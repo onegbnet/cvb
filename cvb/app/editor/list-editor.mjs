@@ -187,7 +187,7 @@ export function createListEditor({ fields, summaryField, items = [], onChange, a
             });
           body.append(openFormEl);
         } else {
-          const rows = fields
+          const rows = fieldsForIndex(index)
             .filter((f) => {
               const v = item[f.attributeId];
               return v !== undefined && v !== null && String(previewText(v)).trim() !== '';
