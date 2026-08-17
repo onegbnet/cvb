@@ -15,7 +15,7 @@ const month = (attributeId, labelKey, opts = {}) => ({ type: 'month', attributeI
 export const SECTIONS = [
   { id: 'personal', labelKey: 'section.personal', groups: ['basics', 'profiles', 'languages', 'summary'] },
   { id: 'education', labelKey: 'section.education', groups: ['education', 'certificates', 'awards'] },
-  { id: 'career', labelKey: 'section.career', groups: ['work', 'projects', 'skills', 'portfolio', 'publications'] },
+  { id: 'career', labelKey: 'section.career', groups: ['work', 'projects', 'skills', 'publications'] },
   { id: 'extra', labelKey: 'section.extra', groups: ['volunteer', 'interests', 'references'] },
 ];
 
@@ -165,11 +165,8 @@ export const MODULES = [
     icon: '📊',
     kind: 'list',
     summaryField: 'name',
-    get: (r) => r.projects.filter((p) => p.type !== 'portfolio'),
-    set: (r, items) => ({
-      ...r,
-      projects: [...items, ...r.projects.filter((p) => p.type === 'portfolio')],
-    }),
+    get: (r) => r.projects,
+    set: (r, items) => ({ ...r, projects: items }),
     fields: (r) => [
       input('name', 'field.project.name'),
       {
@@ -266,43 +263,6 @@ export const MODULES = [
   },
 
   {
-    key: 'portfolio',
-    labelKey: 'nav.portfolio',
-    icon: '🎨',
-    kind: 'list',
-    summaryField: 'name',
-    get: (r) => r.projects.filter((p) => p.type === 'portfolio'),
-    set: (r, items) => ({
-      ...r,
-      projects: [
-        ...r.projects.filter((p) => p.type !== 'portfolio'),
-        ...items.map((p) => ({ ...p, type: 'portfolio' })),
-      ],
-    }),
-    // 作品集条目在数据里就是 projects[] 的成员(type='portfolio'),所以标准字段要给全 ——
-    // 此前这个表单只有 4 个字段,导出时同一个数组里的条目却少了一半字段。
-    fields: (r) => [
-      input('name', 'field.portfolio.name'),
-      {
-        type: 'select',
-        attributeId: 'entity',
-        labelKey: 'field.project.entity',
-        options: [
-          { value: '', labelKey: 'field.project.entity.none' },
-          ...r.work.map((w) => w.name).filter(Boolean).map((name) => ({ value: name, label: name })),
-        ],
-      },
-      { type: 'tags', attributeId: 'roles', labelKey: 'field.project.roles' },
-      month('startDate', 'field.project.startDate'),
-      month('endDate', 'field.project.endDate', { presentKey: 'field.project.ongoing' }),
-      { type: 'textArea', attributeId: 'description', labelKey: 'field.portfolio.description', rows: 3 },
-      { type: 'lines', attributeId: 'highlights', labelKey: 'field.project.highlights', rows: 4 },
-      { type: 'tags', attributeId: 'keywords', labelKey: 'field.portfolio.keywords' },
-      input('url', 'field.portfolio.url', { validate: 'url' }),
-    ],
-  },
-
-  {
     key: 'interests',
     labelKey: 'nav.interests',
     icon: '🎯',
@@ -393,8 +353,6 @@ const FIELD_PATHS = {
   interests: Object.fromEntries(['name', 'keywords'].map((key) => [key, `interests[].${key}`])),
   references: Object.fromEntries(['name', 'reference'].map((key) => [key, `references[].${key}`])),
   projects: Object.fromEntries(['name', 'description', 'highlights', 'keywords', 'startDate', 'endDate', 'url', 'roles', 'entity', 'type']
-    .map((key) => [key, `projects[].${key}`])),
-  portfolio: Object.fromEntries(['name', 'description', 'highlights', 'keywords', 'startDate', 'endDate', 'url', 'roles', 'entity', 'type']
     .map((key) => [key, `projects[].${key}`])),
 };
 
