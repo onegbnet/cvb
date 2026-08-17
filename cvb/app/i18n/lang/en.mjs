@@ -167,7 +167,6 @@ export default {
   'editor.saveFailed': 'Save failed — retrying',
   'editor.tooLarge': 'Resume data exceeds the limit; this change was not saved',
   'editor.empty': 'Nothing here yet — click "Add" to create the first entry',
-  'editor.migrated': 'Legacy data upgraded to the JSON Resume standard',
   'editor.importApplied': 'Config imported',
   'editor.importInvalid': 'Invalid file. Please choose an exported JSON config.',
   'editor.langSwitchHint': 'Switching language reloads the page',

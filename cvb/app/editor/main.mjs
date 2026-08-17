@@ -1,14 +1,11 @@
 // 编辑事实(/edit):lock 门禁 + 纯 JSON Resume 数据 + 四个版块的一级导航 + 页内可折叠 Group。
 // 版块与 Group 的归属见 modules.mjs 的 SECTIONS;条目编辑是提交制,单条表单即改即存。
-// 旧版(v1)数据在服务端/本地首次加载时自动迁移。
 import { h, clear } from '../lib/dom.mjs';
 import { icon } from '../lib/icons.mjs';
 import { tr, getLanguage, buildLocalizedPath, switchLanguage } from '../lib/i18n.mjs';
-import { loadFromStorage, clearStorage } from '../lib/storage.mjs';
 import {
   loadDefaultResumeConfig,
   normalizeResume,
-  isLegacyConfig,
   exportDataToLocal,
   stampMeta,
 } from '../lib/schema.mjs';
@@ -208,7 +205,6 @@ function buildImportButton() {
       if (!file) return;
       let incoming;
       try {
-        // normalizeResume 顺带把 v1 旧格式迁上来 —— 导出过的老文件也能导回去
         incoming = normalizeResume(JSON.parse(await file.text()));
         if (!incoming.basics) throw new Error('missing basics');
       } catch {
@@ -436,25 +432,7 @@ async function main() {
   }
 
   let config = await fetchResume();
-  const wasLegacy = isLegacyConfig(config);
-
-  // v1 localStorage 一次性迁移
-  const legacyLocal = loadFromStorage();
-  if (!config && legacyLocal) {
-    config = legacyLocal;
-    clearStorage();
-  }
-
   config = normalizeResume(config || (await loadDefaultResumeConfig()));
-
-  if (wasLegacy || legacyLocal) {
-    try {
-      await saveResume(config);
-      window.Toast && window.Toast.ok(tr('editor.migrated'));
-    } catch {
-      /* 保存失败时留在内存,后续编辑会重试 */
-    }
-  }
 
   state.config = config;
 

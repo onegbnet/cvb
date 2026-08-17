@@ -183,7 +183,6 @@ export default {
   'editor.saveFailed': '保存失败,正在重试',
   'editor.tooLarge': '简历数据超出上限,这次改动没能保存',
   'editor.empty': '暂无内容,点击"添加"创建第一条',
-  'editor.migrated': '旧版数据已自动升级为标准格式(JSON Resume)',
   'editor.importApplied': '配置已导入',
   'editor.importInvalid': '文件格式无效,请选择导出的 JSON 配置',
   'editor.langSwitchHint': '切换语言将重新加载页面',

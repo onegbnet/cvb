@@ -370,8 +370,44 @@ export const MODULES = [
 
 export const getModule = (key) => MODULES.find((m) => m.key === key);
 
-export const getModuleFields = (module, config) =>
-  typeof module.fields === 'function' ? module.fields(config) : module.fields;
+const FIELD_PATHS = {
+  basics: {
+    name: 'basics.name', label: 'basics.label', phone: 'basics.phone', email: 'basics.email', url: 'basics.url',
+    city: 'basics.location.city', region: 'basics.location.region', countryCode: 'basics.location.countryCode',
+    postalCode: 'basics.location.postalCode', address: 'basics.location.address', image: 'basics.image',
+  },
+  profiles: { network: 'basics.profiles[].network', username: 'basics.profiles[].username', url: 'basics.profiles[].url' },
+  summary: { summary: 'basics.summary' },
+  work: Object.fromEntries(['name', 'location', 'description', 'position', 'url', 'startDate', 'endDate', 'summary', 'highlights']
+    .map((key) => [key, `work[].${key}`])),
+  volunteer: Object.fromEntries(['organization', 'position', 'url', 'startDate', 'endDate', 'summary', 'highlights']
+    .map((key) => [key, `volunteer[].${key}`])),
+  education: Object.fromEntries(['institution', 'url', 'area', 'studyType', 'startDate', 'endDate', 'score', 'courses']
+    .map((key) => [key, `education[].${key}`])),
+  awards: Object.fromEntries(['title', 'date', 'awarder', 'summary'].map((key) => [key, `awards[].${key}`])),
+  certificates: Object.fromEntries(['name', 'date', 'url', 'issuer'].map((key) => [key, `certificates[].${key}`])),
+  publications: Object.fromEntries(['name', 'publisher', 'releaseDate', 'url', 'summary']
+    .map((key) => [key, `publications[].${key}`])),
+  skills: Object.fromEntries(['name', 'level', 'keywords'].map((key) => [key, `skills[].${key}`])),
+  languages: Object.fromEntries(['language', 'fluency'].map((key) => [key, `languages[].${key}`])),
+  interests: Object.fromEntries(['name', 'keywords'].map((key) => [key, `interests[].${key}`])),
+  references: Object.fromEntries(['name', 'reference'].map((key) => [key, `references[].${key}`])),
+  projects: Object.fromEntries(['name', 'description', 'highlights', 'keywords', 'startDate', 'endDate', 'url', 'roles', 'entity', 'type']
+    .map((key) => [key, `projects[].${key}`])),
+  portfolio: Object.fromEntries(['name', 'description', 'highlights', 'keywords', 'startDate', 'endDate', 'url', 'roles', 'entity', 'type']
+    .map((key) => [key, `projects[].${key}`])),
+};
+
+const ARRAY_FIELDS = new Set(['highlights', 'courses', 'keywords', 'roles']);
+
+export const getModuleFields = (module, config) => {
+  const fields = typeof module.fields === 'function' ? module.fields(config) : module.fields;
+  const paths = FIELD_PATHS[module.key] || {};
+  return fields.map((field) => ({
+    ...field,
+    jsonPath: paths[field.attributeId] + (ARRAY_FIELDS.has(field.attributeId) ? '[]' : ''),
+  }));
+};
 
 /**
  * 该模块里"必填还空着"的条目数(object 模块返回 0 或 1)。

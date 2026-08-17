@@ -1,4 +1,4 @@
-// localStorage 持久化 — key 与 v1 相同,老用户数据无缝继承。
+// 仅保留当前编辑器草稿缓存能力。
 const STORAGE_KEY = 'resume-config';
 
 export function saveToStorage(config) {

@@ -4,7 +4,7 @@
 //   · `projects[].type = 'portfolio'` 标记作品集 —— 字段是标准的,值是我们的约定
 //   · 日期三档精度:YYYY / YYYY-MM / YYYY-MM-DD(标准的 iso8601 就是这三档)
 //   · 发出去之前过 stampMeta():盖 $schema/version/lastModified + 剔空值
-// v1 旧数据经 migrateLegacyConfig 自动升级。视图模型 getResumeViewModel 是模板的唯一消费面。
+// JSON Resume 标准对象是事实源；视图模型是模板的唯一消费面。
 import { fetchResume } from './api.mjs';
 import { tr, getLanguage } from './i18n.mjs';
 
@@ -216,128 +216,6 @@ export function stampMeta(config, now = new Date()) {
   };
 }
 
-export const isLegacyConfig = (config) =>
-  Boolean(config && !config.basics && (config.profile || config.workExpList || config.educationList));
-
-// ---- v1 → v2 迁移 ----
-
-const legacyDate = (value) => {
-  const m = String(value || '').match(/(\d{4})[.\-/年]?(\d{1,2})?/);
-  if (!m) return '';
-  return m[2] ? `${m[1]}-${String(m[2]).padStart(2, '0')}` : m[1];
-};
-
-const legacyRange = (value) => {
-  if (Array.isArray(value)) return [legacyDate(value[0]), legacyDate(value[1])];
-  const parts = String(value || '').split(/\s*[-~—至]+\s*/);
-  const start = legacyDate(parts[0]);
-  const rawEnd = parts[1] || '';
-  const end = /今|present|now/i.test(rawEnd) ? '' : legacyDate(rawEnd);
-  return [start, end];
-};
-
-const splitList = (value) =>
-  String(value || '')
-    .split(/[\n,，、/|;；]+/)
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-/** v1(自研 schema)→ v2(JSON Resume)。局部对象(locales 覆盖)也可迁移。 */
-export function migrateLegacyConfig(v1) {
-  const out = {};
-  const p = v1.profile || {};
-
-  const basics = {};
-  if (p.name !== undefined) basics.name = p.name || '';
-  if (p.positionTitle !== undefined) basics.label = p.positionTitle || '';
-  if (p.mobile !== undefined) basics.phone = p.mobile || '';
-  if (p.email !== undefined) basics.email = p.email || '';
-  if (v1.avatar && v1.avatar.src !== undefined) basics.image = v1.avatar.src || '';
-  if (v1.aboutme && v1.aboutme.aboutme_desc !== undefined) basics.summary = v1.aboutme.aboutme_desc || '';
-  const profiles = [];
-  if (p.github) profiles.push({ network: 'GitHub', url: p.github });
-  if (p.zhihu) profiles.push({ network: 'Zhihu', url: p.zhihu });
-  if (profiles.length) basics.profiles = profiles;
-  if (Object.keys(basics).length) out.basics = basics;
-
-  if (v1.educationList) {
-    out.education = v1.educationList.map((e) => {
-      const [startDate, endDate] = legacyRange(e.edu_time);
-      return {
-        institution: e.school || '',
-        area: e.major || '',
-        studyType: e.academic_degree || '',
-        startDate,
-        endDate,
-      };
-    });
-  }
-
-  if (v1.workExpList) {
-    out.work = v1.workExpList.filter(Boolean).map((w) => {
-      const [startDate, endDate] = legacyRange(w.work_time);
-      return {
-        name: w.company_name || '',
-        // v1 的 department_name 不再落库:JSON Resume 的 work 没有"部门"这个字段,
-        // 而标准分节里只放标准字段(2026-08-15 裁定)。原值并进职位,不凭空丢。
-        position: w.department_name ? String(w.department_name) : '',
-        startDate,
-        endDate,
-        summary: w.work_desc || '',
-      };
-    });
-  }
-
-  const projects = [];
-  if (v1.projectList) {
-    for (const item of v1.projectList.filter(Boolean)) {
-      const [startDate, endDate] = legacyRange(item.project_time);
-      projects.push({
-        name: item.project_name || '',
-        roles: item.project_role ? [item.project_role] : [],
-        startDate,
-        endDate,
-        description: item.project_desc || '',
-        highlights: String(item.project_content || '')
-          .split('\n')
-          .map((s) => s.trim())
-          .filter(Boolean),
-      });
-    }
-  }
-  if (v1.workList) {
-    for (const item of v1.workList.filter(Boolean)) {
-      projects.push({
-        type: 'portfolio',
-        name: item.work_name || '',
-        description: item.work_desc || '',
-        url: item.visit_link || '',
-      });
-    }
-  }
-  if (projects.length || v1.projectList || v1.workList) out.projects = projects;
-
-  if (v1.skillList) {
-    out.skills = v1.skillList.filter(Boolean).map((s) => ({
-      name: s.skill_name || '',
-      keywords: splitList(s.skill_desc),
-    }));
-  }
-
-  if (v1.awardList) {
-    out.awards = v1.awardList.filter(Boolean).map((a) => ({
-      title: a.award_info || '',
-      date: legacyDate(a.award_time),
-      awarder: '',
-    }));
-  }
-
-  // v1 里的 template / theme / avatar / workPlace / titleNameMap / locales **不再迁移**:
-  // meta.cvb 已整包移除(它们属于生成侧,不是事实)。需要时逐项加回。
-
-  return out;
-}
-
 const STANDARD_LIST_FIELDS = {
   work: ['name', 'location', 'description', 'position', 'url', 'startDate', 'endDate', 'summary', 'highlights'],
   volunteer: ['organization', 'position', 'url', 'startDate', 'endDate', 'summary', 'highlights'],
@@ -419,10 +297,8 @@ export function sanitizeResume(config) {
 
 /** 归一:补全骨架、严格清理非标准字段、旧数据自动升级。 */
 export function normalizeResume(config) {
-  let v2 = config || {};
-  if (isLegacyConfig(v2)) v2 = migrateLegacyConfig(v2);
   const base = EMPTY_RESUME();
-  const merged = customAssign(base, sanitizeResume(v2));
+  const merged = customAssign(base, sanitizeResume(config || {}));
 
   for (const key of Object.keys(STANDARD_LIST_FIELDS)) {
     if (!Array.isArray(merged[key])) merged[key] = [];

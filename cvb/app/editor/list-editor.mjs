@@ -27,6 +27,12 @@ const previewText = (value) => {
 export function createListEditor({ fields, summaryField, items = [], onChange, aiContext }) {
   const root = h('div', { class: 'list-module-editor' });
 
+  const fieldsForIndex = (index) =>
+    fields.map((field) => ({
+      ...field,
+      jsonPath: field.jsonPath ? field.jsonPath.replaceAll('[]', `[${index}]`) : field.jsonPath,
+    }));
+
   let expandedKey = null;
   let editingKey = null; // -1 = 新增
   let dragIndex = null;
@@ -168,7 +174,7 @@ export function createListEditor({ fields, summaryField, items = [], onChange, a
         const body = h('div', { class: 'list-panel-body' });
         if (editingKey === index) {
           openFormEl = createFormCreator({
-              fields,
+              fields: fieldsForIndex(index),
               value: item,
               isList: true,
               aiContext,
@@ -245,7 +251,7 @@ export function createListEditor({ fields, summaryField, items = [], onChange, a
             )
           ),
           (openFormEl = createFormCreator({
-            fields,
+            fields: fieldsForIndex(items.length),
             value: {},
             isList: true,
             aiContext,

@@ -333,6 +333,7 @@ export function createFormCreator({ fields, value = {}, isList, onChange, onSubm
         'div',
         { class: ['form-item-label', field.required && 'required'] },
         h('span', { class: 'form-item-label-text' }, tr(field.labelKey)),
+        h('code', { class: 'form-item-json-path' }, field.jsonPath),
         aiButton
       ),
       h(
