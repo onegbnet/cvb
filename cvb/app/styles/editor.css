@@ -106,24 +106,6 @@
   flex: 1;
 }
 
-.save-indicator.saving {
-  opacity: 0.4;
-}
-
-.save-indicator {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--ok);
-  background: #f0fdf4;
-  padding: 6px 14px;
-  border-radius: 6px;
-  border: 1px solid #d1fae5;
-}
 
 /* ---- FormCreator ---- */
 .form-creator .form-item {
@@ -498,12 +480,6 @@
     padding: 16px;
   }
 
-  .save-indicator {
-    position: static;
-    width: fit-content;
-    margin-bottom: 16px;
-  }
-
   .form-creator .form-item,
   .form-creator .form-submit {
     grid-template-columns: 1fr;
@@ -519,13 +495,6 @@
     grid-column: 1;
   }
 }
-
-/* 保存指示器三态:已保存 / 有改动未落库 / 失败。
-   原来只有"有没有 saving 这个 class",失败与未保存看起来和已保存一模一样。 */
-.save-indicator.saved { color: var(--ok, #2e9e5b); }
-.save-indicator.saving { color: var(--text-muted); animation: cvb-pulse 1.2s ease-in-out infinite; }
-.save-indicator.error { color: var(--danger, #d93b3b); }
-@keyframes cvb-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 
 /* 列表条目标题现在可聚焦(键盘可达) */
 .list-panel-header:focus-visible { outline: 2px solid var(--accent, #2f5785); outline-offset: -2px; }

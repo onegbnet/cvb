@@ -34,7 +34,6 @@ const state = {
 };
 
 let saveTimer = null;
-let saveIndicatorEl = null;
 let retryDelay = 0;
 
 /**
@@ -47,17 +46,9 @@ const saveState = { dirty: false, saving: false, error: '' };
 const RETRY_BASE_MS = 3000;
 const RETRY_MAX_MS = 30000;
 
-const syncSaveIndicator = () => {
-  if (!saveIndicatorEl) return;
-  const cls = saveState.error ? 'error' : saveState.saving || saveState.dirty ? 'saving' : 'saved';
-  saveIndicatorEl.className = `save-indicator ${cls}`;
-  saveIndicatorEl.title = saveState.error || tr(saveState.dirty ? 'editor.unsaved' : 'editor.saved');
-};
-
 const flushSave = async () => {
   saveTimer = null;
   saveState.saving = true;
-  syncSaveIndicator();
   try {
     // 标准的 meta.lastModified / meta.version / $schema 由这里盖章 —— 它们是
     // JSON Resume 要求有、但不该让用户手填的三样(见 schema.mjs stampMeta)。
@@ -90,7 +81,6 @@ const flushSave = async () => {
     }
   } finally {
     saveState.saving = false;
-    syncSaveIndicator();
   }
 };
 
@@ -100,7 +90,6 @@ const updateConfigTo = (nextConfig) => {
   saveState.error = '';
   retryDelay = 0; // 用户又动了,退避从头算
   renderSectionNav();
-  syncSaveIndicator();
   clearTimeout(saveTimer);
   saveTimer = setTimeout(flushSave, SAVE_DEBOUNCE_MS);
 };
@@ -451,9 +440,6 @@ async function main() {
   renderSectionNav();
   renderSectionPage();
 
-  saveIndicatorEl = h('div', { class: 'save-indicator saved', title: tr('editor.saved') }, icon('check'));
-  syncSaveIndicator();
-
   app.append(
     buildHeader(),
     h(
@@ -467,7 +453,6 @@ async function main() {
           'div',
           { class: 'module-form-card' },
           h('div', { class: 'editor-tools' }),
-          saveIndicatorEl,
           sectionPageEl
         )
       )
