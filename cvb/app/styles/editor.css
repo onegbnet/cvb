@@ -1,0 +1,530 @@
+/* 编辑页样式 — 复刻 v1 ResumeEditor / FormCreator Notion 风格。 */
+.resume-editor {
+  padding: 24px;
+  min-height: calc(100vh - 56px - 40px);
+  background: var(--bg-page);
+  padding-bottom: 96px;
+}
+
+.editor-content {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 3fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.module-list-card,
+.module-form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.module-list-card {
+  overflow: hidden;
+  padding: 8px 0;
+}
+
+.module-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px 16px;
+  margin: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.module-item:hover {
+  background: var(--bg-page);
+}
+
+.module-item.selected {
+  background: var(--accent-bg);
+  border-left: 3px solid var(--accent);
+  padding-left: 13px;
+}
+
+.module-item .module-icon {
+  font-size: 18px;
+  margin-right: 12px;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.module-item.selected .module-icon {
+  color: var(--accent);
+}
+
+.module-item .module-name {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.module-item .module-count {
+  margin-left: 8px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.module-form-card {
+  padding: 24px;
+  min-height: 500px;
+  position: relative;
+}
+
+.editor-tools {
+  position: relative;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  min-height: 45px;
+}
+
+.input-with-upload {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.input-with-upload .fc-input {
+  flex: 1;
+}
+
+.save-indicator.saving {
+  opacity: 0.4;
+}
+
+.save-indicator {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ok);
+  background: #f0fdf4;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #d1fae5;
+}
+
+/* ---- FormCreator ---- */
+.form-creator .form-item {
+  display: grid;
+  grid-template-columns: 25% 1fr;
+  gap: 8px;
+  align-items: start;
+  margin-bottom: 16px;
+}
+
+.form-creator .form-item-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 5px;
+  text-align: right;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.form-creator .form-item-label.required::before {
+  content: '*';
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+
+.form-creator .form-item-control {
+  min-width: 0;
+}
+
+.form-creator .form-item-checkbox {
+  padding-top: 5px;
+}
+
+.form-creator .form-submit {
+  display: grid;
+  grid-template-columns: 25% 1fr;
+  gap: 8px;
+}
+
+.form-creator .form-submit .btn {
+  grid-column: 2;
+  justify-self: start;
+}
+
+.ai-improve-inline-error {
+  margin-top: 8px;
+  color: var(--err);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ---- 列表模块编辑器 ---- */
+.list-module-editor .add-btn {
+  width: 100%;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  height: 40px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.list-module-editor .add-btn:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+
+.list-panel {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.list-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  padding: 14px 16px;
+  background: var(--surface);
+  cursor: move;
+  user-select: none;
+}
+
+.list-panel-header.drop-over-downward {
+  border-bottom: 2px dashed var(--accent);
+}
+
+.list-panel-header.drop-over-upward {
+  border-top: 2px dashed var(--accent);
+}
+
+.list-panel-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.list-panel-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.list-panel-action {
+  font-size: 15px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 0;
+}
+
+.list-panel-action.edit {
+  color: var(--accent);
+}
+
+.list-panel-action.edit:hover {
+  color: var(--accent-hover);
+}
+
+.list-panel-action.delete {
+  color: #dc2626;
+}
+
+.list-panel-action.delete:hover {
+  color: #b91c1c;
+}
+
+.list-panel-body {
+  border-top: 1px solid var(--border);
+  padding: 16px;
+  background: var(--bg-page);
+}
+
+.item-preview {
+  padding: 12px;
+  background: var(--surface);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.item-preview .item-preview-row {
+  margin-bottom: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.item-preview strong {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.edit-form-container {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+}
+
+.edit-form-container .edit-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+  color: var(--text);
+}
+
+.empty-placeholder {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 32px 0;
+}
+
+/* 导入前的覆盖确认:先看清差异再点确认 */
+.import-confirm-note {
+  margin: 0 0 12px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.import-diff {
+  border: 1px solid var(--border, #e3e6ea);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.import-diff-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+.import-diff-row:nth-child(odd) {
+  background: var(--surface-muted, rgba(0, 0, 0, 0.03));
+}
+.import-diff-label {
+  color: var(--text-muted);
+}
+.import-diff-value {
+  font-variant-numeric: tabular-nums;
+}
+.import-diff-empty {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.import-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* ---- 一级导航(版块)+ 页内 Group ---- */
+
+.section-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.section-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text);
+  transition: background 0.15s;
+}
+.section-item:hover {
+  background: var(--surface-muted, rgba(0, 0, 0, 0.04));
+}
+.section-item.selected {
+  background: var(--accent-soft, rgba(47, 87, 133, 0.12));
+  color: var(--accent, #2f5785);
+}
+
+.section-page {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.group-panel {
+  border: 1px solid var(--border, #e3e6ea);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--surface-muted, rgba(0, 0, 0, 0.02));
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+}
+.group-header:hover {
+  background: var(--surface-muted, rgba(0, 0, 0, 0.05));
+}
+.group-chevron {
+  margin-left: auto;
+  display: inline-flex;
+  opacity: 0.6;
+}
+.group-body {
+  padding: 16px 14px;
+  border-top: 1px solid var(--border, #e3e6ea);
+}
+
+/* ---- 日期:精度切换 + 对应输入器 ---- */
+
+.fc-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.fc-date-input .fc-month {
+  min-width: 150px;
+}
+.fc-date-precision {
+  display: inline-flex;
+  border: 1px solid var(--border, #e3e6ea);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.fc-date-precision-btn {
+  padding: 4px 10px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.fc-date-precision-btn + .fc-date-precision-btn {
+  border-left: 1px solid var(--border, #e3e6ea);
+}
+.fc-date-precision-btn.is-active {
+  background: var(--accent, #2f5785);
+  color: #fff;
+}
+
+/* 「必填还空着」标记:导航与条目标题上都用同一个 */
+.module-issue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: var(--danger, #d93b3b);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+/* 列表条目的上/下移按钮(触屏上唯一能用的排序方式) */
+.list-panel-action.move[disabled] {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* 模块级说明(分节标题那类"留空即默认"的规则,写在表单上方) */
+.module-hint {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+
+@media (max-width: 900px) {
+  .resume-editor {
+    padding: 16px 12px 96px;
+  }
+
+  .editor-content {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .module-form-card {
+    min-height: auto;
+    padding: 16px;
+  }
+
+  .save-indicator {
+    position: static;
+    width: fit-content;
+    margin-bottom: 16px;
+  }
+
+  .form-creator .form-item,
+  .form-creator .form-submit {
+    grid-template-columns: 1fr;
+  }
+
+  .form-creator .form-item-label {
+    justify-content: flex-start;
+    text-align: left;
+    padding-top: 0;
+  }
+
+  .form-creator .form-submit .btn {
+    grid-column: 1;
+  }
+}
+
+/* 保存指示器三态:已保存 / 有改动未落库 / 失败。
+   原来只有"有没有 saving 这个 class",失败与未保存看起来和已保存一模一样。 */
+.save-indicator.saved { color: var(--ok, #2e9e5b); }
+.save-indicator.saving { color: var(--text-muted); animation: cvb-pulse 1.2s ease-in-out infinite; }
+.save-indicator.error { color: var(--danger, #d93b3b); }
+@keyframes cvb-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* 列表条目标题现在可聚焦(键盘可达) */
+.list-panel-header:focus-visible { outline: 2px solid var(--accent, #2f5785); outline-offset: -2px; }
