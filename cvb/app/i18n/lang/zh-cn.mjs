@@ -154,7 +154,7 @@ export default {
   'field.volunteer.highlights': '要点(一行一条)',
   'field.volunteer.url': '相关链接',
   'field.publication.name': '标题',
-  'field.publication.publisher': '发表于',
+  'field.publication.publisher': '出版机构',
   'field.publication.releaseDate': '发表时间',
   'field.publication.url': '链接',
   'field.publication.summary': '摘要',

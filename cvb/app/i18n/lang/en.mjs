@@ -141,7 +141,7 @@ export default {
   'field.volunteer.highlights': 'Highlights (one per line)',
   'field.volunteer.url': 'URL',
   'field.publication.name': 'Title',
-  'field.publication.publisher': 'Published in',
+  'field.publication.publisher': 'Publisher',
   'field.publication.releaseDate': 'Date',
   'field.publication.url': 'URL',
   'field.publication.summary': 'Abstract',
