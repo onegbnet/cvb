@@ -1,0 +1,169 @@
+{
+  "basics": {
+    "name": "李明",
+    "label": "后端工程师",
+    "image": "",
+    "email": "liming@example.com",
+    "phone": "13800000000",
+    "url": "https://example.com",
+    "summary": "六年后端开发经验,长期负责高并发服务的设计与运维。\n熟悉分布式系统与云原生技术栈,主导过两次核心系统重构。\n重视工程质量,推动过团队的代码评审与自动化测试实践。",
+    "location": {
+      "city": "上海"
+    },
+    "profiles": [
+      {
+        "network": "GitHub",
+        "url": "https://github.com/example"
+      }
+    ]
+  },
+  "work": [
+    {
+      "name": "某互联网科技有限公司",
+      "position": "高级后端工程师",
+      "startDate": "2021-04",
+      "endDate": "",
+      "summary": "负责订单与支付链路的服务端架构设计与迭代,保障日均千万级请求的稳定性;主导服务网格迁移,发布效率提升明显。"
+    },
+    {
+      "name": "某软件股份有限公司",
+      "position": "后端工程师",
+      "startDate": "2018-07",
+      "endDate": "2021-03",
+      "summary": "参与 SaaS 平台多租户架构开发,负责计费与权限模块;编写并维护内部脚手架工具,被多个团队采用。"
+    }
+  ],
+  "education": [
+    {
+      "institution": "某大学",
+      "area": "计算机科学与技术",
+      "studyType": "本科",
+      "startDate": "2014-09",
+      "endDate": "2018-06",
+      "score": ""
+    }
+  ],
+  "projects": [
+    {
+      "name": "订单中台重构",
+      "entity": "某互联网科技有限公司",
+      "roles": [
+        "技术负责人"
+      ],
+      "startDate": "2022-03",
+      "endDate": "2023-01",
+      "description": "将单体订单系统拆分为领域化微服务,统一状态机与幂等处理。",
+      "highlights": [
+        "设计事件驱动的订单状态流转,消除跨服务数据不一致",
+        "灰度迁移方案实现零停机切换",
+        "核心接口 P99 延迟下降约 60%"
+      ],
+      "url": "",
+      "keywords": [
+        "Go",
+        "gRPC",
+        "Kafka",
+        "MySQL"
+      ]
+    },
+    {
+      "name": "内部配置中心",
+      "entity": "",
+      "roles": [
+        "发起人 / 核心开发"
+      ],
+      "startDate": "2020-06",
+      "endDate": "2020-12",
+      "description": "面向多团队的轻量配置分发服务,支持灰度与回滚。",
+      "highlights": [
+        "推送延迟秒级,支撑 30+ 服务接入",
+        "开源于公司内源平台,获年度工具奖"
+      ],
+      "url": "",
+      "keywords": [
+        "Go",
+        "etcd",
+        "Kubernetes"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "name": "服务端",
+      "keywords": [
+        "Go",
+        "Java",
+        "gRPC",
+        "MySQL",
+        "Redis"
+      ]
+    },
+    {
+      "name": "基础设施",
+      "keywords": [
+        "Kubernetes",
+        "Docker",
+        "Terraform",
+        "Prometheus"
+      ]
+    },
+    {
+      "name": "工程实践",
+      "keywords": [
+        "领域驱动设计",
+        "自动化测试",
+        "CI/CD"
+      ]
+    }
+  ],
+  "certificates": [
+    {
+      "name": "CKA(Certified Kubernetes Administrator)",
+      "issuer": "CNCF",
+      "date": "2022-05",
+      "url": ""
+    }
+  ],
+  "awards": [
+    {
+      "title": "年度技术之星",
+      "awarder": "某互联网科技有限公司",
+      "date": "2023-01",
+      "summary": ""
+    }
+  ],
+  "languages": [
+    {
+      "language": "中文",
+      "fluency": "母语"
+    },
+    {
+      "language": "英语",
+      "fluency": "CET-6,可流畅阅读技术文档"
+    }
+  ],
+  "interests": [
+    {
+      "name": "开源",
+      "keywords": [
+        "维护两个 CLI 小工具"
+      ]
+    }
+  ],
+  "meta": {
+    "cvb": {
+      "template": "template1",
+      "theme": {
+        "color": "#2f5785",
+        "tagColor": "#2f5785"
+      },
+      "avatar": {
+        "shape": "circle",
+        "hidden": true
+      },
+      "desiredLocation": "上海",
+      "sectionTitles": {},
+      "locales": {}
+    }
+  }
+}

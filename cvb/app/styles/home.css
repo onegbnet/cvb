@@ -1,0 +1,335 @@
+/* 工作台首页 —— 入口分发面。
+   克制的现代感:大留白、两张等宽卡、悬停微抬。不用渐变与阴影堆叠,
+   与简历产品「专业、不喧宾夺主」的调性一致。 */
+
+/* **不要写 min-height: 100vh** —— 那是首页还没有页眉页脚时留下的:
+   页眉(约 56px)与页脚(约 40px)是这块的兄弟节点,再让它自己占满一屏,
+   合起来必然超出视口、出现滚动条,页脚被挤到折线以下(2026-08-17 用户报出)。
+   现在改成:body 竖向 flex 撑满,这块 flex:1 吃掉剩余空间。 */
+.home {
+  box-sizing: border-box;
+  flex: 1;
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: clamp(24px, 6vh, 72px) 24px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-head {
+  margin-bottom: 44px;
+}
+
+.home-title {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #16202b;
+}
+
+.home-tagline {
+  margin: 0;
+  font-size: clamp(1.1rem, 2.4vw, 1.55rem);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+
+/* ---- 入口卡 ---- */
+
+.home-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 720px) {
+  .home {
+    padding-top: 8vh;
+  }
+  .home-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 32px 28px 30px;
+  border: 1px solid #e2e7ec;
+  border-radius: 14px;
+  background: #fff;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.home-card:hover {
+  transform: translateY(-2px);
+  border-color: #2f5785;
+  box-shadow: 0 6px 20px rgba(22, 32, 43, 0.08);
+}
+
+/* 大标:线性 SVG,颜色随卡片走(hover 时整体点亮) */
+.home-card-mark {
+  margin-bottom: 18px;
+  color: #2f5785;
+  line-height: 0;
+}
+
+.home-card.is-wip .home-card-mark {
+  color: #a9761a;
+}
+
+.home-card-title {
+  font-size: 19px;
+  font-weight: 600;
+  color: #16202b;
+  letter-spacing: -0.2px;
+}
+
+.home-card-desc {
+  margin-top: 8px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #5a6572;
+}
+
+/* 「进行中」:不假装做完了,但也不禁用 —— 点进去能看到当前真有的能力。 */
+.home-card-note {
+  margin-top: 14px;
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 5px;
+  background: #fff7e6;
+  color: #8a6100;
+  font-size: 12px;
+}
+
+
+/* ---- 页脚 ---- */
+
+.home-foot {
+  margin-top: auto;
+  padding-top: 40px;
+}
+
+.home-lang {
+  border: 0;
+  background: none;
+  padding: 4px 0;
+  color: #5a6572;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.home-lang:hover {
+  color: #2f5785;
+}
+
+/* ---- LaTeX 字标 ----
+ *
+ * 定义来自 LaTeX 内核 ltlogos.dtx(权威,非印象):
+ *   \DeclareRobustCommand{\LaTeX}{L\kern-.36em{…\fontsize\sf@size…A…}\kern-.15em\TeX}
+ *   \TeX  = T\kern-.1667em\lower.5ex\hbox{E}\kern-.125em X
+ * **不是斜体** —— 全文没有任何 italic/slant;A 缩到脚注字号并顶到 T 的高度,E 下沉半个 ex。
+ *
+ * 字体是**真的 Latin Modern**,不是"形状像的系统衬线":文件从我们自己的 TeX 数据包里
+ * 按 metadata 偏移提取(见 static/fonts/README.md),与编译 PDF 用的是同一批字节。
+ * 招牌值得驮这 218KB —— 但只有这一处用,且 font-display: swap,不挡首屏。
+ */
+/* @font-face 在 home.html 头部注入 —— 它要 {{CCS_PIN}} 与 {{CCS_CDN}},静态 CSS 拿不到 */
+
+.latex-logo {
+  /* 中文文案里不写空格(写了会和字标自带的负 kern 叠成一道大缝),统一由这里给间距 */
+  margin: 0 0.12em;
+  font-family: 'LM Roman CVB', 'Latin Modern Roman', 'CMU Serif', Georgia, serif;
+  letter-spacing: 0;
+  /* LM 的字面比周围无衬线小一号,补回来 */
+  font-size: 1.06em;
+}
+/* A:\fontsize\sf@size ≈ .7em,顶端与 T 齐平;kern -.36em / -.15em 是**外层 em**,
+   而这里的 em 按子元素自己的 .7em 算,所以要除以 .7 才等值。 */
+.latex-logo .latex-a {
+  font-size: 0.7em;
+  vertical-align: 0.34em;
+  margin-left: -0.514em;  /* = -0.36em ÷ 0.7 */
+  margin-right: -0.214em; /* = -0.15em ÷ 0.7 */
+}
+/* E:\lower.5ex + kern -.1667em / -.125em(与外层同字号,可直接用) */
+.latex-logo .latex-e {
+  vertical-align: -0.5ex;
+  margin-left: -0.1667em;
+  margin-right: -0.125em;
+}
+
+/* #app 是 body 的 flex 子项,里面装页眉 + .home;让它把剩余高度传下去 */
+body > #app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* 窄屏:桌面的大留白在 390×844 上会把页脚顶出屏幕(实测溢出 96px)。
+   这里按量出来的数收:上下内边距、标题下边距、卡片内边距各让一点,
+   两张卡竖排后仍能整屏放下。 */
+@media (max-width: 600px) {
+  .home {
+    padding: 16px 16px 16px;
+  }
+  .home-head {
+    margin-bottom: 20px;
+  }
+  .home-cards {
+    gap: 12px;
+  }
+  .home-card {
+    padding: 14px 16px 12px;
+  }
+  .home-card-title {
+    margin-bottom: 4px;
+  }
+  .home-card-desc {
+    font-size: 0.86rem;
+    line-height: 1.5;
+  }
+  .home-card-note {
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+  .home-steps {
+    margin-top: 20px;
+    gap: 10px;
+  }
+  .home-step {
+    font-size: 0.98rem;
+  }
+  .home-card-mark {
+    margin-bottom: 6px;
+    transform: scale(0.9);
+    transform-origin: left center;
+  }
+}
+
+/* 三步说明:两张大按钮下方,一行一步,带序号。
+   这是首页唯一的文字说明 —— 副标题式的一长句已去掉(用户 2026-08-17 定)。 */
+/* 这三行是产品主张(替代了原来那句副标题),**要醒目** —— 别按脚注排。 */
+.home-steps {
+  list-style: none;
+  margin: 30px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  counter-reset: home-step;
+}
+/* **不要用 flex + gap**:flex 容器会把每段连续文字当成独立项,gap 于是加在了
+   行内的 LaTeX 字标两侧,凭空多出两道 10px 的缝(2026-08-17 量出来的)。
+   序号改成绝对定位,正文就是普通行内流。 */
+.home-step {
+  counter-increment: home-step;
+  position: relative;
+  padding-left: 38px;
+  font-size: clamp(1.02rem, 1.7vw, 1.22rem);
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--text);
+}
+.home-step::before {
+  content: counter(home-step);
+  position: absolute;
+  left: 0;
+  top: 0.2em;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--border, #e3e6ea);
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent, #2f5785);
+  border-color: var(--accent-bg, #dbe4ef);
+  background: var(--accent-bg, #eef2f7);
+}
+
+/* 三个标语:大按钮**上方**,对应 §0 的三条卖点。这是首页的主视觉。 */
+/* **一行不折**:切到英文(更长)也必须还是一行 —— 用 nowrap + 随视口缩的字号,
+   而不是让它换行(用户 2026-08-17 定)。窄屏上间距一并收。 */
+.home-slogans {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  gap: clamp(10px, 3.4vw, 44px);
+  margin: 0 0 26px;
+}
+.home-slogan {
+  white-space: nowrap;
+  /* 下限要低到英文(更长)在 390px 上也不折行、不撑破 */
+  font-size: clamp(0.8rem, 2.9vw, 2.05rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  color: #16202b;
+}
+/* 标语之间的分隔点:用伪元素而不是字符,复制时不会被带走 */
+.home-slogan + .home-slogan::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: clamp(10px, 3.4vw, 44px);
+  margin-left: calc(-1 * clamp(10px, 3.4vw, 44px) / 2 - 2.5px);
+  border-radius: 50%;
+  background: var(--accent, #2f5785);
+  vertical-align: 0.28em;
+  opacity: 0.55;
+}
+
+/* 窄屏第二轮(英文文案更长,实测还差 83px):
+   ① 页眉在 390px 上会折成两行(87px)—— 收成一行;
+   ② 三步说明英文每条会折两行,字号与行距一并收。
+   这两处加起来正好覆盖英文的额外高度,中文自然更宽裕。 */
+@media (max-width: 600px) {
+  /* 选择器要和 base.css 的 header.app-header 同权重,否则被它的 height:56px 压回去 */
+  header.app-header {
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 0 14px;
+    height: 48px;
+  }
+  header.app-header .header-title {
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+  .home-slogans {
+    margin-bottom: 18px;
+  }
+  .home-step {
+    font-size: 0.9rem;
+    line-height: 1.45;
+    padding-left: 30px;
+  }
+  .home-step::before {
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+  }
+  .home-steps {
+    gap: 8px;
+    margin-top: 16px;
+  }
+}
