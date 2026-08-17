@@ -891,10 +891,11 @@ var resolveLang = (request) => {
   if (m && SUPPORTED_LANGS.includes(m[1])) return m[1];
   return detectLangFromAcceptLanguage(request.headers.get("Accept-Language") || "", SUPPORTED_LANGS);
 };
+var APP_LICENSE_URL = "https://github.com/onegbnet/cvb/blob/main/LICENSE";
 var appAssetUrl = (relativePath, request) => {
   if (false) return relativePath;
   const host = selectJsdelivrCdnHost(request);
-  return `https://${host}/${"gh/onegbnet/cvb@caa2a1ccecfdf2c1b0479af34d77e51f7fdd1b7b/cvb"}/${relativePath}`;
+  return `https://${host}/${"gh/onegbnet/cvb@358cf7be3da5dfa9c62b6ee3c9f3d6a2d29edd89/cvb"}/${relativePath}`;
 };
 var serveHtmlAsset = async (request, env, lang) => {
   const res = await env.ASSETS.fetch(request);
@@ -906,7 +907,7 @@ var serveHtmlAsset = async (request, env, lang) => {
   const html = (await res.text()).replaceAll("{{LANG}}", lang).replaceAll("{{CCS_CDN}}", cdnHost(env, request)).replaceAll("{{CCS_PIN}}", CCS_PIN).replaceAll(TEX_ENGINE_PLACEHOLDER, texEngine).replace(
     /(\b(?:src|href)=['"])(app|static)\//g,
     (_, prefix, directory) => `${prefix}${appAssetUrl(`${directory}/`, request)}`
-  );
+  ).replaceAll('href="/LICENSE"', `href="${APP_LICENSE_URL}"`);
   const headers = new Headers(res.headers);
   headers.delete("Content-Length");
   return new Response(html, { status: res.status, headers });
