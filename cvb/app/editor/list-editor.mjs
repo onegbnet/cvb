@@ -196,9 +196,7 @@ export function createListEditor({ fields, summaryField, items = [], onChange, a
               h(
                 'div',
                 { class: 'item-preview-row' },
-                h('strong', {}, `${tr(f.labelKey)} `),
-                h('code', { class: 'item-preview-json-path' }, f.jsonPath),
-                h('span', {}, ': '),
+                h('strong', { title: f.jsonPath || '' }, `${tr(f.labelKey)}: `),
                 previewText(item[f.attributeId])
               )
             );
