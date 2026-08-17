@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="{{LANG}}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CV Builder</title>
+    <link rel="icon" href="static/favicon.ico" />
+    <!-- per-lang 文案表(worker 按 cookie/Accept-Language 注入;全局 T + data-i18n 自动应用) -->
+    <script src="app/i18n/i18n-{{LANG}}.min.js"></script>
+
+    <!-- ccs 组件(jsDelivr,SHA 与 ccs-pin.json 一致) -->
+    <link
+      rel="stylesheet"
+      href="https://{{CCS_CDN}}/gh/onegbnet/ccs@{{CCS_PIN}}/overlay/style.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://{{CCS_CDN}}/gh/onegbnet/ccs@{{CCS_PIN}}/toast/style.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://{{CCS_CDN}}/gh/onegbnet/ccs@{{CCS_PIN}}/spinner/style.min.css"
+    />
+
+    <link rel="stylesheet" href="app/styles/base.css" />
+    <link rel="stylesheet" href="app/styles/editor.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- 首屏骨架:页面靠 JS 渲染,而渲染前要等 i18n bundle + 模块 + 一两次 API
+           往返 —— 那段时间 #app 是空的,整页只剩一个页脚,像加载失败。
+           这块是纯 CSS 的占位,JS 一 clear(#app) 就消失,不需要任何脚本配合。 -->
+      <div class="boot-skeleton" aria-hidden="true">
+        <div class="boot-bar"></div>
+        <div class="boot-main">
+          <div class="boot-line boot-line-lg"></div>
+          <div class="boot-cards">
+            <div class="boot-card"></div>
+            <div class="boot-card"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 加载顺序:action 先于 overlay(overlay 依赖 window.Action;window.tr 由 app 模块延迟提供) -->
+    <script src="https://{{CCS_CDN}}/gh/onegbnet/ccs@{{CCS_PIN}}/action/client.min.js"></script>
+    <script src="https://{{CCS_CDN}}/gh/onegbnet/ccs@{{CCS_PIN}}/field/client.min.js"></script>
+    <script src="https://{{CCS_CDN}}/gh/onegbnet/ccs@{{CCS_PIN}}/overlay/client.min.js"></script>
+    <script src="https://{{CCS_CDN}}/gh/onegbnet/ccs@{{CCS_PIN}}/popover/client.min.js"></script>
+    <script src="https://{{CCS_CDN}}/gh/onegbnet/ccs@{{CCS_PIN}}/toast/client.min.js"></script>
+
+    <script type="module" src="app/editor/main.mjs"></script>
+    <!-- 页脚:ccs footer-brand(与 tinycfw/logflare 同一形态);品牌文案由 client.min.js 按语言渲染 -->
+    <footer style="text-align:center;padding:1rem 0;font-size:.75rem;color:var(--footer-color,inherit)">© <span id="footerYear"></span> <a href="https://go.gb.net/gaobo" target="_blank" rel="noopener" style="color:var(--footer-color,inherit);text-decoration:none;border-bottom:1px dashed var(--footer-border,currentColor)"><img src="https://{{CCS_CDN}}/gh/onegbnet/ccs@{{CCS_PIN}}/gaobo.png" alt="" style="height:20px;vertical-align:middle;margin:0 2px;"><span id="footerBrand"></span></a> <span id="footerProd"></span> <a href="/LICENSE" target="_blank" rel="noopener" style="color:var(--footer-color,inherit);text-decoration:none;border-bottom:1px dashed var(--footer-border,currentColor)">MIT License</a></footer>
+    <script src="https://{{CCS_CDN}}/gh/onegbnet/ccs@{{CCS_PIN}}/footer-brand/client.min.js"></script>
+    <script>window.FooterBrand && window.FooterBrand.applyLang(document.documentElement.lang);</script>
+  </body>
+</html>

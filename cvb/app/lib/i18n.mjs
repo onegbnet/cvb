@@ -35,7 +35,7 @@ export function buildLocalizedPath(page, extraQuery = {}) {
 export async function switchLanguage(nextLang) {
   if (nextLang === getLanguage()) return;
   try {
-    await fetch('api/prefs', {
+    await fetch('/api/prefs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lang: nextLang }),

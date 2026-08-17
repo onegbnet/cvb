@@ -25,7 +25,7 @@ const jsonOrThrow = async (res) => {
 
 export async function fetchAuth() {
   try {
-    const payload = await jsonOrThrow(await fetch('api/auth'));
+    const payload = await jsonOrThrow(await fetch('/api/auth'));
     return Boolean(payload && payload.authed);
   } catch {
     return false;
@@ -34,7 +34,7 @@ export async function fetchAuth() {
 
 /** 读简历(公开)。无数据返回 null。 */
 export async function fetchResume() {
-  const res = await fetch('api/resume');
+  const res = await fetch('/api/resume');
   if (res.status === 404) return null;
   const payload = await jsonOrThrow(res);
   return payload.config;
@@ -54,7 +54,7 @@ export async function saveResume(config) {
 /** 上传头像到 R2(需解锁),返回站内 URL。 */
 export async function uploadAvatar(file) {
   const payload = await jsonOrThrow(
-    await fetch('api/avatar', {
+    await fetch('/api/avatar', {
       method: 'POST',
       headers: { 'Content-Type': file.type },
       body: file,
@@ -65,11 +65,11 @@ export async function uploadAvatar(file) {
 
 /** 把当前服务端简历存为 R2 快照(需解锁)。 */
 export async function exportSnapshot() {
-  return jsonOrThrow(await fetch('api/export', { method: 'POST' }));
+  return jsonOrThrow(await fetch('/api/export', { method: 'POST' }));
 }
 
 export const isUnauthorized = (err) => err && (err.code === 'UNAUTHORIZED' || err.status === 401);
 
 export function redirectToUnlock() {
-  window.location.href = 'unlock';
+  window.location.href = '/unlock';
 }

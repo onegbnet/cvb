@@ -437,7 +437,7 @@ let defaultResumePromise = null;
 
 export function loadDefaultResumeConfig() {
   if (!defaultResumePromise) {
-    defaultResumePromise = fetch('static/resume.json').then((res) => {
+    defaultResumePromise = fetch('/static/resume.json').then((res) => {
       if (!res.ok) throw new Error(`Failed to load default resume: ${res.status}`);
       return res.json();
     });
