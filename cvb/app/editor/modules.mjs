@@ -69,7 +69,7 @@ export const MODULES = [
       };
     },
     fields: [
-      input('name', 'field.basics.name', { required: true }),
+      input('name', 'field.basics.name'),
       input('label', 'field.basics.label'),
       input('phone', 'field.basics.phone', { validate: 'phone' }),
       input('email', 'field.basics.email', { validate: 'email' }),
@@ -97,7 +97,6 @@ export const MODULES = [
     set: (r, items) => ({ ...r, basics: { ...r.basics, profiles: items } }),
     fields: [
       input('network', 'field.profile.network', {
-        required: true,
         placeholderKey: 'field.profile.network.hint',
       }),
       input('username', 'field.profile.username'),
@@ -124,10 +123,10 @@ export const MODULES = [
     get: (r) => r.education,
     set: (r, items) => ({ ...r, education: items }),
     fields: [
-      input('institution', 'field.education.institution', { required: true }),
+      input('institution', 'field.education.institution'),
       input('area', 'field.education.area'),
       input('studyType', 'field.education.studyType'),
-      month('startDate', 'field.education.startDate', { required: true }),
+      month('startDate', 'field.education.startDate'),
       month('endDate', 'field.education.endDate'),
       input('score', 'field.education.score'),
       { type: 'lines', attributeId: 'courses', labelKey: 'field.education.courses', rows: 4 },
@@ -144,14 +143,14 @@ export const MODULES = [
     get: (r) => r.work,
     set: (r, items) => ({ ...r, work: items }),
     fields: [
-      input('name', 'field.work.name', { required: true }),
+      input('name', 'field.work.name'),
       // description = 这家公司是干什么的(标准举例 "Social Media Company")。
       // 原来这里是非标准的 department(部门),按"与标准严格对齐"已去掉。
       input('description', 'field.work.description', { placeholderKey: 'field.work.description.hint' }),
-      input('position', 'field.work.position', { required: true }),
+      input('position', 'field.work.position'),
       // 工作地点:澳新/北美版式排在右侧。模板早就在读,只是一直没人能填。
       input('location', 'field.work.location', { placeholderKey: 'field.work.location.hint' }),
-      month('startDate', 'field.work.startDate', { required: true }),
+      month('startDate', 'field.work.startDate'),
       month('endDate', 'field.work.endDate', { presentKey: 'field.work.current' }),
       { type: 'textArea', attributeId: 'summary', labelKey: 'field.work.summary', rows: 3, ai: true },
       // 要点(JSON Resume 标准字段,与项目经历同构):一行一条。
@@ -172,7 +171,7 @@ export const MODULES = [
       projects: [...items, ...r.projects.filter((p) => p.type === 'portfolio')],
     }),
     fields: (r) => [
-      input('name', 'field.project.name', { required: true }),
+      input('name', 'field.project.name'),
       {
         type: 'select',
         attributeId: 'entity',
@@ -208,7 +207,7 @@ export const MODULES = [
     get: (r) => r.skills,
     set: (r, items) => ({ ...r, skills: items }),
     fields: [
-      input('name', 'field.skill.name', { required: true }),
+      input('name', 'field.skill.name'),
       input('level', 'field.skill.level', { placeholderKey: 'field.skill.level.hint' }),
       {
         type: 'tags',
@@ -229,7 +228,7 @@ export const MODULES = [
     get: (r) => r.certificates,
     set: (r, items) => ({ ...r, certificates: items }),
     fields: [
-      input('name', 'field.certificate.name', { required: true }),
+      input('name', 'field.certificate.name'),
       input('issuer', 'field.certificate.issuer'),
       month('date', 'field.certificate.date'),
       input('url', 'field.certificate.url', { validate: 'url' }),
@@ -245,7 +244,7 @@ export const MODULES = [
     get: (r) => r.awards,
     set: (r, items) => ({ ...r, awards: items }),
     fields: [
-      input('title', 'field.award.title', { required: true }),
+      input('title', 'field.award.title'),
       input('awarder', 'field.award.awarder'),
       month('date', 'field.award.date'),
       input('summary', 'field.award.summary'),
@@ -261,7 +260,7 @@ export const MODULES = [
     get: (r) => r.languages,
     set: (r, items) => ({ ...r, languages: items }),
     fields: [
-      input('language', 'field.language.language', { required: true }),
+      input('language', 'field.language.language'),
       input('fluency', 'field.language.fluency'),
     ],
   },
@@ -283,7 +282,7 @@ export const MODULES = [
     // 作品集条目在数据里就是 projects[] 的成员(type='portfolio'),所以标准字段要给全 ——
     // 此前这个表单只有 4 个字段,导出时同一个数组里的条目却少了一半字段。
     fields: (r) => [
-      input('name', 'field.portfolio.name', { required: true }),
+      input('name', 'field.portfolio.name'),
       {
         type: 'select',
         attributeId: 'entity',
@@ -312,7 +311,7 @@ export const MODULES = [
     get: (r) => r.interests,
     set: (r, items) => ({ ...r, interests: items }),
     fields: [
-      input('name', 'field.interest.name', { required: true }),
+      input('name', 'field.interest.name'),
       { type: 'tags', attributeId: 'keywords', labelKey: 'field.interest.keywords' },
     ],
   },
@@ -326,7 +325,7 @@ export const MODULES = [
     get: (r) => r.volunteer,
     set: (r, items) => ({ ...r, volunteer: items }),
     fields: [
-      input('organization', 'field.volunteer.organization', { required: true }),
+      input('organization', 'field.volunteer.organization'),
       input('position', 'field.volunteer.position'),
       month('startDate', 'field.volunteer.startDate'),
       month('endDate', 'field.volunteer.endDate', { presentKey: 'field.volunteer.ongoing' }),
@@ -345,7 +344,7 @@ export const MODULES = [
     get: (r) => r.publications,
     set: (r, items) => ({ ...r, publications: items }),
     fields: [
-      input('name', 'field.publication.name', { required: true }),
+      input('name', 'field.publication.name'),
       input('publisher', 'field.publication.publisher'),
       month('releaseDate', 'field.publication.releaseDate'),
       input('url', 'field.publication.url', { validate: 'url' }),
@@ -362,7 +361,7 @@ export const MODULES = [
     get: (r) => r.references,
     set: (r, items) => ({ ...r, references: items }),
     fields: [
-      input('name', 'field.reference.name', { required: true }),
+      input('name', 'field.reference.name'),
       { type: 'textArea', attributeId: 'reference', labelKey: 'field.reference.reference', rows: 3 },
     ],
   },
