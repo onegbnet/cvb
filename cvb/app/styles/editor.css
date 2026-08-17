@@ -152,7 +152,8 @@
   margin-right: 4px;
 }
 
-.form-creator .form-item-json-path {
+.form-creator .form-item-json-path,
+.item-preview-json-path {
   color: var(--text-muted);
   font: 11px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
   font-weight: 400;
