@@ -894,7 +894,7 @@ var resolveLang = (request) => {
 var appAssetUrl = (relativePath, request) => {
   if (false) return relativePath;
   const host = selectJsdelivrCdnHost(request);
-  return `https://${host}/${"gh/onegbnet/cvb@4d3d07dacfce8156a1728f76ad1ee5c3fe3aeb7a	refs/heads/main/cvb"}/${relativePath}`;
+  return `https://${host}/${"gh/onegbnet/cvb@caa2a1ccecfdf2c1b0479af34d77e51f7fdd1b7b/cvb"}/${relativePath}`;
 };
 var serveHtmlAsset = async (request, env, lang) => {
   const res = await env.ASSETS.fetch(request);
