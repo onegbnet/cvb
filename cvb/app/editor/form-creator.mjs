@@ -13,9 +13,9 @@ const VALIDATORS = {
     errorKey: 'error.email',
   },
   phone: {
-    test: (v) => /^\+?\d[\d\s-]{4,19}$/.test(v),
+    test: (v) => /^\+?\d{5,20}$/.test(v),
     errorKey: 'error.phone',
-    filter: /[^\d+\s-]/g,
+    filter: /[^\d+]/g,
   },
   url: {
     test: (v) => /^https?:\/\/\S+\.\S+/.test(v),
@@ -78,10 +78,10 @@ function buildControl(field, value, notifyChange, errorEl) {
   if (field.type === 'phone') {
     const match = String(value || '').match(/^(\+\d{1,3})[\s-]*(.*)$/);
     let code = match ? match[1] : '+86';
-    let local = match ? match[2] : String(value || '');
-    const codeEl = h('select', { class: 'fc-select', onChange: (e) => notifyChange(field.attributeId, `${e.target.value} ${local}`.trim()) },
+    let local = (match ? match[2] : String(value || '')).replace(/\D/g, '');
+    const codeEl = h('select', { class: 'fc-select', onChange: (e) => { code = e.target.value; notifyChange(field.attributeId, `${code}${local}`); } },
       (field.options || []).map((option) => h('option', { value: option.value, selected: option.value === code }, option.label)));
-    const numberEl = h('input', { type: 'tel', class: 'fc-input', value: local, placeholder: '138 0000 0000', onInput: (e) => { local = e.target.value; notifyChange(field.attributeId, `${code} ${local}`.trim()); } });
+    const numberEl = h('input', { type: 'tel', class: 'fc-input', value: local, placeholder: '13800000000', onInput: (e) => { local = e.target.value.replace(/\D/g, ''); e.target.value = local; notifyChange(field.attributeId, `${code}${local}`); } });
     attachValidation(numberEl, field, errorEl);
     return h('div', { class: 'phone-input' }, codeEl, numberEl);
   }
