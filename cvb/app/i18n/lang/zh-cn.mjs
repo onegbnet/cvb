@@ -101,7 +101,7 @@ export default {
   'field.work.location': '工作地点',
   'field.work.description': '公司简介',
   'field.work.description.hint': '这家公司是做什么的，如：社交媒体公司',
-  'field.work.location.hint': '如：Sydney，NSW / 上海',
+  'field.work.location.hint': '如：悉尼、新南威尔士州 / 上海',
   'field.work.summary': '工作概述',
   'field.work.highlights': '工作要点(一行一条)',
   'field.work.url': '公司网址',
