@@ -81,7 +81,7 @@ function buildControl(field, value, notifyChange, errorEl) {
     let local = match ? match[2] : String(value || '');
     const codeEl = h('select', { class: 'fc-select', onChange: (e) => notifyChange(field.attributeId, `${e.target.value} ${local}`.trim()) },
       (field.options || []).map((option) => h('option', { value: option.value, selected: option.value === code }, option.label)));
-    const numberEl = h('input', { type: 'tel', class: 'fc-input', value: local, placeholder: '+86 138 0000 0000', onInput: (e) => { local = e.target.value; notifyChange(field.attributeId, `${code} ${local}`.trim()); } });
+    const numberEl = h('input', { type: 'tel', class: 'fc-input', value: local, placeholder: '138 0000 0000', onInput: (e) => { local = e.target.value; notifyChange(field.attributeId, `${code} ${local}`.trim()); } });
     attachValidation(numberEl, field, errorEl);
     return h('div', { class: 'phone-input' }, codeEl, numberEl);
   }
