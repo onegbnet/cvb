@@ -13,7 +13,7 @@ const month = (attributeId, labelKey, opts = {}) => ({ type: 'month', attributeI
  * 挪某个 Group 到别的版块、或调页内顺序,只改这里。
  */
 export const SECTIONS = [
-  { id: 'personal', labelKey: 'section.personal', groups: ['basics', 'profiles', 'languages', 'summary'] },
+  { id: 'personal', labelKey: 'section.personal', groups: ['basics', 'summary', 'location', 'profiles', 'languages'] },
   { id: 'education', labelKey: 'section.education', groups: ['education', 'certificates', 'awards'] },
   { id: 'career', labelKey: 'section.career', groups: ['work', 'projects', 'skills', 'publications'] },
   { id: 'extra', labelKey: 'section.extra', groups: ['volunteer', 'interests', 'references'] },
@@ -38,12 +38,6 @@ export const MODULES = [
       phone: r.basics.phone,
       email: r.basics.email,
       url: r.basics.url,
-      // 地址是 JSON Resume 的完整结构:此前只存了 city,导出给别的工具就少一半。
-      city: (r.basics.location && r.basics.location.city) || '',
-      region: (r.basics.location && r.basics.location.region) || '',
-      countryCode: (r.basics.location && r.basics.location.countryCode) || '',
-      postalCode: (r.basics.location && r.basics.location.postalCode) || '',
-      address: (r.basics.location && r.basics.location.address) || '',
       image: r.basics.image,
     }),
     set: (r, v) => {
@@ -57,14 +51,6 @@ export const MODULES = [
           email: v.email ?? '',
           url: v.url ?? '',
           image: v.image ?? '',
-          location: {
-            ...(r.basics.location || {}),
-            city: v.city ?? '',
-            region: v.region ?? '',
-            countryCode: v.countryCode ?? '',
-            postalCode: v.postalCode ?? '',
-            address: v.address ?? '',
-          },
         },
       };
     },
@@ -74,13 +60,7 @@ export const MODULES = [
       input('phone', 'field.basics.phone', { validate: 'phone' }),
       input('email', 'field.basics.email', { validate: 'email' }),
       input('url', 'field.basics.url', { validate: 'url' }),
-      input('city', 'field.basics.city'),
-      input('region', 'field.basics.region', { placeholderKey: 'field.basics.region.hint' }),
-      input('countryCode', 'field.basics.countryCode', { placeholderKey: 'field.basics.countryCode.hint' }),
-      input('postalCode', 'field.basics.postalCode'),
-      input('address', 'field.basics.address'),
-      // 头像只剩标准的 image(URL);形状与"隐藏"是排版选择,随 meta.cvb 一起去掉了
-      input('image', 'field.basics.image', { upload: true, placeholder: 'https://…/avatar.png' }),
+      { type: 'avatar', attributeId: 'image', labelKey: 'field.basics.image', uploadOnly: true },
     ],
   },
 
@@ -105,13 +85,20 @@ export const MODULES = [
   },
 
   {
-    key: 'summary',
-    labelKey: 'nav.summary',
-    icon: '📝',
-    kind: 'object',
-    get: (r) => ({ summary: r.basics.summary }),
-    set: (r, v) => ({ ...r, basics: { ...r.basics, summary: v.summary ?? '' } }),
-    fields: [{ type: 'textArea', attributeId: 'summary', labelKey: 'field.summary.text', rows: 8, ai: true }],
+    key: 'summary', labelKey: 'nav.summary', icon: '📝', kind: 'object',
+    get: (r) => ({ label: r.basics.label, summary: r.basics.summary }),
+    set: (r, v) => ({ ...r, basics: { ...r.basics, label: v.label ?? '', summary: v.summary ?? '' } }),
+    fields: [input('label', 'field.basics.label'), { type: 'textArea', attributeId: 'summary', labelKey: 'field.summary.text', rows: 8, ai: true }],
+  },
+  {
+    key: 'location', labelKey: 'nav.location', icon: '📍', kind: 'object',
+    get: (r) => ({ ...(r.basics.location || {}) }),
+    set: (r, v) => ({ ...r, basics: { ...r.basics, location: { ...r.basics.location, ...v } } }),
+    fields: [
+      { type: 'select', attributeId: 'countryCode', labelKey: 'field.basics.countryCode', options: ['CN', 'AU', 'JP', 'US', 'GB', 'CA', 'DE', 'FR', 'IN', 'SG'].map((value) => ({ value, label: value })) },
+      input('region', 'field.basics.region', { placeholderKey: 'field.basics.region.hint' }),
+      input('city', 'field.basics.city'), input('address', 'field.basics.address'), input('postalCode', 'field.basics.postalCode'),
+    ],
   },
 
   {
@@ -331,13 +318,10 @@ export const MODULES = [
 export const getModule = (key) => MODULES.find((m) => m.key === key);
 
 const FIELD_PATHS = {
-  basics: {
-    name: 'basics.name', label: 'basics.label', phone: 'basics.phone', email: 'basics.email', url: 'basics.url',
-    city: 'basics.location.city', region: 'basics.location.region', countryCode: 'basics.location.countryCode',
-    postalCode: 'basics.location.postalCode', address: 'basics.location.address', image: 'basics.image',
-  },
+  basics: { name: 'basics.name', label: 'basics.label', phone: 'basics.phone', email: 'basics.email', url: 'basics.url', image: 'basics.image' },
+  location: { city: 'basics.location.city', region: 'basics.location.region', countryCode: 'basics.location.countryCode', postalCode: 'basics.location.postalCode', address: 'basics.location.address' },
   profiles: { network: 'basics.profiles[].network', username: 'basics.profiles[].username', url: 'basics.profiles[].url' },
-  summary: { summary: 'basics.summary' },
+  summary: { label: 'basics.label', summary: 'basics.summary' },
   work: Object.fromEntries(['name', 'location', 'description', 'position', 'url', 'startDate', 'endDate', 'summary', 'highlights']
     .map((key) => [key, `work[].${key}`])),
   volunteer: Object.fromEntries(['organization', 'position', 'url', 'startDate', 'endDate', 'summary', 'highlights']

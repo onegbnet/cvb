@@ -75,6 +75,27 @@ function attachValidation(inputEl, field, errorEl) {
 }
 
 function buildControl(field, value, notifyChange, errorEl) {
+  if (field.type === 'avatar') {
+    const fileInput = h('input', {
+      type: 'file', accept: 'image/png,image/jpeg,image/webp,image/gif', style: { display: 'none' },
+      onChange: async (e) => {
+        const file = e.target.files && e.target.files[0]; e.target.value = '';
+        if (!file) return;
+        try {
+          const url = await uploadAvatar(file); notifyChange(field.attributeId, url);
+          window.Toast && window.Toast.ok(tr('editor.uploadOk'));
+        } catch (err) {
+          if (isUnauthorized(err)) redirectToUnlock();
+          else window.Toast && window.Toast.err(String(err.message || err));
+        }
+      },
+    });
+    return h('div', { class: 'input-with-upload' },
+      value ? h('span', { class: 'avatar-uploaded' }, tr('editor.avatarUploaded')) : null,
+      h('button', { type: 'button', class: 'btn btn-small', onClick: () => fileInput.click() }, tr('action.upload')),
+      fileInput
+    );
+  }
   switch (field.type) {
     case 'checkbox':
       return h('input', {
