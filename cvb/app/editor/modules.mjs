@@ -56,11 +56,10 @@ export const MODULES = [
     },
     fields: [
       input('name', 'field.basics.name'),
-      input('label', 'field.basics.label'),
+      { type: 'avatar', attributeId: 'image', labelKey: 'field.basics.image', uploadOnly: true },
       input('phone', 'field.basics.phone', { validate: 'phone' }),
       input('email', 'field.basics.email', { validate: 'email' }),
       input('url', 'field.basics.url', { validate: 'url' }),
-      { type: 'avatar', attributeId: 'image', labelKey: 'field.basics.image', uploadOnly: true },
     ],
   },
 
