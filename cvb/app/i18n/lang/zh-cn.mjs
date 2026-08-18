@@ -71,7 +71,7 @@ export default {
   'field.basics.url': '个人主页',
   'field.basics.city': '城市',
   'field.basics.region': '区域',
-  'field.basics.region.hint': '如省、州、道、县等',
+  'field.basics.region.hint': '如：省、州、道、县等',
   'field.basics.countryCode': '国家代码',
   'field.basics.countryCode.hint': '',
   'field.basics.postalCode': '邮政编码',
