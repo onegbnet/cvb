@@ -452,7 +452,6 @@ async function main() {
         h(
           'div',
           { class: 'module-form-card' },
-          h('div', { class: 'editor-tools' }),
           sectionPageEl
         )
       )
