@@ -75,6 +75,16 @@ function attachValidation(inputEl, field, errorEl) {
 }
 
 function buildControl(field, value, notifyChange, errorEl) {
+  if (field.type === 'phone') {
+    const match = String(value || '').match(/^(\+\d{1,3})[\s-]*(.*)$/);
+    let code = match ? match[1] : '+86';
+    let local = match ? match[2] : String(value || '');
+    const codeEl = h('select', { class: 'fc-select', onChange: (e) => notifyChange(field.attributeId, `${e.target.value} ${local}`.trim()) },
+      (field.options || []).map((option) => h('option', { value: option.value, selected: option.value === code }, option.label)));
+    const numberEl = h('input', { type: 'tel', class: 'fc-input', value: local, placeholder: '+86 138 0000 0000', onInput: (e) => { local = e.target.value; notifyChange(field.attributeId, `${code} ${local}`.trim()); } });
+    attachValidation(numberEl, field, errorEl);
+    return h('div', { class: 'phone-input' }, codeEl, numberEl);
+  }
   if (field.type === 'avatar') {
     const fileInput = h('input', {
       type: 'file', accept: 'image/png,image/jpeg,image/webp,image/gif', style: { display: 'none' },

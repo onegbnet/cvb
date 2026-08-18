@@ -85,6 +85,12 @@
   position: relative;
 }
 
+.phone-input {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 8px;
+}
+
 .input-with-upload {
   display: flex;
   gap: 8px;
