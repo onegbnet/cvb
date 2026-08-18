@@ -64,7 +64,7 @@ export default {
 
   // ---- 基本信息字段 ----
   'field.basics.name': '姓名',
-  'field.basics.label': '求职意向',
+  'field.basics.label': '身份标签',
   'field.basics.phone': '手机号码',
   'field.basics.email': '邮箱',
   'field.basics.url': '个人主页',
