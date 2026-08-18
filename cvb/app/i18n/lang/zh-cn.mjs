@@ -78,7 +78,7 @@ export default {
   'field.basics.address': '地址',
   'field.basics.image': '头像',
   'field.profile.network': '平台名称',
-  'field.profile.network.hint': '如:GitHub / LinkedIn / 个人博客',
+  'field.profile.network.hint': '如：GitHub / LinkedIn / 个人博客',
   'field.profile.username': '用户名',
   'field.profile.url': '链接',
   'field.summary.text': '评价综述',
@@ -100,8 +100,8 @@ export default {
   'field.work.endDate': '离职时间',
   'field.work.location': '工作地点',
   'field.work.description': '公司简介',
-  'field.work.description.hint': '这家公司是做什么的,如:社交媒体公司',
-  'field.work.location.hint': '如:Sydney, NSW / 上海',
+  'field.work.description.hint': '这家公司是做什么的，如：社交媒体公司',
+  'field.work.location.hint': '如：Sydney，NSW / 上海',
   'field.work.summary': '工作概述',
   'field.work.highlights': '工作要点(一行一条)',
   'field.work.url': '公司网址',
@@ -120,14 +120,14 @@ export default {
   'field.project.keywords': '技术栈',
   'field.project.url': '项目链接',
   'field.project.type': '类型',
-  'field.project.type.hint': '自由填写,如:application / presentation / portfolio',
+  'field.project.type.hint': '自由填写，如：application / presentation / portfolio',
 
   // ---- 技能 ----
   'field.skill.name': '技能领域',
   'field.skill.keywords': '技能清单',
   'field.skill.level': '熟练度',
-  'field.skill.level.hint': '如:精通 / 熟练 / 了解',
-  'field.skill.keywords.hint': '逗号或换行分隔,如:Java, Go, Kubernetes',
+  'field.skill.level.hint': '如：精通 / 熟练 / 了解',
+  'field.skill.keywords.hint': '逗号或换行分隔，如：Java、Go、Kubernetes',
 
   // ---- 证书/奖项 ----
   'field.certificate.name': '证书名称',
