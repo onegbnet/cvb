@@ -1,495 +1,1044 @@
-/* 编辑页样式 — 复刻 v1 ResumeEditor / FormCreator Notion 风格。 */
+/* 编辑事实页。
+ *
+ * 架构从数据结构本身推出来(见 CLAUDE.md §3):
+ *   身份块(3 个单例对象,12 字段) → 一张普通表单 + 一个保存
+ *   轻记录(5 个集合,2–3 个键值对) → 行内一行一条,失焦即存
+ *   重记录(7 个集合,带日期与散文) → 一行一条的列表;打开则整块换成那条记录的编辑器
+ *
+ * **一页到底,不换面**:15 个分节全在一个可滚动文档里,左侧只有纯文字锚点索引。
+ * 文档里只放事实;导入 / 导出 / 快照在顶栏「管理」的抽屉里(.mng)。
+ * 观感一律照 sibling(tinycfw / logflare)的既有值,不发明新语汇。
+ */
+
+/* 顶栏的保存状态字样(已保存 / 保存中… / 未保存)。纯文字,不是按钮;
+ * 失败档才上告警色 —— 平时它应当安静(--text-secondary,别用 --text-disabled,
+ * 这是人要读的东西,见 base.css 对比度那条)。 */
+.save-status {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.save-status.is-err {
+  color: var(--err);
+}
+
 .resume-editor {
-  padding: 24px;
-  min-height: calc(100vh - 56px - 40px);
-  background: var(--bg-page);
-  padding-bottom: 96px;
+  flex: 1;
+  padding: 24px 20px 64px;
 }
 
 .editor-content {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) 3fr;
-  gap: 24px;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 32px;
   align-items: start;
+  max-width: var(--max-width);
+  margin: 0 auto;
 }
 
-.module-list-card,
-.module-form-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+/* ---- 左侧锚点索引:点了是滚过去,不是切面板 ---- */
+.doc-index {
+  position: sticky;
+  top: 72px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 0.85rem;
 }
 
-.module-list-card {
+.doc-index-title {
+  margin-top: 14px;
+  padding: 0 8px 4px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.doc-index-title:first-child {
+  margin-top: 0;
+}
+
+.doc-index-item {
+  display: block;
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
   overflow: hidden;
-  padding: 8px 0;
+  text-overflow: ellipsis;
 }
 
-.module-item {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  padding: 12px 16px;
-  margin: 4px 8px;
-  border-radius: 8px;
-  transition: background 0.15s ease;
-}
-
-.module-item:hover {
-  background: var(--bg-page);
-}
-
-.module-item.selected {
-  background: var(--accent-bg);
-  border-left: 3px solid var(--accent);
-  padding-left: 13px;
-}
-
-.module-item .module-icon {
-  font-size: 18px;
-  margin-right: 12px;
-  color: var(--text-muted);
-  line-height: 1;
-}
-
-.module-item.selected .module-icon {
-  color: var(--accent);
-}
-
-.module-item .module-name {
-  display: flex;
-  align-items: center;
-  font-weight: 500;
-  font-size: 14px;
+.doc-index-item:hover {
+  background: var(--bg);
   color: var(--text);
 }
 
-.module-item .module-count {
-  margin-left: 8px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9px;
-  font-size: 12px;
-  font-weight: 500;
+.doc-index-item.is-current {
   background: var(--accent-bg);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.doc-index-item:focus-visible,
+.blk-title:focus-visible,
+.rec-editor-title:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.doc-index-item.has-issue::after {
+  content: '·';
+  margin-left: 4px;
+  color: var(--warning);
+  font-weight: 700;
+}
+
+/* ---- 文档 ---- */
+.doc {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.blk {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 14px 16px;
+  scroll-margin-top: 72px;
+}
+
+.blk-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.blk-icon {
+  display: inline-flex;
+  color: var(--text-secondary);
+}
+
+.blk-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.blk-count {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+/* ---- 表单(logflare 的 .form-group 口径)---- */
+.form-creator {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group:last-of-type {
+  margin-bottom: 0;
+}
+
+.form-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-label.required::after {
+  content: '*';
+  margin-left: 3px;
   color: var(--accent);
 }
 
-.module-form-card {
-  padding: 24px;
-  min-height: 500px;
-  position: relative;
+.fc-error {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: var(--danger);
 }
 
+/* 底部一对按钮 —— 一条记录一次保存 */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* 被 revealInvalid 带过来时短暂点亮那一行 */
+.form-group.is-blocking {
+  animation: fc-blocking 1.2s ease-out;
+}
+
+@keyframes fc-blocking {
+  0%, 60% { background: var(--accent-bg); }
+  100% { background: transparent; }
+}
+
+/* ---- 重记录:一行一条 ---- */
+.rec-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.rec-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.rec-row:first-child {
+  border-top: 1px solid var(--border);
+}
+
+.rec-open {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 4px;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.rec-open:hover {
+  background: var(--bg);
+}
+
+.rec-open:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.rec-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.rec-sub {
+  margin-left: 8px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.rec-period {
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.rec-del,
+.inl-del {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: none;
+  border-radius: var(--radius-sm);
+  /* 图标也要 3:1(WCAG 1.4.11),--text-disabled 只有 2.21:1 */
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.rec-del:hover,
+.inl-del:hover {
+  color: var(--danger);
+  background: var(--bg);
+}
+
+.rec-del svg,
+.inl-del svg {
+  width: 16px;
+  height: 16px;
+}
+
+.rec-add {
+  align-self: flex-start;
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  font: inherit;
+  font-size: 0.85rem;
+  border: 1px dashed var(--border-input);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.rec-add:hover {
+  border-style: solid;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.rec-add svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ---- 轻记录:行内一行一条 ---- */
+.inl {
+  display: grid;
+  gap: 6px;
+}
+
+.inl-head,
+.inl-row {
+  display: grid;
+  grid-template-columns: var(--inl-cols, repeat(auto-fit, minmax(0, 1fr))) 32px;
+  gap: 8px;
+  align-items: center;
+}
+
+.inl-th {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  padding-left: 2px;
+}
+
+.inl-input {
+  min-height: 34px;
+  padding: 5px 10px;
+  font-size: 0.88rem;
+}
+
+.inl-row-draft .inl-input {
+  border-style: dashed;
+}
+
+.inl-act {
+  display: block;
+}
+
+/* ---- 「管理」抽屉:对整份事实库的操作 ----
+   外壳(.drawer-overlay > .drawer)归 ccs overlay 管,这里只管里面的分组。 */
+.drawer:has(.mng) {
+  width: 460px;
+  max-width: 94vw;
+}
+
+.mng {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 4px 0;
+}
+
+.mng-h {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.mng-row {
+  display: flex;
+  gap: 8px;
+}
+
+/* 导出:格式选择器 + 按钮同一行。选择器不撑满,按内容宽。
+   **同一行的控件必须同高** —— `.fc-input` 那组带 `min-height: 38px`,
+   而 `.btn-small` 只有 `min-height: 28px`:两个并排就差近 10px,一眼就看出来歪。
+   `height` 压不过 `min-height`(我先写的 `height:32px` 就是这么被吃掉的),
+   所以**不给固定高度,让行去拉伸** —— 和快照那一行(输入框 + 创建按钮)同一个做法。 */
+.mng-export {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.mng-format {
+  width: auto;
+  min-width: 8.5rem;
+  font-size: 0.85rem;
+}
+
+.mng-export .btn {
+  flex: 0 0 auto;
+}
+
+/* 格式约束那一行(不是说明句):次要文字 + 一个指向标准本身的链接 */
+.mng-note {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.mng-note a {
+  color: var(--accent);
+}
+
+.mng-group + .mng-group {
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+/* ---- 快照 ---- */
+.snap-create {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.snap-note {
+  flex: 1;
+  min-width: 0;
+}
+
+.snap-create .btn {
+  flex: 0 0 auto;
+}
+
+.snap-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.snap-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+}
+
+/* 一行只有一个名字(默认是时间戳,可改)+ 四个记号。
+   此前是「时间」「副标题」两栏并排,而绝大多数快照的副标题是空的 —— 两栏各占地方,
+   一栏还常年没内容。合成一栏,行短一半。 */
+.snap-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 一行四个动作(改名 / 查看 / 恢复 / 删除)一律用记号 —— 写成字会把一行挤满,
+   而内容才是要读的东西。可访问名走 aria-label,见 snapshots.mjs。 */
+.snap-act {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.snap-act:hover {
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* 删除是唯一不可撤销的那个,悬停时才变色 —— 平时不靠颜色制造紧张 */
+.snap-row .snap-act:last-child:hover {
+  color: var(--danger);
+}
+
+.snap-act svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* 行内改名:占住副标题那一格,别把整行撑变形 */
+.snap-rename {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  font-size: 0.82rem;
+}
+
+.snap-empty {
+  padding: 10px 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* 索引里那条不属于任何版块的(快照) */
+.doc-index-standalone {
+  margin-top: 14px;
+}
+
+/* ---- 重记录编辑器:整块换掉文档 ---- */
+.rec-editor {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+
+.crumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.crumb-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 4px 6px 4px 0;
+}
+
+.crumb-back svg {
+  width: 15px;
+  height: 15px;
+}
+
+.crumb-sep {
+  color: var(--text-disabled);
+}
+
+.rec-editor-title {
+  margin: 0 0 16px;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+/* ---- 控件组合 ---- */
 .phone-input {
   display: grid;
-  grid-template-columns: 92px 1fr;
+  /* 区号列**必须封顶**:max-content 会被 "+86 · 中国" 撑开、把号码框挤没 */
+  grid-template-columns: minmax(0, 11em) minmax(0, 1fr);
   gap: 8px;
+  min-width: 0;
+}
+
+.searchable-select,
+.phone-input .searchable-select {
+  min-width: 0;
+}
+
+.fc-date-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.fc-date-text {
+  max-width: 220px;
+}
+
+.fc-present {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.fc-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
 }
 
 .input-with-upload {
   display: flex;
   gap: 8px;
   align-items: center;
+  min-width: 0;
 }
 
-.input-with-upload .fc-input {
-  flex: 1;
-}
-
-
-/* ---- FormCreator ---- */
-.form-creator .form-item {
+/* ---- 头像 ----
+   缩略图 + 明确的两个动作。此前只有一个「上传」按钮和一行「已上传头像」的字:
+   看不见传的是哪张、不能换、不能删。 */
+.avatar {
   display: grid;
-  grid-template-columns: 25% 1fr;
-  gap: 8px;
-  align-items: start;
-  margin-bottom: 16px;
-}
-
-.form-creator .form-item-label {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  grid-template-columns: 72px minmax(0, 1fr);
   gap: 12px;
-  padding-top: 5px;
-  text-align: right;
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--text);
+  align-items: center;
 }
 
-.form-creator .form-item-label.required::before {
-  content: '*';
-  color: var(--text-muted);
-  margin-right: 4px;
+.avatar-img,
+.avatar-drop {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius);
+  object-fit: cover;
+  display: block;
 }
 
-
-.form-creator .form-item-control {
-  min-width: 0;
-}
-
-.form-creator .form-item-checkbox {
-  padding-top: 5px;
-}
-
-.form-creator .form-submit {
-  display: grid;
-  grid-template-columns: 25% 1fr;
-  gap: 8px;
-}
-
-.form-creator .form-submit .btn {
-  grid-column: 2;
-  justify-self: start;
-}
-
-.ai-improve-inline-error {
-  margin-top: 8px;
-  color: var(--err);
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-/* ---- 列表模块编辑器 ---- */
-.list-module-editor .add-btn {
-  width: 100%;
-  margin-bottom: 16px;
-  border-radius: 8px;
-  height: 40px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--accent);
-  border-color: var(--accent);
-  background: var(--surface);
-}
-
-.list-module-editor .add-btn:hover {
-  background: var(--accent-bg);
-  border-color: var(--accent);
-}
-
-.list-panel {
+.avatar-img {
   border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-bottom: 8px;
-  overflow: hidden;
-  background: var(--surface);
+  background: var(--bg);
 }
 
-.list-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  width: 100%;
-  min-width: 0;
-  padding: 14px 16px;
-  background: var(--surface);
-  cursor: move;
-  user-select: none;
-}
-
-.list-panel-header.drop-over-downward {
-  border-bottom: 2px dashed var(--accent);
-}
-
-.list-panel-header.drop-over-upward {
-  border-top: 2px dashed var(--accent);
-}
-
-.list-panel-title {
-  flex: 1;
-  min-width: 0;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text);
-  line-height: 1.5;
-  word-break: break-word;
-}
-
-.list-panel-actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.list-panel-action {
-  font-size: 15px;
-  cursor: pointer;
-  transition: color 0.15s ease;
-  background: none;
-  border: none;
-  padding: 0;
-  line-height: 0;
-}
-
-.list-panel-action.edit {
-  color: var(--accent);
-}
-
-.list-panel-action.edit:hover {
-  color: var(--accent-hover);
-}
-
-.list-panel-action.delete {
-  color: #dc2626;
-}
-
-.list-panel-action.delete:hover {
-  color: #b91c1c;
-}
-
-.list-panel-body {
-  border-top: 1px solid var(--border);
-  padding: 16px;
-  background: var(--bg-page);
-}
-
-.item-preview {
-  padding: 12px;
-  background: var(--surface);
-  border-radius: 6px;
-  border: 1px solid var(--border);
-}
-
-.item-preview .item-preview-row {
-  margin-bottom: 8px;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.item-preview strong {
-  color: var(--accent);
-  font-weight: 500;
-}
-
-.edit-form-container {
-  background: var(--surface);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
-  border: 1px solid var(--border);
-}
-
-.edit-form-container .edit-form-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-  font-weight: 500;
-  color: var(--text);
-}
-
-.empty-placeholder {
-  text-align: center;
-  color: var(--text-muted);
-  padding: 32px 0;
-}
-
-/* 导入前的覆盖确认:先看清差异再点确认 */
-.import-confirm-note {
-  margin: 0 0 12px;
-  color: var(--text);
-  line-height: 1.6;
-}
-.import-diff {
-  border: 1px solid var(--border, #e3e6ea);
-  border-radius: 6px;
-  overflow: hidden;
-}
-.import-diff-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-}
-.import-diff-row:nth-child(odd) {
-  background: var(--surface-muted, rgba(0, 0, 0, 0.03));
-}
-.import-diff-label {
-  color: var(--text-muted);
-}
-.import-diff-value {
-  font-variant-numeric: tabular-nums;
-}
-.import-diff-empty {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-.import-confirm-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-/* ---- 一级导航(版块)+ 页内 Group ---- */
-
-.section-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.section-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 12px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  color: var(--text);
-  transition: background 0.15s;
-}
-.section-item:hover {
-  background: var(--surface-muted, rgba(0, 0, 0, 0.04));
-}
-.section-item.selected {
-  background: var(--accent-soft, rgba(47, 87, 133, 0.12));
-  color: var(--accent, #2f5785);
-}
-
-.section-page {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.group-panel {
-  border: 1px solid var(--border, #e3e6ea);
-  border-radius: 8px;
-  overflow: hidden;
-}
-.group-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 12px 14px;
-  background: var(--surface-muted, rgba(0, 0, 0, 0.02));
-  border: 0;
-  cursor: pointer;
-  font: inherit;
-  font-weight: 600;
-  color: var(--text);
-  text-align: left;
-}
-.group-header:hover {
-  background: var(--surface-muted, rgba(0, 0, 0, 0.05));
-}
-.group-chevron {
-  margin-left: auto;
-  display: inline-flex;
-  opacity: 0.6;
-}
-.group-body {
-  padding: 16px 14px;
-  border-top: 1px solid var(--border, #e3e6ea);
-}
-
-/* ---- 日期:精度切换 + 对应输入器 ---- */
-
-.fc-date {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.fc-date-input .fc-month {
-  min-width: 150px;
-}
-.fc-date-precision {
-  display: inline-flex;
-  border: 1px solid var(--border, #e3e6ea);
-  border-radius: 6px;
-  overflow: hidden;
-}
-.fc-date-precision-btn {
-  padding: 4px 10px;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-.fc-date-precision-btn + .fc-date-precision-btn {
-  border-left: 1px solid var(--border, #e3e6ea);
-}
-.fc-date-precision-btn.is-active {
-  background: var(--accent, #2f5785);
-  color: #fff;
-}
-
-/* 「必填还空着」标记:导航与条目标题上都用同一个 */
-.module-issue {
+.avatar-drop {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
-  margin-left: 6px;
-  border-radius: 50%;
-  background: var(--danger, #d93b3b);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  vertical-align: middle;
+  border: 1px dashed var(--border-input);
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
 }
 
-/* 列表条目的上/下移按钮(触屏上唯一能用的排序方式) */
-.list-panel-action.move[disabled] {
-  opacity: 0.3;
-  cursor: default;
+.avatar-drop:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
-/* 模块级说明(分节标题那类"留空即默认"的规则,写在表单上方) */
-.module-hint {
-  color: var(--text-muted);
+.avatar-drop svg {
+  width: 26px;
+  height: 26px;
+}
+
+.avatar-actions {
+  display: inline-flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.avatar-remove:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* 照片放不放是当地规范决定的 —— 只陈述,不替模板下结论 */
+.avatar-hint {
+  grid-column: 2;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+/* ---- 整份覆盖的确认框(导入 / 恢复快照共用)---- */
+.ovw-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ovw-note {
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.ovw-diff,
+.ovw-dropped {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 8px 10px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
-  line-height: 1.6;
-  margin: 0 0 12px;
 }
 
-@media (max-width: 900px) {
+.ovw-diff-row,
+.ovw-dropped-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ovw-diff-label,
+.ovw-dropped-path {
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.ovw-dropped-note {
+  font-size: 0.85rem;
+  color: var(--warning);
+}
+
+.ovw-dropped-more,
+.ovw-diff-empty {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+/* 三个选项一行排不下就换行(窄屏)。「直接覆盖」不加重点色 ——
+   它能选,但不该是默认那一档。 */
+.ovw-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ---- 塌陷 ---- */
+@media (max-width: 860px) {
   .resume-editor {
-    padding: 16px 12px 96px;
+    padding: 12px 12px 48px;
   }
 
   .editor-content {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
   }
 
-  .module-form-card {
-    min-height: auto;
-    padding: 16px;
+  /* 索引变成顶栏下可横滚的一条 —— 不做抽屉:抽屉要多一次点击才知道自己在哪 */
+  .doc-index {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding: 8px 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
   }
 
-  .form-creator .form-item,
-  .form-creator .form-submit {
-    grid-template-columns: 1fr;
+  .doc-index-title {
+    margin: 0;
+    padding: 0 6px 0 10px;
+    border-left: 1px solid var(--border);
+    white-space: nowrap;
   }
 
-  .form-creator .form-item-label {
-    justify-content: flex-start;
-    text-align: left;
-    padding-top: 0;
+  .doc-index-title:first-child {
+    border-left: 0;
+    padding-left: 0;
   }
 
-  .form-creator .form-submit .btn {
+  .doc-index-item {
+    /* **必须 flex: 0 0 auto** —— 横排里不写就被 shrink 成单个字(2026-08-19 拍到) */
+    flex: 0 0 auto;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--border-input);
+    background: var(--card-bg);
+    overflow: visible;
+  }
+
+  .doc-index-title {
+    flex: 0 0 auto;
+  }
+
+  .blk,
+  .rec-editor {
+    padding: 14px;
+    scroll-margin-top: 56px;
+  }
+
+  /* 轻记录在窄屏竖排:两三个输入框并排谁都不够用 */
+  .inl-head {
+    display: none;
+  }
+
+  .inl-row {
+    grid-template-columns: minmax(0, 1fr) 32px;
+    gap: 6px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .inl-row .inl-input {
     grid-column: 1;
+    min-height: 40px;
+  }
+
+  .inl-row .inl-del,
+  .inl-row .inl-act {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .avatar {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+
+  .avatar-img,
+  .avatar-drop {
+    width: 64px;
+    height: 64px;
+  }
+
+  .snap-create {
+    flex-direction: column;
+  }
+
+  /* 触控目标 ≥40px(WCAG 2.5.8) */
+  .snap-act {
+    width: 40px;
+    height: 40px;
+  }
+
+  .rec-open {
+    flex-wrap: wrap;
+    gap: 2px 12px;
+    min-height: 44px;
+  }
+
+  .rec-name {
+    flex: 1 0 100%;
+    white-space: normal;
+  }
+
+  /* 触摸态:所有可点的东西够得着 */
+  .rec-del,
+  .inl-del {
+    width: 40px;
+    height: 40px;
+  }
+
+  .rec-add {
+    min-height: 40px;
+  }
+
+  .ai-improve-button {
+    min-height: 40px;
+    padding-inline: 10px;
+  }
+
+  .form-actions .btn {
+    flex: 1;
   }
 }
 
-/* 列表条目标题现在可聚焦(键盘可达) */
-.list-panel-header:focus-visible { outline: 2px solid var(--accent, #2f5785); outline-offset: -2px; }
+/* ---- 快照只读视图(/edit?snapshot=<key>)---- */
+
+/* 横幅**置顶常驻**:滚到第 12 个分节时也得知道自己看的不是当前事实。 */
+.snapv-banner {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.snapv-banner-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+}
+
+.snapv-banner-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.snapv-banner-text {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  min-width: 0;
+  font-size: 0.9rem;
+}
+
+.snapv-banner-sub {
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+
+.snapv-doc .blk-body {
+  padding: 0;
+}
+
+.snapv-records {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 一条记录一块。**只读所以不给边框以外的任何交互暗示** —— 没有 hover、没有指针手势。 */
+.snapv-record {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+.snapv-field {
+  display: grid;
+  grid-template-columns: minmax(88px, 25%) minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+}
+
+.snapv-label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.snapv-text,
+.snapv-lines {
+  font-size: 0.9rem;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+/* 长文保留换行(自我评价、经历描述) */
+.snapv-prose {
+  font-size: 0.9rem;
+  color: var(--text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* 空值的「—」是**要读的内容**(它在说"这一格是空的"),所以走 --text-secondary。
+   我一开始填的是 --text-disabled(2.21:1),css-tokens.test.js 当场判违规 —— 那条规则对。 */
+.snapv-empty {
+  color: var(--text-secondary);
+}
+
+.snapv-none {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.snapv-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.snapv-tag {
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.snapv-avatar {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.snapv-error {
+  padding: 24px;
+  color: var(--err);
+}
+
+@media (max-width: 860px) {
+  .snapv-field {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+}
+
+/* 姓名三段:一行放得下就并排,窄屏堆叠。**存的仍是一个串**,见 app/lib/name-parts.mjs。 */
+.fc-name {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.fc-namepart {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 8rem;
+  min-width: 0;
+}
+
+.fc-namepart-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* ---- 导入:选文件 / 粘贴 ---- */
+
+.imp {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* 粘贴开的那个框:贴一大段 JSON 需要地方,所以给足高度、等宽字体。
+   **宽度归模态自己管** —— 我一度给内容加了 `min-width: min(70vw, 520px)`,
+   而 ccs 的模态体只有 438px:内容比框宽 82px,文本域撑出边界、按钮行整个被挤到框外,
+   模态还多出一条横向滚动条。**内容不许比容器宽**,宽窄是模态的事,不是内容的事。 */
+.imp-paste-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.imp-paste {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  resize: vertical;
+}
+
+.imp-paste-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

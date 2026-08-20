@@ -67,6 +67,14 @@ function readConfig() {
     wrapperUrl: raw.wrapperUrl.trim(),
     assetBase: raw.assetBase.trim().replace(/\/+$/, ''),
     assetVersion: raw.assetVersion.trim(),
+    // **必须带上** —— 漏了这一行的后果:templateBase() 永远拿不到值、回落到同源 `/tex`,
+    // 而 `tex/` 自 2026-08-17 起就不随站点发布了,于是每个 .cls/.sty 都 404、**编译全灭**。
+    // worker 那边注入得好好的,是这里把它丢在地上(2026-08-19 真机在生产上抓到,
+    // 它已经这么坏了两天)。Node 冒烟显式传文件,**结构上抓不到这一类**。
+    templateBase:
+      typeof raw.templateBase === 'string' && raw.templateBase.trim()
+        ? raw.templateBase.trim().replace(/\/+$/, '')
+        : '',
     // 默认 worker 模式(主线程编译会卡死页面);页面显式置 false 才走直连。
     useWorker: raw.useWorker !== false,
     // 同源 shim。跨域的 worker 壳一律不接受——那正是 SecurityError 的来源。

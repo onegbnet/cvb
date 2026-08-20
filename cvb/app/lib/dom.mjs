@@ -11,7 +11,12 @@ export function h(tag, attrs = {}, ...children) {
     if (key === 'class') {
       el.className = Array.isArray(val) ? val.filter(Boolean).join(' ') : val;
     } else if (key === 'style' && typeof val === 'object') {
-      Object.assign(el.style, val);
+      for (const [prop, v] of Object.entries(val)) {
+        // **自定义属性必须走 setProperty** —— Object.assign 到 CSSStyleDeclaration 上
+        // 对 `--x` 是静默无效的(2026-08-19 踩到:行内编辑的列数怎么设都不生效)。
+        if (prop.startsWith('--')) el.style.setProperty(prop, v);
+        else el.style[prop] = v;
+      }
     } else if (key === 'dataset' && typeof val === 'object') {
       Object.assign(el.dataset, val);
     } else if (key.startsWith('on') && typeof val === 'function') {
@@ -42,9 +47,11 @@ export function clear(el) {
   return el;
 }
 
+// 图标是**线性**的(与 app/home/marks.mjs 同族):这里只定 fill/stroke 的取色,
+// 线宽与端点交给 CSS 的 .icon svg —— 那是 token(--icon-stroke),不该烤死在 DOM 里。
 export function svgIcon(pathMarkup, { size = '1em', viewBox = '0 0 24 24', className = '' } = {}) {
   const wrap = document.createElement('span');
   wrap.className = `icon ${className}`.trim();
-  wrap.innerHTML = `<svg viewBox="${viewBox}" width="${size}" height="${size}" fill="currentColor" aria-hidden="true">${pathMarkup}</svg>`;
+  wrap.innerHTML = `<svg viewBox="${viewBox}" width="${size}" height="${size}" fill="none" stroke="currentColor" aria-hidden="true">${pathMarkup}</svg>`;
   return wrap;
 }

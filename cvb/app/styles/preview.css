@@ -1,9 +1,11 @@
-/* 预览页样式 — 复刻 v1 preview.less。 */
+/* 生成简历页(/apply)的样式。
+   token 与观感一律来自 base.css(照 sibling 抄,见 CLAUDE.md §3.5);
+   这里只放这一页独有的东西:PDF 舞台、缩放条、工具栏。 */
 .preview-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg-page);
+  background: var(--bg);
 }
 
 .preview-header {
@@ -34,7 +36,7 @@
 }
 
 .preview-header .back-link:hover {
-  background: var(--bg-page);
+  background: var(--bg);
   border-color: #d1d1d1;
 }
 
@@ -50,22 +52,11 @@
   align-items: center;
 }
 
+/* 观感与编辑器的 select 同一份定义(base.css 的 .fc-select 那组),这里只给尺寸 —— 
+   原来是各写一份、互相漂移,且两份都漏了 appearance: none。 */
 .preview-template-select {
-  width: 160px;
-  height: 32px;
-  border-radius: 6px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 0 12px;
-  font-size: 14px;
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.preview-template-select:hover {
-  background: var(--bg-page);
-  border-color: #d1d1d1;
+  width: 180px;
+  flex: 0 0 auto;
 }
 
 .preview-content {
@@ -78,12 +69,6 @@
 .print-resume-shell {
   width: 100%;
   max-width: 794px;
-}
-
-.preview-loading {
-  display: flex;
-  justify-content: center;
-  padding: 64px 0;
 }
 
 /* ---- PDF 预览(TeX 路)---- */
@@ -126,7 +111,7 @@
   flex: 1;
   min-width: 0;
   overflow: auto;
-  background: var(--bg-page);
+  background: var(--bg);
   scroll-behavior: smooth;
 }
 
@@ -182,7 +167,7 @@
 
 .pdf-view-controls .btn-icon:hover:not(:disabled),
 .pdf-view-controls .btn-small:hover:not(:disabled) {
-  background: var(--bg-page);
+  background: var(--bg);
   border-color: transparent;
 }
 
@@ -208,7 +193,7 @@
 
 .pdf-skeleton {
   flex: 1;
-  background: linear-gradient(100deg, var(--surface) 30%, var(--bg-page) 50%, var(--surface) 70%);
+  background: linear-gradient(100deg, var(--surface) 30%, var(--bg) 50%, var(--surface) 70%);
   background-size: 300% 100%;
   animation: pdf-skeleton-shimmer 1.4s ease-in-out infinite;
 }
@@ -249,7 +234,7 @@
   height: 14px;
   border-radius: 50%;
   border: 2px solid var(--border);
-  border-top-color: var(--primary, #1a73e8);
+  border-top-color: var(--accent);
   animation: pdf-busy-spin 0.8s linear infinite;
 }
 
@@ -267,23 +252,34 @@
   white-space: nowrap;
 }
 
+/* 失败态住在 .print-resume-shell.is-pdf 里,而那个壳是**写死整屏高**的
+   (height: calc(100vh - 104px),给 PDF 画布当舞台用)。所以错误内容必须自己
+   竖直居中 —— 顶部对齐的话就是几行字缩在一个整屏高的空盒子顶上(踩过)。 */
 .pdf-error {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
   gap: 10px;
   padding: 24px;
   overflow: auto;
 }
 
+/* 展开日志之后内容很长,这时回到顶部对齐,否则长日志会被居中顶出可视区 */
+.pdf-error:has(.pdf-error-log:not([hidden])) {
+  justify-content: flex-start;
+}
+
 .pdf-error-title {
   font-size: 15px;
   font-weight: 600;
-  color: #c0392b;
+  color: var(--err);
 }
 
 .pdf-error-message {
+  /* 报错也是正文,给它一个可读行宽,别让它横贯 794px 的壳 */
+  max-width: 52ch;
   font-size: 13px;
   color: var(--text);
   white-space: pre-wrap;
@@ -302,7 +298,7 @@
   margin: 0;
   padding: 12px;
   border-radius: 6px;
-  background: var(--bg-page);
+  background: var(--bg);
   border: 1px solid var(--border);
   font-size: 12px;
   line-height: 1.5;
@@ -321,128 +317,6 @@
 }
 
 /* ---- 主题设置面板(popover) ---- */
-.theme-settings-popover {
-  position: fixed;
-  z-index: 1200;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  padding: 12px;
-  display: none;
-}
-
-.theme-settings-popover.open {
-  display: block;
-}
-
-.theme-settings-panel {
-  min-width: 240px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 8px 4px;
-}
-
-.theme-settings-preview {
-  padding: 12px 14px;
-  border-radius: 8px;
-  background: var(--bg-page);
-  border: 1px solid var(--border);
-}
-
-.theme-settings-preview-value {
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.theme-settings-preview-value code {
-  font-size: 12px;
-  color: var(--text-muted);
-  background: var(--surface);
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-}
-
-.theme-settings-preview-chip {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  flex-shrink: 0;
-}
-
-.theme-settings-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.theme-settings-label {
-  font-size: 14px;
-  color: var(--text);
-  font-weight: 500;
-}
-
-.theme-settings-picker {
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  overflow: hidden;
-  cursor: pointer;
-  background: none;
-}
-
-.theme-settings-presets {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.theme-settings-swatch-list {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.theme-settings-swatch {
-  position: relative;
-  width: 100%;
-  height: 32px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.theme-settings-swatch:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.theme-settings-swatch.is-active {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent-bg);
-}
-
-.theme-settings-swatch.is-active::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  transform: translate(-50%, -50%);
-  background: #fff;
-  box-shadow: 0 0 0 1px var(--accent);
-}
 
 @media (max-width: 768px) {
   .preview-header {
@@ -475,9 +349,6 @@
     padding: 12px;
   }
 
-  .theme-settings-panel {
-    min-width: min(240px, calc(100vw - 40px));
-  }
 }
 
 /* ---- 打印 ---- */

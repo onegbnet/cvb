@@ -5,6 +5,7 @@
 //   · 日期三档精度:YYYY / YYYY-MM / YYYY-MM-DD(标准的 iso8601 就是这三档)
 //   · 发出去之前过 stampMeta():盖 $schema/version/lastModified + 剔空值
 // JSON Resume 标准对象是事实源；视图模型是模板的唯一消费面。
+import { splitName } from './name-parts.mjs';
 import { fetchResume } from './api.mjs';
 import { tr, getLanguage } from './i18n.mjs';
 
@@ -236,7 +237,13 @@ const pickFields = (value, fields) => {
 };
 
 const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value));
-const isValidPhone = (value) => /^\+?\d[\d\s-]{4,19}$/.test(String(value));
+// **电话不能按"长得像我们的输入框那样"来判**。JSON Resume 标准对 phone 根本没有
+// format 约束,官方 sample 就写着 "(912) 555-4321";而这里原来的 /^\+?\d[\d\s-]{4,19}$/
+// 会把它判为非法,再被 sanitizeFormattedFields 直接 delete —— 导入一份别家导出的标准简历,
+// 电话就这么没了,导入差异摘要还告诉你"没有明显变化"(2026-08-19 查出)。
+// 现在的口径:剥掉世界通行的分隔符 ( ) + - . 与空格之后,剩 5–20 位纯数字即认。
+// 既接住标准允许的任意写法,又仍然挡得住 '138abc0000' 这种垃圾。
+const isValidPhone = (value) => /^\d{5,20}$/.test(String(value).replace(/[()+\-.\s]/g, ''));
 const isValidUrl = (value) => {
   try {
     const url = new URL(String(value));
@@ -247,6 +254,41 @@ const isValidUrl = (value) => {
 };
 
 const DATE_FIELDS = new Set(['startDate', 'endDate', 'date', 'releaseDate']);
+/**
+ * 导入时被归一化丢掉了哪些**用户真的填了**的值。
+ *
+ * 为什么必须有:normalizeResume 会做两件破坏性的事 —— pickFields 只留标准字段
+ * (非标准扩展一律不要),sanitizeFormattedFields 把过不了格式校验的值 delete。
+ * 两件事都是对的(§3 与标准严格对齐),**错的是不告诉用户**:导入一份别家导出的简历,
+ * 电话/主页/自定义字段就这么没了,而导入差异摘要只比姓名与条目数,还显示
+ * 「没有明显变化」,确认后直接覆盖入库(2026-08-19 查出)。
+ *
+ * 逐标量比对原始对象与归一结果:原始里非空、归一后没了的,就是被丢掉的。
+ * 列表是 1:1 map 的,下标对得上。
+ */
+export function collectDroppedPaths(raw, clean) {
+  const out = [];
+  const walk = (a, b, path) => {
+    if (a === null || a === undefined) return;
+    if (Array.isArray(a)) {
+      a.forEach((item, i) => walk(item, Array.isArray(b) ? b[i] : undefined, `${path}[${i}]`));
+      return;
+    }
+    if (typeof a === 'object') {
+      for (const [k, v] of Object.entries(a)) {
+        walk(v, b && typeof b === 'object' ? b[k] : undefined, path ? `${path}.${k}` : k);
+      }
+      return;
+    }
+    const text = String(a).trim();
+    if (text === '') return;
+    const kept = b !== undefined && b !== null && String(b).trim() !== '';
+    if (!kept) out.push({ path, value: text });
+  };
+  walk(raw, clean, '');
+  return out;
+}
+
 const FORMAT_VALIDATORS = {
   email: isValidEmail,
   phone: isValidPhone,
@@ -359,6 +401,10 @@ export function getResumeViewModel(config) {
 
   return {
     name: r.basics.name,
+    // **三段分开也给模板**:`basics.name` 的存储次序是「名 中间名 姓」(见 name-parts.mjs),
+    // 而**印在简历上怎么拼是当地规范**(中文模板「张三」/ 英文模板「San Zhang」)——
+    // 那是模板的决定,不是存储的决定,所以这里只把边界交出去,不替它拼。
+    nameParts: splitName(r.basics.name),
     label: r.basics.label,
     // 头像只剩标准的 basics.image;形状/隐藏那两个呈现开关随 meta.cvb 一起去掉了
     avatar: { src: r.basics.image },

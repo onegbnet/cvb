@@ -64,8 +64,80 @@ export async function uploadAvatar(file) {
 }
 
 /** 把当前服务端简历存为 R2 快照(需解锁)。 */
-export async function exportSnapshot() {
-  return jsonOrThrow(await fetch('/api/export', { method: 'POST' }));
+/** 快照 —— 服务端的还原点。「导出配置」是下载到本机,那是另一回事。 */
+export async function listSnapshots() {
+  return jsonOrThrow(await fetch('/api/snapshots'));
+}
+
+/**
+ * 建一个还原点。
+ * @param {string} [note] 用户随手写的名字(可改;空着就由界面按时间算一个默认的)
+ * @param {''|'before-restore'|'before-import'} [kind] **不可改属性**:是不是覆盖前自动留的。
+ *   它与 note 分开存 —— 早先塞在 note 里当哨兵,而 note 现在能改,一改名哨兵就没了。
+ */
+export async function createSnapshot(note = '', kind = '') {
+  return jsonOrThrow(
+    await fetch('/api/snapshots', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ note, kind }),
+    })
+  );
+}
+
+/**
+ * 读某个快照的正文。恢复前要拿它算差异 —— 恢复和导入一样是整份覆盖,
+ * 不该少那张"看清楚再覆盖"的表。走 `/files/`(门禁之后,同源带 cookie)。
+ */
+export async function fetchSnapshotConfig(key) {
+  const res = await fetch(`/files/${key}`);
+  if (!res.ok) {
+    const err = new Error(`HTTP_${res.status}`);
+    err.code = res.status === 401 ? 'UNAUTHORIZED' : `HTTP_${res.status}`;
+    err.status = res.status;
+    throw err;
+  }
+  return res.json();
+}
+
+/**
+ * 用某个快照**整份覆盖**当前事实。
+ * @param {string} key 快照的 R2 键
+ * @param {boolean} [snapshot=true] 覆盖前要不要让服务端先留一份还原点。
+ *   界面上「直接覆盖」这一档必须真的不留 —— 否则那个按钮是句空话。
+ */
+export async function restoreSnapshot(key, snapshot = true) {
+  return jsonOrThrow(
+    await fetch('/api/snapshots/restore', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key, snapshot }),
+    })
+  );
+}
+
+/**
+ * 给快照改个名字(只换备注,正文一个字节不动)。
+ * 服务端要把对象原样 put 回去 —— 所以列表的时间与排序看的是键里的时间戳,不是 `uploaded`。
+ */
+export async function renameSnapshot(key, note) {
+  return jsonOrThrow(
+    await fetch('/api/snapshots', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key, note }),
+    })
+  );
+}
+
+export async function deleteSnapshot(key) {
+  return jsonOrThrow(
+    await fetch('/api/snapshots', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key }),
+    })
+  );
 }
 
 export const isUnauthorized = (err) => err && (err.code === 'UNAUTHORIZED' || err.status === 401);

@@ -21,6 +21,9 @@
 //   · **照片:目前不放** —— 高校口径普遍要求贴一寸证件照,但抓到的三份原文里
 //     都没有照片规定,按 culture/README.md 的规矩标"待查",不许我替它补。
 import { getResumeViewModel } from '../../lib/schema.mjs';
+// 姓名按**当地写法**拼(存储次序是「名 中间名 姓」,印出来由模板决定)——
+// 这一支服务的求职地用 'cjk' 那一档,见 app/lib/name-parts.mjs
+import { formatName } from '../../lib/name-parts.mjs';
 import { escapeTex, texMonth, texDateRange, splitLines, joinNonEmpty } from '../writer.mjs';
 
 const PRESENT = '至今';
@@ -45,7 +48,7 @@ export function renderTex(config) {
   };
 
   // ---- 头部:姓名作大标题(S1 原文"大标题为姓名")+ 联系信息行 ----
-  if (vm.name) body.push(`\\name{${escapeTex(vm.name)}}`);
+  if (vm.name) body.push(`\\name{${escapeTex(formatName(vm.nameParts, 'cjk'))}}`);
   const info = [
     vm.email ? `\\email{${escapeTex(vm.email)}}` : '',
     vm.phone ? `\\phone{${escapeTex(vm.phone)}}` : '',

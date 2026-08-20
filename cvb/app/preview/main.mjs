@@ -12,6 +12,7 @@
 //      回落是一次性的:失败后本次会话直接走 iframe,不每编译一次重试一次。
 import { h, clear } from '../lib/dom.mjs';
 import { icon } from '../lib/icons.mjs';
+import { adoptThemeToggle } from '../lib/theme.mjs';
 import { tr, getLanguage } from '../lib/i18n.mjs';
 import {
   normalizeResume,
@@ -21,12 +22,12 @@ import {
 import {
   fetchResume,
   saveResume,
-  exportSnapshot,
   isUnauthorized,
   redirectToUnlock,
 } from '../lib/api.mjs';
 import {
   TEX_TEMPLATES,
+  DEFAULT_TEMPLATE,
   templateGroups,
   resolveTemplate,
   texTemplateMacros,
@@ -42,7 +43,7 @@ document.title = tr('app.previewTitle');
 const state = {
   rawConfig: null, // 服务端原始配置(PUT 时用)
   config: null, // 按语言解析后的渲染配置
-  template: 'us-ats',
+  template: DEFAULT_TEMPLATE,
 };
 
 // ---- 简历渲染(PDF 单一路) ----
@@ -630,7 +631,7 @@ function buildToolbar(pageEl) {
   const header = h(
     'div',
     { class: 'preview-header' },
-    h('a', { class: 'back-link', href: '/edit' }, `← ${tr('action.backToEdit')}`),
+    h('a', { class: 'back-link', href: '/edit' }, icon('back'), tr('action.backToEdit')),
     h('span', { class: 'header-title' }, tr('home.apply.title')),
     h(
       'div',
@@ -649,13 +650,9 @@ function buildToolbar(pageEl) {
                 window.Toast.err(tr('preview.noData'));
                 return;
               }
+              // 只下载。快照是编辑事实那边的独立功能,不该由"导出"顺手代劳
               exportDataToLocal(JSON.stringify(state.rawConfig, null, 2), 'resume.json');
-              try {
-                await exportSnapshot();
-                window.Toast.ok(tr('preview.snapshotSaved'));
-              } catch (err) {
-                if (!isUnauthorized(err)) window.Toast.err(String(err.message || err));
-              }
+              window.Toast.ok(tr('editor.exportOk'));
             },
           },
           icon('download'),
@@ -664,7 +661,8 @@ function buildToolbar(pageEl) {
       ),
       buildPdfViewControls(),
       printItemEl,
-      pdfItemEl
+      pdfItemEl,
+      h('div', { class: 'preview-action-item' }, adoptThemeToggle())
     )
   );
 

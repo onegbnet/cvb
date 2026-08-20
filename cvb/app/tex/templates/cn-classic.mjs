@@ -18,6 +18,9 @@
 // 因此这里只用**上游件自带的形态**,没有替中国大陆的规范做任何假设
 // (照片政策、出生日期、籍贯等一律不加)。补上 culture/cn.md 之前别在这里加"我觉得"。
 import { getResumeViewModel } from '../../lib/schema.mjs';
+// 姓名按**当地写法**拼(存储次序是「名 中间名 姓」,印出来由模板决定)——
+// 这一支服务的求职地用 'cjk' 那一档,见 app/lib/name-parts.mjs
+import { formatName } from '../../lib/name-parts.mjs';
 import { escapeTex, texMonth, texDateRange, splitLines, joinNonEmpty } from '../writer.mjs';
 
 const PRESENT = '至今';
@@ -42,7 +45,7 @@ export function renderTex(config) {
   const t = (key, fallback) => escapeTex(titles[key] || fallback);
 
   const head = [
-    vm.name ? `\\name{${escapeTex(vm.name)}}` : '',
+    vm.name ? `\\name{${escapeTex(formatName(vm.nameParts, 'cjk'))}}` : '',
     vm.label ? `\\organization{${escapeTex(vm.label)}}` : '',
     vm.city ? `\\address{${escapeTex(vm.city)}}` : '',
     vm.phone ? `\\mobile{${escapeTex(vm.phone)}}` : '',

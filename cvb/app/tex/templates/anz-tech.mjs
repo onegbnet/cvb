@@ -21,6 +21,9 @@
 // \resumeItem{标题}{正文}、\resumeSubItem、\resumeItemPlain、
 // \resumeSubHeadingListStart/End、\resumeItemListStart/End。
 import { getResumeViewModel } from '../../lib/schema.mjs';
+// 姓名按**当地写法**拼(存储次序是「名 中间名 姓」,印出来由模板决定)——
+// 这一支服务的求职地用 'latin' 那一档,见 app/lib/name-parts.mjs
+import { formatName } from '../../lib/name-parts.mjs';
 import {
   escapeTex,
   texDateRange,
@@ -69,7 +72,7 @@ export function renderTex(config) {
   if (vm.name) {
     body.push(
       '\\begin{center}',
-      `  {\\Huge \\scshape ${escapeTex(vm.name)}} \\\\ \\vspace{2pt}`,
+      `  {\\Huge \\scshape ${escapeTex(formatName(vm.nameParts, 'latin'))}} \\\\ \\vspace{2pt}`,
       `  ${joinNonEmpty(
         [escapeTex(vm.city), escapeTex(vm.phone), escapeTex(vm.email), texUrl(vm.github), texUrl(vm.url)],
         ' $|$ '

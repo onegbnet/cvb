@@ -1,42 +1,98 @@
-/* 全局基础样式 — 复刻 v1 Notion 风格。同时提供 ccs 模块要求的 CSS 变量。 */
+/* cvb 全站 token 与基础样式。
+ *
+ * **形态照 sibling 走**(tinycfw / logflare):一块扁平 token → ccs 模块别名映射
+ * → `[data-theme="dark"]` 只覆盖调色板,结构值(圆角/间距/字体)不参与主题。
+ * 调色板取 logflare 那一支(它的 sidebar + card + form 骨架正是这一页要的),
+ * 让 cvb 一眼看上去是它们的兄弟,而不是第三种自创的东西。
+ *
+ * 两条不许违反的:
+ * ① **ccs 的变量名是硬契约**:overlay/action/field/toast/spinner 只认
+ *    `--surface --border --text --text-muted --accent --err --ok`,
+ *    footer-brand 另认 `--footer-color --footer-border`。所以下面要显式做别名映射
+ *    (与 logflare 的 "ccs module aliases" 一节同一做法)。改名 = 模态框在黑幕布上变透明。
+ * ② **控件边界要看得见**:`--border` 用于分界线,控件边框另走 `--border-input`
+ *    (sibling 的 #e5e5e7 对白底只有 1.2:1,过不了 WCAG 1.4.11 的非文本对比 3:1)。
+ *    **这个值是算出来的不是挑出来的** —— 我先填过 Apple 的分隔灰 #c7c7cc,
+ *    注释里写着"过 1.4.11",实测只有 1.68:1,是句假话。server/__tests__/css-tokens.test.js
+ *    现在会算这个比值,改小了立刻红。
+ * ③ **`--text-disabled` 只有 2.21:1** —— 只许用在真正禁用的控件与纯装饰的分隔符上。
+ *    人要读的东西一律 `--text-secondary`(5.07:1)。同一条测试盯着。
+ */
 :root {
-  /* ccs footer-brand 契约要求 consumer 定义这两个,让页脚配色随主题走 */
-  --footer-color: #9b9a97;
-  --footer-border: #e5e5e5;
-  --surface: #ffffff;
-  --border: #e5e5e5;
-  --text: #37352f;
-  --text-muted: #9b9a97;
-  --accent: #4f46e5;
-  --accent-hover: #4338ca;
-  --accent-bg: rgba(79, 70, 229, 0.08);
-  --err: #dc2626;
-  --ok: #16a34a;
-  --bg-page: #f7f6f3;
+  --bg: #f5f5f7;
+  --card-bg: #ffffff;
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-disabled: #aeaeb2;
+  --accent: #0071e3;
+  --accent-hover: #0077ed;
+  --border: #e5e5e7;
+  --border-input: #8e8e93;
+  --danger: #d70015;
+  --success: #248a3d;
+  --warning: #b25000;
+  --focus-ring: rgba(0, 113, 227, 0.35);
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --max-width: 1100px;
+  --sidebar-width: 240px;
+  /* 系统栈 + **一小段 CJK 尾巴**。sibling 是英文优先的工具,栈里没有中文族;
+     cvb 是中文优先,不点名的话 Windows 会兜底到宋体。只补两个最常见的,
+     不铺一长串 —— 观感仍是 house 的系统字体,只是中文不再掉进宋体。 */
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'SF Mono', Menlo, Consolas, monospace;
+
+  /* ---- ccs 模块别名(与 logflare 同一做法)---- */
+  --surface: var(--card-bg);
+  --text-muted: var(--text-secondary);
+  --err: var(--danger);
+  --ok: var(--success);
+  --accent-bg: rgba(0, 113, 227, 0.08);
+  --footer-color: var(--text-secondary);
+  --footer-border: var(--border);
+
+}
+
+/* 只覆盖调色板;结构值继承 :root。主题由 worker 按 cookie 服务端渲染进
+   <html data-theme>,客户端 ccs theme 模块只负责切属性 + POST /api/prefs。
+   **不写 prefers-color-scheme** —— 两个 sibling 都是纯显式开关,跟着它们走。 */
+[data-theme='dark'] {
+  --bg: #0a0a0c;
+  --card-bg: #1c1c1e;
+  --text: #f5f5f7;
+  --text-secondary: #98989d;
+  --text-disabled: #636366;
+  --accent: #0a84ff;
+  --accent-hover: #409cff;
+  --border: #38383a;
+  --border-input: #727277;
+  --danger: #ff453a;
+  --success: #30d158;
+  --warning: #ff9f0a;
+  --focus-ring: rgba(10, 132, 255, 0.4);
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  --accent-bg: rgba(10, 132, 255, 0.16);
 }
 
 * {
   box-sizing: border-box;
-}
-
-html,
-body {
   margin: 0;
   padding: 0;
 }
 
 body {
-  /* 竖向三段:页眉 + 内容(#app 里的 main 用 flex:1 吃剩余)+ 页脚。
-     这样页脚永远贴在视口底或内容之后,不会因为内容块自带 100vh 而被顶出屏幕。 */
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.6;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg-page);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
-  font-size: 14px;
-  line-height: 1.5715;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
@@ -47,31 +103,79 @@ a {
 .icon {
   display: inline-flex;
   align-items: center;
+  flex: 0 0 auto;
   line-height: 0;
 }
 
-/* ---- 顶部导航 ---- */
+.icon svg {
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 全局无障碍块 —— 照抄 logflare(`src/assets/style.css` 的同名块)。
+   之前只在 editor.css 里给一条动画做了让步,而首屏骨架的三处 infinite 脉冲照转,
+   等于只抄了半条。用 * 一网打尽,新加的动画不会再漏。 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---- 顶栏 ---- */
 header.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 24px;
-  height: 56px;
-  background: var(--surface);
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--card-bg);
   border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 header.app-header .header-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: -0.01em;
+  font-size: 1.05rem;
+  font-weight: 700;
 }
 
 header.app-header .header-actions {
+  margin-inline-start: auto;
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+header.app-header .back-link,
+.preview-header .back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+header.app-header .back-link:hover,
+.preview-header .back-link:hover {
+  color: var(--accent);
+}
+
+header.app-header .back-link .icon svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* ---- 按钮 ---- */
@@ -80,44 +184,28 @@ header.app-header .header-actions {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  min-height: 32px;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
   color: var(--text);
-  font-weight: 500;
-  font-size: 14px;
-  padding: 0 14px;
-  height: 32px;
-  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  font-family: inherit;
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
 
 .btn:hover {
-  background: var(--bg-page);
-  border-color: #d1d1d1;
-}
-
-.btn .icon svg {
-  width: 14px;
-  height: 14px;
-}
-
-.btn-accent {
-  background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--accent);
 }
 
-.btn-accent:hover {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
-}
-
-.btn-small {
-  height: 28px;
-  font-size: 13px;
-  padding: 0 10px;
+.btn:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .btn:disabled {
@@ -125,195 +213,299 @@ header.app-header .header-actions {
   cursor: not-allowed;
 }
 
-/* ---- 表单控件 ---- */
+.btn:disabled:hover {
+  border-color: var(--border-input);
+  color: var(--text);
+}
+
+.btn .icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.btn-accent,
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.btn-accent:hover,
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: #fff;
+}
+
+.btn-small {
+  font-size: 0.8rem;
+  padding: 3px 9px;
+  min-height: 28px;
+}
+
+/* ---- 表单控件(logflare 的 .form-group 口径)---- */
 .fc-input,
 .fc-textarea,
-.fc-select {
+.fc-select,
+.preview-template-select {
   width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 4px 11px;
-  font-size: 14px;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  min-height: 38px;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
   color: var(--text);
-  background: var(--surface);
-  font-family: inherit;
-  line-height: 1.5715;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .fc-textarea {
   resize: vertical;
+  min-height: 90px;
+  line-height: 1.6;
 }
 
 .fc-input::placeholder,
 .fc-textarea::placeholder {
-  color: var(--text-muted);
-}
-
-.fc-input:hover,
-.fc-textarea:hover,
-.fc-select:hover {
-  border-color: #d1d1d1;
+  color: var(--text-secondary);
 }
 
 .fc-input:focus,
 .fc-textarea:focus,
-.fc-select:focus {
+.fc-select:focus,
+.preview-template-select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
-/* ---- AI 组件 ---- */
-.ai-improve-button {
-  margin-left: 8px;
+.fc-input:disabled,
+.fc-select:disabled {
+  background: var(--bg);
+  color: var(--text-disabled);
+  cursor: not-allowed;
 }
 
-.ai-dialog-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-width: 560px;
-}
-
-.ai-loading {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--text-muted);
-  padding: 16px 0;
-}
-
-.ai-error {
-  color: var(--err);
-  font-size: 13px;
-  padding: 8px 0;
-}
-
-.ai-candidate-card {
-  padding: 14px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg-page);
-}
-
-.ai-candidate-content {
-  margin-bottom: 12px;
-  color: var(--text);
-  white-space: pre-wrap;
-  line-height: 1.7;
-  font-size: 14px;
+/* **不重置 appearance** —— 两个 sibling(tinycfw / logflare)的 select 都用原生下拉箭头。
+   之前我给它套了自绘箭头,那是发明:当初原生控件显得刺眼,是因为周围一切都被重度
+   美化过;现在全站跟 sibling 一样朴素,原生 chrome 反而是协调的。规矩是不发明。 */
+.fc-select,
+.preview-template-select {
+  cursor: pointer;
 }
 
 /* ---- 语言切换 ---- */
 .language-switcher {
   display: inline-flex;
   align-items: center;
-  color: var(--text-muted);
-  font-size: 14px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
   user-select: none;
 }
 
 .language-switcher .lang {
+  position: relative;
   cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 4px;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+}
+
+/* 视觉尺寸不动,用伪元素把命中区撑到 44px(页眉是紧凑排版,加 padding 会撑高) */
+.language-switcher .lang::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100%, 44px);
+  height: 44px;
+  transform: translate(-50%, -50%);
 }
 
 .language-switcher .lang:hover,
 .language-switcher .lang.active {
   color: var(--text);
-  background: var(--bg-page);
+  background: var(--bg);
 }
 
 .language-switcher .divider {
   margin: 0 2px;
+  color: var(--text-disabled);
 }
 
-/* ---- 页脚 ---- */
-footer.app-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding-top: 16px;
-  pointer-events: none;
-}
-
-footer.app-footer > div {
-  pointer-events: auto;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 12px 20px;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-footer.app-footer a {
-  color: var(--text-muted);
-  transition: color 0.15s ease;
+/* ---- 主题开关(ccs theme 模块的按钮,由 app 搬进页眉)---- */
+.theme-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-}
-
-footer.app-footer a:hover {
+  justify-content: center;
+  height: 32px;
+  min-width: 32px;
+  padding: 0 8px;
+  font-size: 0.9rem;
+  line-height: 1;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
   color: var(--text);
-}
-
-footer.app-footer .author {
-  margin: 0 4px;
   cursor: pointer;
 }
 
-footer.app-footer .repo-link {
-  position: absolute;
-  right: 8px;
-  font-size: 12px;
+.theme-toggle:hover {
+  border-color: var(--accent);
 }
 
-@media print {
-  header.app-header,
-  footer.app-footer {
-    display: none;
-  }
+.theme-toggle[hidden] {
+  display: none;
 }
 
+/* ---- AI 润色 ---- */
+.ai-improve-button {
+  font: inherit;
+  font-size: 0.78rem;
+  padding: 2px 8px;
+  /* 它是个控件,边框走 --border-input;--border 只用于区块分界线 */
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.ai-improve-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---- AI 润色对话框(壳是 ccs overlay,这里只管内层)---- */
+.ai-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* 外壳 .cmn-modal-box 只有 440px —— 内层写 560px 那条永远不生效 */
+  max-width: 100%;
+}
+
+.ai-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 28px 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.ai-error {
+  padding: 8px 12px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  background: var(--accent-bg);
+  color: var(--danger);
+  font-size: 0.85rem;
+}
+
+.ai-candidate-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  background: var(--card-bg);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.ai-candidate-card:hover {
+  border-color: var(--accent);
+}
+
+.ai-candidate-content {
+  color: var(--text);
+  white-space: pre-wrap;
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+
+/* ---- 窄屏顶栏 ----
+   DOM 是扁平三项(返回 / 标题 / 动作),竖向排会吃掉 160px。两行网格:
+   返回与标题共用第一行,动作独占第二行、放不下就横向滚(**别用 flex:1 1 140px**,
+   那让按钮各自抻成不同宽度、页眉高到 211px)。 */
 @media (max-width: 768px) {
   header.app-header {
-    height: auto;
-    padding: 12px;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 12px;
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'back title'
+      'actions actions';
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 8px;
+    padding: 8px 12px;
+  }
+
+  header.app-header .back-link {
+    grid-area: back;
+  }
+
+  header.app-header .header-title {
+    grid-area: title;
+    justify-self: start;
+    padding-right: 96px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.95rem;
   }
 
   header.app-header .header-actions {
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 10px;
+    grid-area: actions;
+    margin-inline-start: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding-bottom: 2px;
   }
 
   header.app-header .header-actions .btn {
-    flex: 1 1 140px;
+    flex: 0 0 auto;
+  }
+
+  /* 语言与主题移出滚动流钉到右上角 —— 留在可横滚的行里会被切掉一半 */
+  header.app-header .header-actions .language-switcher,
+  header.app-header .header-actions .theme-toggle {
+    position: absolute;
+    top: 8px;
+    margin-inline-start: 0;
+  }
+
+  header.app-header .header-actions .theme-toggle {
+    right: 12px;
+  }
+
+  header.app-header .header-actions .language-switcher {
+    right: 52px;
+  }
+
+  .btn,
+  .theme-toggle {
+    min-height: 40px;
+  }
+
+  header.app-header .back-link,
+  .preview-header .back-link {
+    min-height: 40px;
+  }
+
+  .fc-input,
+  .fc-select,
+  .preview-template-select {
+    min-height: 44px;
   }
 }
 
-/* 顶栏左侧的返回链接(编辑事实 → 工作台首页)。
-   与 header-title 同排,所以 app-header 从两端对齐改成三段。 */
-header.app-header .back-link {
-  font-size: 13px;
-  color: var(--text-muted, #5a6572);
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-header.app-header .back-link:hover {
-  color: var(--accent);
+@media print {
+  header.app-header {
+    display: none;
+  }
 }
 
 /* ---- 首屏骨架 ----
@@ -328,7 +520,7 @@ header.app-header .back-link:hover {
 }
 .boot-bar {
   height: 56px;
-  background: var(--surface);
+  background: var(--card-bg);
   border-bottom: 1px solid var(--border);
 }
 .boot-main {
@@ -340,7 +532,7 @@ header.app-header .back-link:hover {
 }
 .boot-line {
   height: 22px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--border);
   opacity: 0.55;
 }
@@ -357,7 +549,7 @@ header.app-header .back-link:hover {
 .boot-card {
   height: 180px;
   border-radius: 12px;
-  background: var(--surface);
+  background: var(--card-bg);
   border: 1px solid var(--border);
 }
 .boot-skeleton .boot-line,
