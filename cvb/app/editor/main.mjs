@@ -635,9 +635,10 @@ function renderIndex() {
               e.preventDefault();
               // 从记录编辑器里点索引 = 先回到文档面,再滚过去
               if (openRecord) {
+                // 同样是 renderDoc 重建后的定位 —— 瞬移(理由见 scrollToModule)
                 leaveRecord(() => {
                   renderDoc();
-                  scrollToModule(module.key);
+                  scrollToModule(module.key, { instant: true });
                 });
                 return;
               }
@@ -651,10 +652,15 @@ function renderIndex() {
   }
 }
 
-function scrollToModule(key) {
+/**
+ * 平滑还是瞬移,按"文档还是不是刚才那份"分:在稳定文档里点索引是真旅程,平滑;
+ * renderDoc 刚重建过的场合(退出记录编辑器)是**还原**,瞬移 —— 视口本来就不在页顶,
+ * 从页顶飞驰一趟是假旅程,还会吃掉刚保存那行的闪现时间(2026-08-21 用户报出)。
+ */
+function scrollToModule(key, { instant = false } = {}) {
   const target = document.getElementById(`m-${key}`);
   if (!target) return;
-  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  target.scrollIntoView({ behavior: instant ? 'auto' : 'smooth', block: 'start' });
   history.replaceState({}, '', `#m-${key}`);
   // **光滚不移焦点等于没点** —— 读屏的阅读位置不会跟着视口走
   focusAfterSwap(target.querySelector('.blk-title') || target);
@@ -760,11 +766,12 @@ function buildRecordEditor() {
   const items = module.get(state.config);
   const isNew = openRecord.index === -1;
   const value = isNew ? {} : items[openRecord.index] || {};
-  // 退出一律滚回来处的分节 —— 编辑器把文档整块换掉过,滚动位置早就不在了;
+  // 退出一律回到来处的分节 —— 编辑器把文档整块换掉过,滚动位置早就不在了;
   // 光把焦点送回去(preventScroll)人看到的还是页顶(2026-08-21 用户报出)。
+  // 瞬移不平滑:这是还原,不是跳转(理由见 scrollToModule)。
   const backToSection = () => {
     renderDoc();
-    scrollToModule(module.key);
+    scrollToModule(module.key, { instant: true });
   };
   const back = () => leaveRecord(backToSection);
 
