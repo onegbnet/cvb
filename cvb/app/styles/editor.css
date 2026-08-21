@@ -209,6 +209,22 @@
   border-bottom: 1px solid var(--border);
 }
 
+/* 刚保存的那条:重点色淡淡垫一下再退掉。色从 --accent 上现调,不引入新色值,
+ * 明暗两套主题各自跟着自己的 accent 走。 */
+.rec-row.rec-flash {
+  animation: rec-flash 2s ease-out;
+}
+
+@keyframes rec-flash {
+  from {
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+  }
+
+  to {
+    background: transparent;
+  }
+}
+
 .rec-row:first-child {
   border-top: 1px solid var(--border);
 }

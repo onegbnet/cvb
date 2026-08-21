@@ -661,6 +661,18 @@ function scrollToModule(key) {
   markCurrent(key);
 }
 
+/**
+ * 刚保存的记录底色闪一下再慢慢退掉(2026-08-21 用户提)。
+ * 保存后列表按日期重排过,行常常不在原位 —— 这一下告诉人"你那条在这儿"。
+ * 减动效时不用特判:base.css 的 prefers-reduced-motion 全局规则会把动画压到 0.01ms。
+ */
+function flashRecord(moduleKey, index) {
+  const row = document.querySelectorAll(`#m-${moduleKey} .rec-row`)[index];
+  if (!row) return;
+  row.classList.add('rec-flash');
+  row.addEventListener('animationend', () => row.classList.remove('rec-flash'), { once: true });
+}
+
 /** 索引里标出当前分节。 */
 function markCurrent(key) {
   for (const a of indexEl.querySelectorAll('.doc-index-item')) {
@@ -765,9 +777,12 @@ function buildRecordEditor() {
       // 带日期的集合自动按日期倒序 —— 简历本来就是倒序的,顺序不该让用户手摆
       // 这个集合有没有「至今」的概念,看它的字段里有没有 presentKey
       const hasPresent = getModuleFields(module, state.config).some((f) => f.presentKey);
-      updateConfigTo(module.set(state.config, sortByDateDesc(next, { hasPresent })));
+      // 排序保持对象引用,所以能用 indexOf 找到这条记录重排后落在第几行
+      const sorted = sortByDateDesc(next, { hasPresent });
+      updateConfigTo(module.set(state.config, sorted));
       openRecord = null;
       backToSection();
+      flashRecord(module.key, sorted.indexOf(values));
       window.Toast && window.Toast.ok(tr('editor.savedOne'));
     },
     onCancel: () => {
