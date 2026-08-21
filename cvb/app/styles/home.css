@@ -140,6 +140,33 @@
   outline-offset: 2px;
 }
 
+/* 应用名左侧的图标 —— 照 tinycfw 诸 app 的 .logo-icon 抄:渐变圆角方块 + 白字形。
+   渐变终点的青色是 sibling 的既有值(mixssl / mailgunfire 同款),不是新发明。 */
+.home-logo {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent), #06b6d4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.home-logo svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* 窄屏页眉是显式 grid-area 网格(base.css),加子项必须指名 —— 首页没有返回链接,
+   图标就住 back 那一格(第一行、标题左侧) */
+@media (max-width: 768px) {
+  header.app-header .home-logo {
+    grid-area: back;
+  }
+}
+
 .hm-entry-mark {
   flex: 0 0 auto;
   display: inline-flex;

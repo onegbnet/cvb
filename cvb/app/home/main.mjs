@@ -131,9 +131,17 @@ const entry = ({ href, mark, title, state, note }) => {
 
 /** 页眉:与 /edit、/apply 同一形态(.app-header)—— 首页此前没有,语言切换孤零零挂在页脚。 */
 function buildHeader() {
+  // 应用名左侧一枚图标,照 tinycfw 诸 app 的 .logo-icon:渐变圆角方块 + 白色线性字形。
+  // 字形与 favicon 同一枚(页上一枚人像);装饰性节点,读屏跳过。
+  const logo = h('span', { class: 'home-logo', 'aria-hidden': 'true' });
+  logo.innerHTML =
+    "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>" +
+    "<rect x='5' y='2.5' width='14' height='19' rx='2'/><circle cx='12' cy='9' r='2.5'/>" +
+    "<path d='M8 17c.6-2 2.2-3 4-3s3.4 1 4 3'/></svg>";
   return h(
     'header',
     { class: 'app-header' },
+    logo,
     h('span', { class: 'header-title' }, tr('app.name')),
     h(
       'span',
