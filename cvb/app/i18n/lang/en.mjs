@@ -140,7 +140,7 @@ export default {
 
   'field.language.language': 'Language',
   'field.language.fluency': 'Fluency',
-  'field.interest.name': 'Interest',
+  'field.interest.name': 'Interest Name',
   'field.interest.keywords': 'Keywords',
 
   'field.volunteer.organization': 'Organization',

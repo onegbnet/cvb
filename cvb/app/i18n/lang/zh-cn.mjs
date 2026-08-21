@@ -150,9 +150,9 @@ export default {
   'field.award.summary': '摘要',
 
   // ---- 语言/兴趣 ----
-  'field.language.language': '语言',
+  'field.language.language': '语种',
   'field.language.fluency': '熟练程度',
-  'field.interest.name': '兴趣',
+  'field.interest.name': '兴趣名称',
   'field.interest.keywords': '关键词',
 
   // ---- 志愿/出版/推荐 ----
