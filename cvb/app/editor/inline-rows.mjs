@@ -64,7 +64,9 @@ export function createInlineRows({ fields, items, onChange }) {
     h(
       'div',
       { class: 'inl-head' },
-      scalarFields.map((f) => h('span', { class: 'inl-th' }, tr(f.labelKey))),
+      // 列标题悬停出 JSON 路径 —— 重记录表单的标签一直有(form-creator 的
+      // title=jsonPath),行内此前漏了,两边对齐(2026-08-21 用户问起)
+      scalarFields.map((f) => h('span', { class: 'inl-th', title: f.jsonPath || '' }, tr(f.labelKey))),
       h('span', { class: 'inl-th inl-th-act' })
     )
   );
@@ -180,9 +182,12 @@ export function createInlineRows({ fields, items, onChange }) {
     for (const field of scalarFields) row.append(buildText(field));
 
     // 整宽行(芯片 / 多行文本域)排在标量列之后、删除按钮之前
-    // (Tab 序:名称 → 熟练度 → 清单 → 删除);删除按钮由 CSS 钉在首行末列,不吃 DOM 次序
+    // (Tab 序:名称 → 熟练度 → 清单 → 删除);删除按钮由 CSS 钉在首行末列,不吃 DOM 次序。
+    // 它们没有列标题,JSON 路径的悬停提示挂在控件自身上
     for (const field of fullLineFields) {
-      row.append(field.type === 'tags' ? buildChips(field) : buildText(field));
+      const el = field.type === 'tags' ? buildChips(field) : buildText(field);
+      if (field.jsonPath) el.title = field.jsonPath;
+      row.append(el);
     }
 
     row.append(draft ? h('span', { class: 'inl-act' }) : delButton());
