@@ -6,7 +6,6 @@ export default {
 
   // ---- 工作台首页 ----
   "app.homeTitle": "CV Builder — Workbench",
-  "home.facts.title": "Fact base",
   "home.who.unnamed": "No name yet",
   "home.who.lastModified": "Last edited",
   "home.edit.state": "{n} records",

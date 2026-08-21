@@ -10,9 +10,10 @@
 // 编辑器早就在算了。于是这一页 = 事实库一览 + 入口:
 //
 //   ① 一行:这是谁的站 + 上次改动是什么时候(名字没填时,那句提示本身就是引导)
-//   ② 事实库:每个分节一枚计数芯片,点了**直接跳进编辑器对应分节**(锚点已存在),
-//      比"先进编辑器再找分节"少一步。有内容的实心,空的淡 —— 空不等于缺,不做评判。
-//   ③ 入口:两个(将来三个)。未接入的部分做成安静的一行小字,不是黄色告示条。
+//   ② 「编辑事实」卡 = 入口 + 事实库一览(2026-08-21 用户裁定合并 —— 芯片本来就
+//      逐格深链进编辑器,单独的入口卡只剩一个链接和一个总数,冗余):卡头即 /edit
+//      入口,卡体是每分节一枚计数芯片。有内容的实心,空的淡 —— 空不等于缺,不做评判。
+//   ③ 入口:「生成简历」(将来还有「查看历史」)。未接入的部分做成安静的一行小字。
 //
 // **没有完成度百分比**(§8 卖点③):英美简历刻意不填照片与生日,
 // 「填满」从来不是目标,一个百分比会诱导用户去填不该填的字段。计数只给事实。
@@ -80,14 +81,29 @@ const factCount = (module, config) => {
 };
 
 /**
- * 事实库一览。每个分节一枚芯片,点了**直接跳进编辑器对应分节**(锚点 #m-<key>)——
+ * 「编辑事实」卡 = 入口 + 事实库一览(2026-08-21 用户裁定合并:芯片本来就
+ * 逐格深链进编辑器,单独一张「编辑事实」卡只剩一个链接和一个总数,是冗余)。
+ * 卡头(记号 + 标题 + N 条记录)整行是进 /edit 的链接;
+ * 芯片照旧:每个分节一枚计数芯片,点了**直接跳进编辑器对应分节**(锚点 #m-<key>)——
  * 比"先进编辑器再找分节"少一步。有内容的实心,空的淡:**空不等于缺**,不做评判。
  */
-const buildFacts = (config) =>
-  h(
+const buildEditCard = (config) => {
+  const totalRecords = SECTIONS.flatMap((sec) => sectionModules(sec.id))
+    .filter((m) => m.kind === 'list')
+    .reduce((sum, m) => sum + factCount(m, config), 0);
+  const head = h(
+    'a',
+    { class: 'hm-facts-head', href: '/edit' },
+    h('span', { class: 'hm-entry-mark' }),
+    h('h2', { class: 'hm-h' }, tr('home.edit.title')),
+    h('span', { class: 'hm-facts-state' }, tr('home.edit.state').replace('{n}', String(totalRecords)))
+  );
+  // 内联 SVG 走 innerHTML:标是我们自己写死的常量,不含任何外部输入
+  head.querySelector('.hm-entry-mark').innerHTML = MARK_EDIT;
+  return h(
     'section',
     { class: 'hm-facts' },
-    h('h2', { class: 'hm-h' }, tr('home.facts.title')),
+    head,
     SECTIONS.map((section) =>
       h(
         'div',
@@ -109,6 +125,7 @@ const buildFacts = (config) =>
       )
     )
   );
+};
 
 /** 一个入口。状态行说的是**当前真实状况**,不是产品介绍。 */
 const entry = ({ href, mark, title, state, note }) => {
@@ -173,9 +190,6 @@ const buildWho = (config) => {
 function render(config) {
   const root = document.getElementById('app');
   clear(root);
-  const totalRecords = SECTIONS.flatMap((sec) => sectionModules(sec.id))
-    .filter((m) => m.kind === 'list')
-    .reduce((sum, m) => sum + factCount(m, config), 0);
 
   root.append(
     buildHeader(),
@@ -183,16 +197,11 @@ function render(config) {
       'main',
       { class: 'hm' },
       buildWho(config),
-      buildFacts(config),
+      // 「编辑事实」与「事实库」已合并成一张卡(卡头即入口,见 buildEditCard)
+      buildEditCard(config),
       h(
         'nav',
         { class: 'hm-entries' },
-        entry({
-          href: '/edit',
-          mark: MARK_EDIT,
-          title: tr('home.edit.title'),
-          state: tr('home.edit.state').replace('{n}', String(totalRecords)),
-        }),
         entry({
           href: '/apply',
           mark: MARK_GENERATE,

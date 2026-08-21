@@ -7,7 +7,6 @@ export default {
 
   // ---- 工作台首页 ----
   "app.homeTitle": "CV Builder — 工作台",
-  "home.facts.title": "事实库",
   "home.who.unnamed": "还没填姓名",
   "home.who.lastModified": "上次修改",
   "home.edit.state": "{n} 条记录",

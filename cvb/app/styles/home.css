@@ -47,6 +47,41 @@
   font-weight: 600;
 }
 
+/* 「编辑事实」卡头 —— 它就是进 /edit 的入口(与事实库一览合并成一张卡) */
+.hm-facts-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.hm-facts-head .hm-h {
+  margin: 0;
+}
+
+.hm-facts-head:hover .hm-h,
+.hm-facts-head:hover .hm-entry-mark {
+  color: var(--accent);
+}
+
+.hm-facts-head:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* 入口卡里的记号是 34px 招牌尺寸;在卡头里它是行内记号,跟着标题走 */
+.hm-facts-head .hm-entry-mark svg {
+  width: 20px;
+  height: 20px;
+}
+
+.hm-facts-state {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
 .hm-facts-row {
   display: grid;
   grid-template-columns: 5.5em minmax(0, 1fr);
