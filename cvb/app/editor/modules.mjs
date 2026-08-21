@@ -1,7 +1,7 @@
 // 编辑器模块描述符 — 每个导航模块声明:数据存取(get/set 对接 JSON Resume
 // 结构)、字段定义(类型/校验/必填)、列表摘要字段。
-// 字段类型:input | textArea | month | checkbox | select | tags(数组↔逗号分隔)
-//          | lines(数组↔换行分隔)
+// 字段类型:input | textArea | month | checkbox | select
+//          | tags(词组数组 → 芯片输入,chips.mjs) | lines(句子数组 → 逐条清单,string-list.mjs)
 // 校验(validate):email | phone | url(打字时经 ccs Field,提交时兜底)
 import { tr, getLanguage } from '../lib/i18n.mjs';
 
@@ -191,7 +191,7 @@ export const MODULES = [
       month('startDate', 'field.education.startDate'),
       month('endDate', 'field.education.endDate'),
       input('score', 'field.education.score'),
-      { type: 'lines', attributeId: 'courses', labelKey: 'field.education.courses', rows: 4 },
+      { type: 'tags', attributeId: 'courses', labelKey: 'field.education.courses', placeholderKey: 'field.tags.hint' },
       input('url', 'field.education.url', { validate: 'url' }),
     ],
   },
@@ -217,7 +217,7 @@ export const MODULES = [
       month('endDate', 'field.work.endDate', { presentKey: 'field.work.current' }),
       { type: 'textArea', attributeId: 'summary', labelKey: 'field.summary.text', rows: 3, ai: true },
       // 要点(JSON Resume 标准字段,与项目经历同构):一行一条。
-      { type: 'lines', attributeId: 'highlights', labelKey: 'field.work.highlights', rows: 6, ai: true },
+      { type: 'lines', attributeId: 'highlights', labelKey: 'field.work.highlights', placeholderKey: 'field.list.add', ai: true },
     ],
   },
 
@@ -243,12 +243,12 @@ export const MODULES = [
             .map((name) => ({ value: name, label: name })),
         ],
       },
-      { type: 'lines', attributeId: 'roles', labelKey: 'field.project.roles', rows: 3 },
+      { type: 'tags', attributeId: 'roles', labelKey: 'field.project.roles', placeholderKey: 'field.tags.hint' },
       month('startDate', 'field.project.startDate'),
       month('endDate', 'field.project.endDate', { presentKey: 'field.project.ongoing' }),
       { type: 'textArea', attributeId: 'description', labelKey: 'field.project.description', rows: 3, ai: true },
-      { type: 'lines', attributeId: 'highlights', labelKey: 'field.project.highlights', rows: 6, ai: true },
-      { type: 'lines', attributeId: 'keywords', labelKey: 'field.project.keywords', rows: 3 },
+      { type: 'lines', attributeId: 'highlights', labelKey: 'field.project.highlights', placeholderKey: 'field.list.add', ai: true },
+      { type: 'tags', attributeId: 'keywords', labelKey: 'field.project.keywords', placeholderKey: 'field.tags.hint' },
       input('url', 'field.project.url', { validate: 'url' }),
       {
         type: 'select',
@@ -374,7 +374,7 @@ export const MODULES = [
       month('startDate', 'field.volunteer.startDate'),
       month('endDate', 'field.volunteer.endDate', { presentKey: 'field.volunteer.ongoing' }),
       { type: 'textArea', attributeId: 'summary', labelKey: 'field.summary.text', rows: 3 },
-      { type: 'lines', attributeId: 'highlights', labelKey: 'field.volunteer.highlights', rows: 4 },
+      { type: 'lines', attributeId: 'highlights', labelKey: 'field.volunteer.highlights', placeholderKey: 'field.list.add' },
       input('url', 'field.volunteer.url', { validate: 'url' }),
     ],
   },

@@ -95,7 +95,7 @@ export default {
   'field.education.startDate': '入学时间',
   'field.education.endDate': '毕业时间',
   'field.education.score': '成绩/绩点',
-  'field.education.courses': '主修课程（一行一条）',
+  'field.education.courses': '主修课程',
   'field.education.url': '学校主页',
 
   // ---- 工作 ----
@@ -108,7 +108,7 @@ export default {
   'field.work.description.hint': '这家公司是做什么的，如：社交媒体公司',
   'field.work.location.hint': '如：悉尼、新南威尔士州 / 上海',
   'field.work.summary': '摘要',
-  'field.work.highlights': '主要亮点（一行一条）',
+  'field.work.highlights': '主要亮点',
   'field.work.url': '公司网址',
   'field.work.current': '至今在职',
 
@@ -116,13 +116,13 @@ export default {
   'field.project.name': '项目名称',
   'field.project.entity': '所属公司/组织',
   'field.project.entity.none': '独立项目',
-  'field.project.roles': '担任角色（一行一个）',
+  'field.project.roles': '担任角色',
   'field.project.startDate': '开始时间',
   'field.project.endDate': '结束时间',
   'field.project.ongoing': '进行中',
   'field.project.description': '项目描述',
-  'field.project.highlights': '主要亮点（一行一条）',
-  'field.project.keywords': '关键词（一行一个）',
+  'field.project.highlights': '主要亮点',
+  'field.project.keywords': '关键词',
   'field.project.url': '项目链接',
   'field.project.type': '类型',
   'field.project.type.none': '请选择',
@@ -137,6 +137,7 @@ export default {
   'field.skill.level': '熟练度',
   'field.skill.level.hint': '如：精通 / 熟练 / 了解',
   'field.tags.hint': '回车或逗号添加',
+  'field.list.add': '添加一条，回车换下一条',
 
   // ---- 证书/奖项 ----
   'field.certificate.name': '证书名称',
@@ -161,7 +162,7 @@ export default {
   'field.volunteer.endDate': '结束时间',
   'field.volunteer.ongoing': '进行中',
   'field.volunteer.summary': '摘要',
-  'field.volunteer.highlights': '要点（一行一条）',
+  'field.volunteer.highlights': '要点',
   'field.volunteer.url': '相关链接',
   'field.publication.name': '作品名字',
   'field.publication.publisher': '发表机构',

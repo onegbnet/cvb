@@ -276,7 +276,8 @@
 }
 
 .rec-del,
-.inl-del {
+.inl-del,
+.strlist-del {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
@@ -292,13 +293,15 @@
 }
 
 .rec-del:hover,
-.inl-del:hover {
+.inl-del:hover,
+.strlist-del:hover {
   color: var(--danger);
   background: var(--bg);
 }
 
 .rec-del svg,
-.inl-del svg {
+.inl-del svg,
+.strlist-del svg {
   width: 16px;
   height: 16px;
 }
@@ -372,12 +375,11 @@
   grid-column: -2;
 }
 
-/* ---- tags 字段的芯片行 ----
-   多值清单不挤在列里(行宽 ÷ 列数排不开),自己占整行宽的第二条线。
+/* ---- 多值字段的两种控件(行内与重记录表单共用) ----
+   词组数组 → 芯片(chips.mjs);句子数组 → 逐条清单(string-list.mjs)。
    容器打扮成输入框(同 .fc-input 的边框/圆角/底色),芯片沿用快照视图
    .snapv-tag 的既有形态 —— 不发明新语汇。 */
-.inl-chips {
-  grid-column: 1 / -1;
+.chips {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -390,16 +392,21 @@
   cursor: text;
 }
 
-.inl-chips:focus-within {
+.chips:focus-within {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
-.inl-row-draft .inl-chips {
+/* 行内轻记录里:芯片不占列(清单不封顶,一列排不开),占整行宽的第二条线 */
+.inl-row .chips {
+  grid-column: 1 / -1;
+}
+
+.inl-row-draft .chips {
   border-style: dashed;
 }
 
-.inl-chip {
+.chip {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -411,7 +418,7 @@
   white-space: nowrap;
 }
 
-.inl-chip-x {
+.chip-x {
   display: inline-flex;
   border: 0;
   padding: 2px;
@@ -420,16 +427,16 @@
   cursor: pointer;
 }
 
-.inl-chip-x:hover {
+.chip-x:hover {
   color: var(--err);
 }
 
-.inl-chip-x svg {
+.chip-x svg {
   width: 12px;
   height: 12px;
 }
 
-.inl-chip-in {
+.chip-in {
   flex: 1;
   min-width: 130px;
   border: 0;
@@ -440,12 +447,43 @@
   color: var(--text);
 }
 
-.inl-chip-in:focus {
+.chip-in:focus {
   outline: none;
 }
 
-.inl-chip-in::placeholder {
+.chip-in::placeholder {
   color: var(--text-secondary);
+}
+
+/* 逐条清单:每条自己一格,末尾常驻一格空的 —— 条界看得见 */
+.strlist {
+  display: grid;
+  gap: 6px;
+}
+
+.strlist-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 32px;
+  gap: 6px;
+  align-items: start;
+}
+
+.strlist-in {
+  resize: none;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+.strlist-row-draft .strlist-in {
+  border-style: dashed;
+}
+
+.strlist-del {
+  align-self: center;
+}
+
+.strlist-row-draft .strlist-pad {
+  width: 32px;
 }
 
 /* ---- 「管理」抽屉:对整份事实库的操作 ----

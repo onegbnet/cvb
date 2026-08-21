@@ -13,6 +13,7 @@
 import { h } from '../lib/dom.mjs';
 import { icon } from '../lib/icons.mjs';
 import { tr } from '../lib/i18n.mjs';
+import { createChipsInput } from './chips.mjs';
 
 /** 多值字段在**一行输入框**里的写法:逗号分隔。`tags` 在这个组件里另有芯片输入(见 buildRow)。 */
 const MULTI = new Set(['tags', 'lines']);
@@ -135,87 +136,23 @@ export function createInlineRows({ fields, items, onChange }) {
     }
 
     /**
-     * `tags` 字段的芯片输入:回车/逗号成一枚,退格删最后一枚,粘贴逗号串自动拆,
-     * 失焦把没敲完的半截也收进去(打了一半的词不许丢)再走同一个 commit。
-     * 存的还是那个字符串数组,只是不再要求用户自己维护分隔符。
+     * `tags` 字段:共用的芯片输入(chips.mjs),接到本行的 buf/commit 上 ——
+     * 改动进 buf,失焦与点 × 走同一个 commit(失焦即存;× 是完成动作,当场落库)。
      */
     function buildChips(field) {
-      // **数组永不原地改,每次赋新的**:commit 的快照(committed/slot)是浅拷,
-      // 原地 push/splice 会让 buf 与快照共享同一个数组 —— 比较变成自己跟自己比,
-      // 永远相等,第二次编辑就再也提交不上去(sameRecord 的老坑,见文件头)。
       buf[field.attributeId] = Array.isArray(record[field.attributeId])
         ? [...record[field.attributeId]]
         : [];
-      const input = h('input', {
-        type: 'text',
-        class: 'inl-chip-in',
+      return createChipsInput({
+        value: buf[field.attributeId],
         placeholder: tr(field.placeholderKey || field.labelKey),
-        'aria-label': tr(field.labelKey),
+        ariaLabel: tr(field.labelKey),
+        onChange: (arr, reason) => {
+          buf[field.attributeId] = arr;
+          if (reason === 'remove-x') commit();
+        },
+        onBlur: commit,
       });
-      // input 是 box 的末子 —— 芯片一律 insertBefore(chip, input) 插在它前面
-      const box = h('div', { class: 'inl-chips', onClick: (e) => e.target === box && input.focus() }, input);
-
-      const addChip = (word) => {
-        const chip = h(
-          'span',
-          { class: 'inl-chip' },
-          word,
-          h(
-            'button',
-            {
-              type: 'button',
-              class: 'inl-chip-x',
-              'aria-label': `${tr('action.delete')} ${word}`,
-              onClick: () => {
-                // 同名词可能重复,按元素位置定下标,别 indexOf(word)
-                const i = [...box.querySelectorAll('.inl-chip')].indexOf(chip);
-                if (i >= 0) {
-                  buf[field.attributeId] = buf[field.attributeId].filter((_, k) => k !== i);
-                }
-                chip.remove();
-                commit(); // 点 × 是完成动作,当场落库(同整行的删除按钮)
-              },
-            },
-            icon('close')
-          )
-        );
-        box.insertBefore(chip, input);
-      };
-
-      /** 把输入框里的文字收成芯片;有收到东西返回 true。 */
-      const chipify = () => {
-        const parts = String(input.value || '')
-          .split(/[,，]/)
-          .map((s) => s.trim())
-          .filter(Boolean);
-        input.value = '';
-        if (parts.length) {
-          buf[field.attributeId] = [...buf[field.attributeId], ...parts];
-          for (const word of parts) addChip(word);
-        }
-        return parts.length > 0;
-      };
-
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          // 有字就收成芯片继续敲下一枚;空着回车 = 收工,走失焦即存
-          if (!chipify()) input.blur();
-        } else if (e.key === 'Backspace' && input.value === '' && buf[field.attributeId].length) {
-          const chips = box.querySelectorAll('.inl-chip');
-          buf[field.attributeId] = buf[field.attributeId].slice(0, -1);
-          chips[chips.length - 1].remove();
-        }
-      });
-      // 逗号(含全角)一落就收 —— 粘贴「Java, Go」也从这里拆开
-      input.addEventListener('input', () => /[,，]/.test(input.value) && chipify());
-      input.addEventListener('blur', () => {
-        chipify();
-        commit();
-      });
-
-      for (const word of buf[field.attributeId]) addChip(word);
-      return box;
     }
 
     for (const field of scalarFields) {

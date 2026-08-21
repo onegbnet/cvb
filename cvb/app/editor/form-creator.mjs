@@ -10,6 +10,8 @@ import { tr, getLanguage } from '../lib/i18n.mjs';
 import { uploadAvatar, isUnauthorized, redirectToUnlock } from '../lib/api.mjs';
 import { openImproveDialog } from '../lib/ai.mjs';
 import { isRealisticDate } from '../lib/schema.mjs';
+import { createChipsInput } from './chips.mjs';
+import { createStringList } from './string-list.mjs';
 
 const CCS_RE = globalThis.CCSRe;
 if (!CCS_RE) throw new Error('ccs/re must be loaded before the editor');
@@ -367,13 +369,28 @@ function buildControl(field, value, notifyChange, errorEl) {
       return row;
     }
 
-    case 'textArea':
+    // 词组数组 → 芯片;句子数组 → 逐条清单。两者都把存放单元的边界摆在界面上 ——
+    // 「textarea 里一行一条、让用户看不出一行是一个存放单元」被判不专业(2026-08-21)。
     case 'tags':
-    case 'lines': {
-      const rows = field.rows || (field.type === 'tags' ? 2 : 4);
+      return createChipsInput({
+        value: Array.isArray(value) ? value : [],
+        placeholder: field.placeholderKey ? tr(field.placeholderKey) : '',
+        ariaLabel: tr(field.labelKey),
+        onChange: (arr) => notifyChange(field.attributeId, arr),
+      });
+
+    case 'lines':
+      return createStringList({
+        value: Array.isArray(value) ? value : [],
+        placeholder: field.placeholderKey ? tr(field.placeholderKey) : '',
+        ariaLabel: tr(field.labelKey),
+        onChange: (arr) => notifyChange(field.attributeId, arr),
+      });
+
+    case 'textArea': {
       return h('textarea', {
         class: 'fc-textarea',
-        rows,
+        rows: field.rows || 4,
         placeholder: field.placeholderKey ? tr(field.placeholderKey) : field.placeholder || '',
         value: toDisplay(field, value),
         onInput: (e) => notifyChange(field.attributeId, fromDisplay(field, e.target.value)),
@@ -504,6 +521,9 @@ export function createFormCreator({ fields, value = {}, onSubmit, onCancel, aiCo
       control.resetAvatar(value);
     } else if (field.type === 'month' && typeof control.resetDate === 'function') {
       control.resetDate(value);
+    } else if (typeof control.setValues === 'function') {
+      // 芯片 / 逐条清单:整体重置,别把 toDisplay 的拼接串塞进内部输入框
+      control.setValues(Array.isArray(value) ? value : []);
     } else if (elements[0]) {
       elements[0].value = toDisplay(field, value);
     }
@@ -539,7 +559,9 @@ export function createFormCreator({ fields, value = {}, onSubmit, onCancel, aiCo
                   onApply: (text) => {
                     const parsed = fromDisplay(field, text);
                     values[field.attributeId] = parsed;
-                    control.value = toDisplay(field, parsed);
+                    // 逐条清单(亮点)是复合控件,回填走整体重置;textarea 直接赋值
+                    if (typeof control.setValues === 'function') control.setValues(parsed);
+                    else control.value = toDisplay(field, parsed);
                     refreshActions();
                   },
                 }),
