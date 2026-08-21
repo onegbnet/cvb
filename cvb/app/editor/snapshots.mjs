@@ -88,7 +88,7 @@ export function createSnapshots({ lang, onRestore }) {
       // 没改过名时它和显示的字相同,那也照挂 —— 少一个"什么时候该挂"的特例。
       const labelEl = h('span', { class: 'snap-name', title: defaultLabel }, label);
 
-      // 行内改(点笔 → 变输入框 → 回车/失焦即存,Esc 取消),和这一页轻记录同一个 idiom;
+      // 行内改(点笔 → 变输入框 → 回车/失焦即存,Esc 取消);
       // 不弹框,因为它是个小得不值一次打断的动作。
       const rename = () => {
         const input = h('input', {

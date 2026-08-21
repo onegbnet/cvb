@@ -4,7 +4,12 @@
 // 为什么单独一档:`languages` 就是 {语言, 熟练度} 两个词。让它走
 // 「展开 Group → 点添加 → 填表单 → 点提交」四步流程,是把轻的东西当重的东西对待 ——
 // 这正是旧界面最官僚的地方。这里**每条记录就是一行输入框**,末尾常驻一行空的,
-// 打字即新增,失焦即存,没有添加按钮、没有展开、没有提交。
+// 打字即新增,没有添加按钮、没有展开。
+//
+// **落不落库不归这里管**(2026-08-21 用户裁定统一显式保存):失焦把改动收进
+// 本组件的 data 并经 onChange 交给上层**暂存**,整节的「保存 / 取消」在上层
+// (main.mjs buildInlineBlock)。此前是失焦即存 —— 有的节要点保存、有的不用,
+// 两套混着被判困惑源。
 //
 // **这个组件自己管 DOM,不接受上层重渲染**(2026-08-19 审计抓到两条丢数据):
 // 原来提交后走 onChange → main.renderDoc() 整页重建,而浏览器那一刻正在把焦点
@@ -140,7 +145,7 @@ export function createInlineRows({ fields, items, onChange }) {
 
     /**
      * `tags` 字段:共用的芯片输入(chips.mjs),接到本行的 buf/commit 上 ——
-     * 改动进 buf,失焦与点 × 走同一个 commit(失焦即存;× 是完成动作,当场落库)。
+     * 改动进 buf,失焦与点 × 走同一个 commit(收进 data、经 onChange 交上层暂存)。
      */
     function buildChips(field) {
       buf[field.attributeId] = Array.isArray(record[field.attributeId])
@@ -197,7 +202,5 @@ export function createInlineRows({ fields, items, onChange }) {
   for (const record of data) root.append(buildRow(record, false));
   root.append(buildRow({}, true));
 
-  // 行内编辑没有"未提交"的概念(失焦即存),所以恒为 false —— 上层的导航拦截靠它。
-  root.hasPendingEdit = () => false;
   return root;
 }

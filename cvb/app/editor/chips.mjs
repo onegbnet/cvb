@@ -77,7 +77,7 @@ export function createChipsInput({ value = [], placeholder = '', ariaLabel = '',
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      // 有字就收成芯片继续敲下一枚;空着回车 = 收工,交还焦点流(行内借它触发失焦即存)
+      // 有字就收成芯片继续敲下一枚;空着回车 = 收工,交还焦点流(触发 onBlur)
       if (!chipify()) input.blur();
     } else if (e.key === 'Backspace' && input.value === '' && arr.length) {
       const chips = box.querySelectorAll('.chip');

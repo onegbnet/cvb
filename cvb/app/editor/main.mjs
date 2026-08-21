@@ -1,5 +1,5 @@
 // 编辑事实(/edit):lock 门禁 + 纯 JSON Resume 数据 + 四个版块的一级导航 + 页内可折叠 Group。
-// 架构从数据结构推出(见 CLAUDE.md §3):身份块 = 表单;轻记录 = 行内一行一条、失焦即存;
+// 架构从数据结构推出(见 CLAUDE.md §3):身份块 = 表单;轻记录 = 行内一行一条、整节一次保存;
 // 重记录 = 一行一条的列表,打开则整块换成那条记录的编辑器。**一条记录一次保存。**
 import { h, clear } from '../lib/dom.mjs';
 import { icon } from '../lib/icons.mjs';
@@ -53,7 +53,7 @@ let retryDelay = 0;
 const saveState = { dirty: false, saving: false, error: '' };
 
 // 顶栏的保存状态字样(buildHeader 造,页面只建一次)。此前这份状态只在两处露头:
-// 失败的 Toast 和 beforeunload 拦截 —— 失焦即存平时是静默的,「存了没有」看不见。
+// 失败的 Toast 和 beforeunload 拦截 —— 落盘过程平时是静默的,「存了没有」看不见。
 let saveStatusEl = null;
 
 const renderSaveStatus = () => {
@@ -543,7 +543,7 @@ function buildHeader() {
     h(
       'span',
       { class: 'header-actions' },
-      // 保存状态:已保存 / 保存中… / 未保存(失焦即存是静默的,状态得有处看)。
+      // 保存状态:已保存 / 保存中… / 未保存(落盘过程是静默的,状态得有处看)。
       // 放动作区最前 —— 桌面在按钮左侧,窄屏跟着动作行,不用给窄屏网格加行
       (saveStatusEl = h('span', { class: 'save-status' })),
       // 导入 / 导出 / 快照都是**对整份事实库的操作**,不是主内容 —— 收进抽屉,
@@ -588,7 +588,8 @@ function buildHeader() {
 
 /**
  * 当前页上所有**会持有未保存内容**的编辑器实例。
- * 重记录编辑器与身份块表单都挂了 hasPendingEdit(),行内编辑恒为 false(失焦即存)。
+ * 重记录编辑器、身份块表单、行内轻记录块都挂了 hasPendingEdit()(2026-08-21 起
+ * 行内也是提交制,暂存脏了就为真)。
  * 上层鸭子类型一视同仁 —— 切走之前问一句,别静默吞掉。
  */
 let pendingEls = [];
@@ -607,7 +608,7 @@ const hasPendingEdit = () =>
 //
 // 三档:
 //   身份块(object)      → 一张普通表单 + 一个保存
-//   轻记录(inline)      → 行内一行一条,失焦即存
+//   轻记录(inline)      → 行内一行一条,整节一次保存
 //   重记录(其余 list)   → 一行一条的列表;打开则整块换成那条记录的编辑器
 
 const indexEl = h('nav', { class: 'doc-index' });
@@ -689,6 +690,19 @@ function markCurrent(key) {
   }
 }
 
+/** 进重记录编辑器前的闸门:renderDoc 整页重建,别处未提交的表单先问一句。 */
+function enterRecord(next) {
+  const go = () => {
+    openRecord = next;
+    renderDoc();
+  };
+  if (!hasPendingEdit()) {
+    go();
+    return;
+  }
+  confirmAction(tr('editor.discardEdit'), go);
+}
+
 /**
  * 改到一半要离开时问一句(只有重记录编辑器会有未保存内容)。
  * 去处(滚动 + 焦点)由 go 自己负责 —— 各退出路径的目的地不同:
@@ -727,16 +741,73 @@ function buildObjectBlock(module) {
   return form;
 }
 
+/**
+ * 行内轻记录也是提交制(2026-08-21 用户裁定:**统一显式保存** —— 有的节要点保存、
+ * 有的失焦就存,两套混着才是困惑源)。行内编辑的轻(一行一条、打字即新增)保留,
+ * 但改动只进暂存:底部「保存」才落库,「取消」整节复原 —— 误删的行由此救得回来
+ * (行内删除无确认的裸露点顺带治掉)。
+ */
 function buildInlineBlock(module) {
+  const initialItems = module.get(state.config);
+  let pending = initialItems;
+  let initialJson = JSON.stringify(initialItems);
+  let footerEl = null;
+
+  const isDirty = () => JSON.stringify(pending) !== initialJson;
+  const refreshActions = () => {
+    footerEl.classList.toggle('is-dirty', isDirty());
+    footerEl.querySelector('.form-save').disabled = !isDirty();
+  };
+
   const rows = createInlineRows({
     fields: getModuleFields(module, state.config),
-    items: module.get(state.config),
-    // **只存,不重渲染** —— createInlineRows 自己管 DOM(原地追加/摘除行)。
+    items: initialItems,
+    // **只暂存,不落库、不重渲染** —— createInlineRows 自己管 DOM(原地追加/摘除行)。
     // 重渲染会把正要接收焦点的那个输入框一起铲掉,接着打的字全丢(审计抓到)。
-    onChange: (items) => updateConfigTo(module.set(state.config, items)),
+    onChange: (items) => {
+      pending = items;
+      refreshActions();
+    },
   });
-  pendingEls.push(rows);
-  return rows;
+
+  footerEl = h(
+    'div',
+    { class: 'form-actions' },
+    h(
+      'button',
+      {
+        type: 'button',
+        class: 'btn form-cancel',
+        onClick: () => {
+          if (!isDirty()) return;
+          // 整节复原 = 从当前事实重建这一段(rerenderBlock 顺带把本节暂存铲掉,正是要的)
+          rerenderBlock(module.key);
+          focusAfterSwap(document.querySelector(`#m-${module.key} .blk-title`));
+        },
+      },
+      tr('action.cancel')
+    ),
+    h(
+      'button',
+      {
+        type: 'button',
+        class: 'btn btn-primary form-save',
+        disabled: true,
+        onClick: () => {
+          updateConfigTo(module.set(state.config, pending));
+          initialJson = JSON.stringify(pending);
+          refreshActions();
+          window.Toast && window.Toast.ok(tr('editor.savedOne'));
+        },
+      },
+      tr('action.submit')
+    )
+  );
+
+  const wrap = h('div', { class: 'inl-block' }, rows, footerEl);
+  wrap.hasPendingEdit = isDirty;
+  pendingEls.push(wrap);
+  return wrap;
 }
 
 function buildRecordBlock(module) {
@@ -745,14 +816,10 @@ function buildRecordBlock(module) {
     module,
     items,
     fields: getModuleFields(module, state.config),
-    onOpen: (index) => {
-      openRecord = { moduleKey: module.key, index };
-      renderDoc();
-    },
-    onAdd: () => {
-      openRecord = { moduleKey: module.key, index: -1 };
-      renderDoc();
-    },
+    // 打开/新建都会整页重建 —— 同页别处没保存的表单(身份块、行内暂存)会被铲掉,
+    // 先问一句(这洞在身份块上早就存在,2026-08-21 行内改提交制时一并补上)
+    onOpen: (index) => enterRecord({ moduleKey: module.key, index }),
+    onAdd: () => enterRecord({ moduleKey: module.key, index: -1 }),
     onDelete: (index) => {
       updateConfigTo(module.set(state.config, items.filter((_, i) => i !== index)));
       rerenderBlock(module.key); // 只重建自己那一段,别动同页别的表单
