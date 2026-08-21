@@ -47,10 +47,11 @@ export function createInlineRows({ fields, items, onChange }) {
   // 组件自己持有一份 —— 上层不会因为 onChange 把我们重建,所以状态得在这里。
   let data = items.map((it) => ({ ...it }));
 
-  // `tags` 字段不占列 —— 它是不封顶的列表,挤在一列里(行宽 ÷ 列数)排不开,
-  // 自己占行内的第二条整宽线(2026-08-21 用户定的 B 方案:行内芯片,不为它升重记录)。
-  const scalarFields = fields.filter((f) => f.type !== 'tags');
-  const tagFields = fields.filter((f) => f.type === 'tags');
+  // `tags` 与多行文本域都不占列,各自占行内的第二条整宽线:
+  // 芯片是不封顶的列表,一列排不开(2026-08-21 用户定的 B 方案);
+  // 多行文本域(推荐详情)和单行框并排则两个输入不同高(2026-08-21 用户报出)。
+  const scalarFields = fields.filter((f) => f.type !== 'tags' && !MULTILINE.has(f.type));
+  const fullLineFields = fields.filter((f) => f.type === 'tags' || MULTILINE.has(f.type));
 
   const root = h('div', {
     class: 'inl',
@@ -155,12 +156,9 @@ export function createInlineRows({ fields, items, onChange }) {
       });
     }
 
-    for (const field of scalarFields) {
-      // **按字段类型分派**,别一律 input[type=text]:`lines` 是多值,
-      // 单行框里塞不进换行 —— 原来 ['Go','Rust','K8s'] 会显示成 "GoRustK8s"、
-      // 回写恒为单元素数组(2026-08-19 审计抓到,丢数据)。
+    const buildText = (field) => {
       const multiline = MULTILINE.has(field.type);
-      const el = h(multiline ? 'textarea' : 'input', {
+      return h(multiline ? 'textarea' : 'input', {
         ...(multiline ? { rows: 2 } : { type: 'text' }),
         class: ['fc-input', 'inl-input', multiline && 'inl-input-multi'],
         value: asText(field, record[field.attributeId]),
@@ -177,12 +175,15 @@ export function createInlineRows({ fields, items, onChange }) {
           }
         },
       });
-      row.append(el);
-    }
+    };
 
-    // 芯片行排在标量列之后、删除按钮之前(Tab 序:名称 → 熟练度 → 清单 → 删除);
-    // 删除按钮由 CSS 钉在首行末列,不吃 DOM 次序
-    for (const field of tagFields) row.append(buildChips(field));
+    for (const field of scalarFields) row.append(buildText(field));
+
+    // 整宽行(芯片 / 多行文本域)排在标量列之后、删除按钮之前
+    // (Tab 序:名称 → 熟练度 → 清单 → 删除);删除按钮由 CSS 钉在首行末列,不吃 DOM 次序
+    for (const field of fullLineFields) {
+      row.append(field.type === 'tags' ? buildChips(field) : buildText(field));
+    }
 
     row.append(draft ? h('span', { class: 'inl-act' }) : delButton());
     return row;
