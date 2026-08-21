@@ -136,7 +136,7 @@ export default {
   'field.skill.keywords': '技能清单',
   'field.skill.level': '熟练度',
   'field.skill.level.hint': '如：精通 / 熟练 / 了解',
-  'field.skill.keywords.hint': '逗号分隔，如：Java, Go, Kubernetes',
+  'field.tags.hint': '回车或逗号添加',
 
   // ---- 证书/奖项 ----
   'field.certificate.name': '证书名称',
@@ -152,7 +152,7 @@ export default {
   'field.language.language': '语言',
   'field.language.fluency': '熟练程度',
   'field.interest.name': '兴趣',
-  'field.interest.keywords': '关键词（逗号分隔）',
+  'field.interest.keywords': '关键词',
 
   // ---- 志愿/出版/推荐 ----
   'field.volunteer.organization': '组织',

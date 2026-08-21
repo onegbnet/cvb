@@ -364,6 +364,90 @@
   display: block;
 }
 
+/* 删除按钮钉在首行末列 —— 芯片行加进来之后 DOM 次序里它在最后,
+   靠自动排布会掉到芯片行下面再起一行 */
+.inl-row .inl-del,
+.inl-row .inl-act {
+  grid-row: 1;
+  grid-column: -2;
+}
+
+/* ---- tags 字段的芯片行 ----
+   多值清单不挤在列里(行宽 ÷ 列数排不开),自己占整行宽的第二条线。
+   容器打扮成输入框(同 .fc-input 的边框/圆角/底色),芯片沿用快照视图
+   .snapv-tag 的既有形态 —— 不发明新语汇。 */
+.inl-chips {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 3px 8px;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+  cursor: text;
+}
+
+.inl-chips:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+.inl-row-draft .inl-chips {
+  border-style: dashed;
+}
+
+.inl-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.inl-chip-x {
+  display: inline-flex;
+  border: 0;
+  padding: 2px;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.inl-chip-x:hover {
+  color: var(--err);
+}
+
+.inl-chip-x svg {
+  width: 12px;
+  height: 12px;
+}
+
+.inl-chip-in {
+  flex: 1;
+  min-width: 130px;
+  border: 0;
+  padding: 4px;
+  background: none;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.inl-chip-in:focus {
+  outline: none;
+}
+
+.inl-chip-in::placeholder {
+  color: var(--text-secondary);
+}
+
 /* ---- 「管理」抽屉:对整份事实库的操作 ----
    外壳(.drawer-overlay > .drawer)归 ccs overlay 管,这里只管里面的分组。 */
 .drawer:has(.mng) {

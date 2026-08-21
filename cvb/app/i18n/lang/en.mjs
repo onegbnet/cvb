@@ -126,7 +126,7 @@ export default {
   'field.skill.keywords': 'Skills',
   'field.skill.level': 'Level',
   'field.skill.level.hint': 'e.g. Expert / Proficient',
-  'field.skill.keywords.hint': 'Comma separated, e.g. Java, Go, Kubernetes',
+  'field.tags.hint': 'Enter or comma to add',
 
   'field.certificate.name': 'Certificate',
   'field.certificate.issuer': 'Issuer',
@@ -140,7 +140,7 @@ export default {
   'field.language.language': 'Language',
   'field.language.fluency': 'Fluency',
   'field.interest.name': 'Interest',
-  'field.interest.keywords': 'Keywords (comma separated)',
+  'field.interest.keywords': 'Keywords',
 
   'field.volunteer.organization': 'Organization',
   'field.volunteer.position': 'Role',

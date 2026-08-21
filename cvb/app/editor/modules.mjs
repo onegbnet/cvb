@@ -280,11 +280,11 @@ export const MODULES = [
       input('name', 'field.skill.name'),
       input('level', 'field.skill.level', { placeholderKey: 'field.skill.level.hint' }),
       {
-        type: 'lines',
+        // tags 不是 lines:行内是芯片输入,快照视图排成一串小签(两处都按这个类型分派)
+        type: 'tags',
         attributeId: 'keywords',
         labelKey: 'field.skill.keywords',
-        placeholderKey: 'field.skill.keywords.hint',
-        rows: 3,
+        placeholderKey: 'field.tags.hint',
       },
     ],
   },
@@ -351,7 +351,12 @@ export const MODULES = [
     set: (r, items) => ({ ...r, interests: items }),
     fields: [
       input('name', 'field.interest.name'),
-      { type: 'lines', attributeId: 'keywords', labelKey: 'field.interest.keywords', rows: 3 },
+      {
+        type: 'tags',
+        attributeId: 'keywords',
+        labelKey: 'field.interest.keywords',
+        placeholderKey: 'field.tags.hint',
+      },
     ],
   },
 
