@@ -375,21 +375,14 @@
   grid-column: -2;
 }
 
-/* ---- 多值字段的两种控件(行内与重记录表单共用) ----
-   词组数组 → 芯片(chips.mjs);句子数组 → 逐条清单(string-list.mjs)。
-   容器打扮成输入框(同 .fc-input 的边框/圆角/底色),芯片沿用快照视图
-   .snapv-tag 的既有形态 —— 不发明新语汇。 */
+/* ---- 多值字段的两种控件:实现在 ccs(chips / string-list),这里只放 cvb 的覆盖 ----
+   词组数组 → 芯片;句子数组 → 逐条清单(取舍见 CLAUDE.md §3)。
+   逐条清单的每格经 inputClass 挂 .fc-input,本站输入框样式自然生效。 */
 .chips {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  min-height: 34px;
-  padding: 3px 8px;
-  border: 1px solid var(--border-input);
+  /* ccs 缺省用 --border,对白底只有 1.2:1,过不了 WCAG 1.4.11(见 §3.5) */
+  border-color: var(--border-input);
   border-radius: var(--radius-sm);
   background: var(--card-bg);
-  cursor: text;
 }
 
 .chips:focus-within {
@@ -410,85 +403,6 @@
   border-style: dashed;
 }
 
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 4px 2px 8px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  white-space: nowrap;
-}
-
-.chip-x {
-  display: inline-flex;
-  border: 0;
-  padding: 2px;
-  background: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-
-.chip-x:hover {
-  color: var(--err);
-}
-
-.chip-x svg {
-  width: 12px;
-  height: 12px;
-}
-
-.chip-in {
-  flex: 1;
-  min-width: 130px;
-  border: 0;
-  padding: 4px;
-  background: none;
-  font: inherit;
-  font-size: 0.9rem;
-  color: var(--text);
-}
-
-.chip-in:focus {
-  outline: none;
-}
-
-.chip-in::placeholder {
-  color: var(--text-secondary);
-}
-
-/* 逐条清单:每条自己一格,末尾常驻一格空的 —— 条界看得见 */
-.strlist {
-  display: grid;
-  gap: 6px;
-}
-
-.strlist-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 32px;
-  gap: 6px;
-  align-items: start;
-}
-
-.strlist-in {
-  resize: none;
-  overflow: hidden;
-  line-height: 1.5;
-}
-
-.strlist-row-draft .strlist-in {
-  border-style: dashed;
-}
-
-.strlist-del {
-  align-self: center;
-}
-
-.strlist-row-draft .strlist-pad {
-  width: 32px;
-}
 
 /* ---- 「管理」抽屉:对整份事实库的操作 ----
    外壳(.drawer-overlay > .drawer)归 ccs overlay 管,这里只管里面的分组。 */
