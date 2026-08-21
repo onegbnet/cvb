@@ -671,14 +671,17 @@ function markCurrent(key) {
   }
 }
 
-/** 改到一半要离开时问一句(只有重记录编辑器会有未保存内容)。 */
+/**
+ * 改到一半要离开时问一句(只有重记录编辑器会有未保存内容)。
+ * 去处(滚动 + 焦点)由 go 自己负责 —— 各退出路径的目的地不同:
+ * 面包屑/保存/取消回**来处的分节**,点索引去**点的那个分节**。
+ * 这里不许再补一次焦点:曾经补过,把"点索引去乙"的焦点抢回了甲,
+ * 视口在乙、读屏在甲。
+ */
 function leaveRecord(go) {
-  const from = openRecord && openRecord.moduleKey;
   const done = () => {
     openRecord = null;
     go();
-    // 回到文档面时把焦点送回刚才那一段,别让键盘用户从页首重来
-    if (from) focusAfterSwap(document.querySelector(`#m-${from} .blk-title`));
   };
   if (!hasPendingEdit()) {
     done();
@@ -745,7 +748,13 @@ function buildRecordEditor() {
   const items = module.get(state.config);
   const isNew = openRecord.index === -1;
   const value = isNew ? {} : items[openRecord.index] || {};
-  const back = () => leaveRecord(renderDoc);
+  // 退出一律滚回来处的分节 —— 编辑器把文档整块换掉过,滚动位置早就不在了;
+  // 光把焦点送回去(preventScroll)人看到的还是页顶(2026-08-21 用户报出)。
+  const backToSection = () => {
+    renderDoc();
+    scrollToModule(module.key);
+  };
+  const back = () => leaveRecord(backToSection);
 
   const form = createFormCreator({
     fields: getModuleFields(module, state.config),
@@ -758,12 +767,12 @@ function buildRecordEditor() {
       const hasPresent = getModuleFields(module, state.config).some((f) => f.presentKey);
       updateConfigTo(module.set(state.config, sortByDateDesc(next, { hasPresent })));
       openRecord = null;
-      renderDoc();
+      backToSection();
       window.Toast && window.Toast.ok(tr('editor.savedOne'));
     },
     onCancel: () => {
       openRecord = null;
-      renderDoc();
+      backToSection();
     },
   });
   pendingEls.push(form);
