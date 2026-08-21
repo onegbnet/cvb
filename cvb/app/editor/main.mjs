@@ -862,6 +862,10 @@ function renderDoc() {
     const editor = buildRecordEditor();
     docEl.append(editor);
     renderIndex();
+    // 进编辑器也是"换面",从面的开头看起:文档面的滚动位置会原样留下来,
+    // 表单够高时人一进来看到的是中下段的日期字段而不是标题(2026-08-21 用户报出)。
+    // 瞬移,理由同 scrollToModule 的还原那档;焦点是 preventScroll 的,救不了视口。
+    window.scrollTo({ top: 0, behavior: 'auto' });
     focusAfterSwap(editor.querySelector('.rec-editor-title'));
     return;
   }
