@@ -77,10 +77,6 @@
   height: 20px;
 }
 
-.hm-facts-state {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
 
 .hm-facts-row {
   display: grid;

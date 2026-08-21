@@ -83,20 +83,18 @@ const factCount = (module, config) => {
 /**
  * 「编辑事实」卡 = 入口 + 事实库一览(2026-08-21 用户裁定合并:芯片本来就
  * 逐格深链进编辑器,单独一张「编辑事实」卡只剩一个链接和一个总数,是冗余)。
- * 卡头(记号 + 标题 + N 条记录)整行是进 /edit 的链接;
+ * 卡头(记号 + 标题)整行是进 /edit 的链接;
  * 芯片照旧:每个分节一枚计数芯片,点了**直接跳进编辑器对应分节**(锚点 #m-<key>)——
  * 比"先进编辑器再找分节"少一步。有内容的实心,空的淡:**空不等于缺**,不做评判。
  */
 const buildEditCard = (config) => {
-  const totalRecords = SECTIONS.flatMap((sec) => sectionModules(sec.id))
-    .filter((m) => m.kind === 'list')
-    .reduce((sum, m) => sum + factCount(m, config), 0);
+  // 卡头不带总数:12 个集合的条目加成一个数没有语义,各分节的真实计数
+  // 就在下面的芯片上(2026-08-21 用户看到「21 条记录」问"是什么",当天删)
   const head = h(
     'a',
     { class: 'hm-facts-head', href: '/edit' },
     h('span', { class: 'hm-entry-mark' }),
-    h('h2', { class: 'hm-h' }, tr('home.edit.title')),
-    h('span', { class: 'hm-facts-state' }, tr('home.edit.state').replace('{n}', String(totalRecords)))
+    h('h2', { class: 'hm-h' }, tr('home.edit.title'))
   );
   // 内联 SVG 走 innerHTML:标是我们自己写死的常量,不含任何外部输入
   head.querySelector('.hm-entry-mark').innerHTML = MARK_EDIT;

@@ -9,7 +9,6 @@ export default {
   "app.homeTitle": "CV Builder — 工作台",
   "home.who.unnamed": "还没填姓名",
   "home.who.lastModified": "上次修改",
-  "home.edit.state": "{n} 条记录",
   "home.apply.state": "选模板,用 {latex} 引擎编译出 PDF",
   "home.edit.title": "编辑事实",
   "home.apply.title": "生成简历",

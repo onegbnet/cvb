@@ -8,7 +8,6 @@ export default {
   "app.homeTitle": "CV Builder — Workbench",
   "home.who.unnamed": "No name yet",
   "home.who.lastModified": "Last edited",
-  "home.edit.state": "{n} records",
   "home.apply.state": "Pick a template, compile a PDF with {latex}",
   "home.edit.title": "Edit the facts",
   "home.apply.title": "Generate a resume",
