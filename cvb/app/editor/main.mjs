@@ -25,6 +25,7 @@ import {
   redirectToUnlock,
 } from '../lib/api.mjs';
 import { buildFactsBar, openAddLangDialog, factsLangName } from './facts-bar.mjs';
+import { factsLangOfUi, uiLangForFacts as uiForFacts } from '../lib/lang-names.mjs';
 import { SECTIONS, sectionModules, MODULES, getModuleFields, getModuleName, moduleIssues } from './modules.mjs';
 import { confirmAction } from '../lib/confirm.mjs';
 import { adoptThemeToggle } from '../lib/theme.mjs';
@@ -60,9 +61,7 @@ let langsInfo = { source: 'zh', langs: [] };
 // 主动切换文档/语言时置真 —— 自家闸门已经问过了,别让 beforeunload 再拦一道
 let bypassUnloadGuard = false;
 
-/** 事实语言 → 界面语言(zh→zh-cn、en→en);没有对应界面包回 null(界面不动)。 */
-const uiLangForFacts = (code) =>
-  SUPPORTED_LANGS.find((l) => l === code || l.startsWith(`${code}-`)) || null;
+
 
 let saveTimer = null;
 let retryDelay = 0;
@@ -1031,15 +1030,21 @@ async function main() {
   try {
     langsInfo = await listFactsLangs();
   } catch { /* 语言清单取不到就按单语世界画,编辑照常 */ }
+  // 缺省文档跟随界面语言(全站一个语言概念):界面语言对应的语种有事实就开它,
+  // 没有才回真相源 —— 从首页点进来的就是刚才看的那份。?flang= 显式指定仍最优先。
+  //(/api/resume 不带参数 = 真相源的生成侧契约不受此影响,这只是编辑器选开哪份)
   const requestedFlang = params.get('flang');
+  const uiPrimary = factsLangOfUi(getLanguage());
   factsLang =
     requestedFlang && langsInfo.langs.some((l) => l.lang === requestedFlang)
       ? requestedFlang
-      : langsInfo.source;
+      : langsInfo.langs.some((l) => l.lang === uiPrimary)
+        ? uiPrimary
+        : langsInfo.source;
 
   // 界面语言跟着事实语言走:深链接(?flang=en 而 cookie 还是中文)在这儿对齐 ——
-  // 落偏好后原地重开一次;重开后两者相等,不会循环
-  const uiWanted = uiLangForFacts(factsLang);
+  // 落偏好后原地重开一次;重开后两者同族,不会循环
+  const uiWanted = uiForFacts(factsLang, getLanguage(), SUPPORTED_LANGS);
   if (uiWanted && uiWanted !== getLanguage()) {
     await setLanguagePref(uiWanted);
     bypassUnloadGuard = true;
@@ -1114,8 +1119,9 @@ async function switchFactsLang(code) {
     }
   }
   bypassUnloadGuard = true;
-  // 界面语言跟着事实语言走:有对应界面包就先落偏好,重开后整页(含 ccs 组件文案)都是那门语言
-  const ui = uiLangForFacts(code);
+  // 界面语言跟着事实语言走:有对应界面包就先落偏好,重开后整页(含 ccs 组件文案)都是那门语言。
+  // 同族变体不折腾(zh-tw 看 zh 事实不会被掰成 zh-cn)—— uiLangForFacts 已按主子标签比
+  const ui = uiForFacts(code, getLanguage(), SUPPORTED_LANGS);
   if (ui && ui !== getLanguage()) await setLanguagePref(ui);
   const next = new URL(location.href);
   next.searchParams.set('flang', code);
@@ -1150,7 +1156,7 @@ async function deleteCurrentFactsLang() {
     return false;
   }
   bypassUnloadGuard = true;
-  const ui = uiLangForFacts(langsInfo.source);
+  const ui = uiForFacts(langsInfo.source, getLanguage(), SUPPORTED_LANGS);
   if (ui && ui !== getLanguage()) await setLanguagePref(ui);
   const next = new URL(location.href);
   next.searchParams.delete('flang');

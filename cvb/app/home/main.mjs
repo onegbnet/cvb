@@ -22,10 +22,11 @@
 // 从「查看历史」里继续才是追加版本 —— 所以这几个口子必须在入口就分开,不是装饰。
 // 「查看历史」等投递记录落地后再加,不提前画一个点不动的按钮。
 import { h, clear } from '../lib/dom.mjs';
-import { tr, getLanguage, switchLanguage, SUPPORTED_LANGS } from '../lib/i18n.mjs';
-import { UI_LANG_NAMES } from '../lib/lang-names.mjs';
+import { tr, getLanguage, setLanguagePref, SUPPORTED_LANGS } from '../lib/i18n.mjs';
+import { factsLangOfUi, uiLangForFacts } from '../lib/lang-names.mjs';
+import { factsLangName } from '../editor/facts-bar.mjs';
 import { adoptThemeToggle } from '../lib/theme.mjs';
-import { fetchResume, isUnauthorized, redirectToUnlock } from '../lib/api.mjs';
+import { fetchResume, listFactsLangs, isUnauthorized, redirectToUnlock } from '../lib/api.mjs';
 import { normalizeResume } from '../lib/schema.mjs';
 import { SECTIONS, sectionModules, getModuleName } from '../editor/modules.mjs';
 import { MARK_EDIT, MARK_GENERATE } from './marks.mjs';
@@ -146,7 +147,7 @@ const entry = ({ href, mark, title, state, note }) => {
 };
 
 /** 页眉:与 /edit、/apply 同一形态(.app-header)—— 首页此前没有,语言切换孤零零挂在页脚。 */
-function buildHeader() {
+function buildHeader(langsInfo, displayLang) {
   // 应用名左侧一枚图标,照 tinycfw 诸 app 的 .logo-icon:渐变圆角方块 + 白色线性字形。
   // 字形与 favicon 同一枚(页上一枚人像);装饰性节点,读屏跳过。
   const logo = h('span', { class: 'home-logo', 'aria-hidden': 'true' });
@@ -162,17 +163,23 @@ function buildHeader() {
     h(
       'span',
       { class: 'header-actions' },
-      // 20 门语言两枚字排不下 —— 照 ccs i18n-engine 的官方清单做成选择器,选项用自名
+      // **全站一个语言概念:事实语言**(2026-08-22 用户报出错配后统一到底)。
+      // 这里列的是**已有事实的语种**(与 /edit 文档栏同一份清单),切了 =
+      // 换看哪份事实 + 界面跟着走;想要新语言的界面,先去 /edit 添加那门语言的事实。
       h(
         'select',
         {
           class: 'lang-select',
           title: tr('editor.langSwitchHint'),
           'aria-label': tr('editor.langSwitchHint'),
-          onChange: (e) => switchLanguage(e.target.value),
+          onChange: async (e) => {
+            const ui = uiLangForFacts(e.target.value, lang, SUPPORTED_LANGS);
+            if (ui && ui !== lang) await setLanguagePref(ui);
+            window.location.reload();
+          },
         },
-        SUPPORTED_LANGS.map((code) =>
-          h('option', { value: code, selected: code === lang }, UI_LANG_NAMES[code] || code)
+        langsInfo.langs.map(({ lang: code }) =>
+          h('option', { value: code, selected: code === displayLang }, factsLangName(code))
         )
       ),
       adoptThemeToggle()
@@ -192,12 +199,12 @@ const buildWho = (config) => {
   );
 };
 
-function render(config) {
+function render(config, langsInfo, displayLang) {
   const root = document.getElementById('app');
   clear(root);
 
   root.append(
-    buildHeader(),
+    buildHeader(langsInfo, displayLang),
     h(
       'main',
       { class: 'hm' },
@@ -221,9 +228,30 @@ function render(config) {
 }
 
 async function main() {
+  // 首页显示哪份事实 = 界面语言对应的语种(存在时),否则真相源 ——
+  // 不存在时把界面吸附回真相源的语言:「日语界面看着中文事实」那个错配态
+  // 不再可能停留(2026-08-22 用户报出)。
+  let langsInfo = { source: 'zh', langs: [{ lang: 'zh' }] };
+  try {
+    langsInfo = await listFactsLangs();
+  } catch (err) {
+    if (isUnauthorized(err)) {
+      redirectToUnlock();
+      return;
+    }
+  }
+  const uiPrimary = factsLangOfUi(lang);
+  const displayLang = langsInfo.langs.some((l) => l.lang === uiPrimary) ? uiPrimary : langsInfo.source;
+  const uiWanted = uiLangForFacts(displayLang, lang, SUPPORTED_LANGS);
+  if (uiWanted && uiWanted !== lang) {
+    await setLanguagePref(uiWanted);
+    window.location.reload();
+    return;
+  }
+
   let config;
   try {
-    config = normalizeResume(await fetchResume());
+    config = normalizeResume(await fetchResume(displayLang));
   } catch (err) {
     if (isUnauthorized(err)) {
       redirectToUnlock();
@@ -232,7 +260,7 @@ async function main() {
     // 取不到就按空的画 —— 入口照样能用,不能因为读不到状态就把整页卡住
     config = normalizeResume(null);
   }
-  render(config);
+  render(config, langsInfo, displayLang);
 }
 
 main();

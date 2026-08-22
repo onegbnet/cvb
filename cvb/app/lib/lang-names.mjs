@@ -23,3 +23,15 @@ export const UI_LANG_NAMES = {
   he: 'עברית',
   ar: 'العربية',
 };
+
+/** 界面语言 → 事实语言(主语言子标签):zh-cn/zh-tw → zh。 */
+export const factsLangOfUi = (uiLang) => String(uiLang || '').split('-')[0];
+
+/**
+ * 事实语言 → 界面语言。同族变体不折腾:当前界面已是该族(zh-tw 看 zh 事实)就保持;
+ * 否则取官方清单里第一个匹配(zh → zh-cn)。没有界面包回 null(界面不动)。
+ */
+export const uiLangForFacts = (code, currentUi, supported) => {
+  if (factsLangOfUi(currentUi) === code) return currentUi;
+  return supported.find((l) => l === code || l.startsWith(`${code}-`)) || null;
+};
