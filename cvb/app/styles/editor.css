@@ -1162,3 +1162,12 @@
   justify-content: flex-end;
   gap: 8px;
 }
+
+/* 删语种的三选项行:形态同 .ovw-actions,类分开 —— 共用类会让探针一次选中两个框的按钮 */
+.fdel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}

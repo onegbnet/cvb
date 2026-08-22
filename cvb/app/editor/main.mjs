@@ -275,9 +275,16 @@ function confirmOverwrite({ title, note, incoming, raw, apply }) {
   );
 
   // 差异表 + 「这些留不住」两栏并排,440px 装不下 —— 要一档宽的
-  const handle = window.Overlay.show({ variant: 'box', title, body, width: 'wide' });
+  // ESC / 点幕布关框也要 settle —— 不然这个 Promise 悬着,调用方永远等不完。
+  // run() 自己也会 close(先于 apply),所以 onClose 只兜「没按选项就关掉」的那条路
+  let chosen = false;
+  const handle = window.Overlay.show({
+    variant: 'box', title, body, width: 'wide',
+    onClose: () => { if (!chosen) settle(false); },
+  });
 
   const run = async (snapshot) => {
+    chosen = true;
     handle.close();
     if (!(await guardOverwrite())) {
       settle(false);
@@ -1165,13 +1172,46 @@ async function makeCurrentFactsSource() {
   return true;
 }
 
-/** 删除当前语种版本(仅非真相源;快照留着,可由恢复再立起来)。 */
+/** 删除当前语种版本(仅非真相源;既有快照留着,可由恢复再立起来)。
+ *  留不留「删除保护」快照是个决定,决定摆成按钮(同整份覆盖的三选项,不是勾选框):
+ *  「删除前创建快照」(重点色)/「直接删除」/「取消」。选了留就留不成不删 ——
+ *  服务端 put 在删行之前,失败整个请求失败。 */
 async function deleteCurrentFactsLang() {
   const name = factsLangName(factsLang);
-  const ok = await confirmAction(tr('facts.delete.confirm').replace('{name}', name));
-  if (!ok) return false;
+  const choice = await new Promise((resolve) => {
+    let chosen = '';
+    const body = h(
+      'div',
+      { class: 'ovw-confirm' },
+      h('p', { class: 'ovw-note' }, tr('facts.delete.confirm').replace('{name}', name))
+    );
+    // 走 Overlay.show + 自建按钮行(同 confirmOverwrite),不走 Overlay.confirm ——
+    // 后者的 doAction 契约踩过(§9);按钮行用自己的类,别蹭 .ovw-actions(§3 导入框的教训)
+    const handle = window.Overlay.show({
+      variant: 'box',
+      title: tr('facts.delete'),
+      body,
+      onClose: () => resolve(chosen || 'cancel'),
+    });
+    const pick = (v) => { chosen = v; handle.close(); };
+    body.append(
+      h(
+        'div',
+        { class: 'fdel-actions' },
+        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('cancel') }, tr('action.cancel')),
+        // 「直接删除」不加重点色:能选,但不该是默认那一档
+        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('direct') }, tr('facts.delete.direct')),
+        h(
+          'button',
+          { type: 'button', class: 'btn btn-small btn-accent', onClick: () => pick('snapshot') },
+          tr('facts.delete.withSnapshot')
+        )
+      )
+    );
+  });
+  if (choice === 'cancel') return false;
   try {
-    await deleteFactsLang(factsLang);
+    await deleteFactsLang(factsLang, { snapshot: choice === 'snapshot' });
   } catch (err) {
     window.Toast && window.Toast.err(String(err.message || err));
     return false;

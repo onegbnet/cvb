@@ -66,7 +66,10 @@ export function createSnapshots({ lang, factsLang, onRestore }) {
       // **默认名字就是时间戳**(覆盖前自动留的那几份再缀一句「覆盖保护」)——
       // 此前是「时间」「副标题」两栏并排,而绝大多数快照的副标题是空的:
       // 两栏各占地方,一栏还常年没内容。合成一个可改的名字,行短一半。
-      const kindLabel = s.kind ? tr('snapshot.autoKind') : '';
+      // 「覆盖保护」(恢复/导入前自动留)与「删除保护」(删语种前按选项留)分开说 ——
+      // 一个词说不清两种来历
+      const kindLabel =
+        s.kind === 'before-delete' ? tr('snapshot.autoKindDelete') : s.kind ? tr('snapshot.autoKind') : '';
       // 括号形制随语言(中文全角、拉丁半角),模板住语言表,别写死在这里
       const defaultLabel = kindLabel
         ? tr('snapshot.autoName').replace('{name}', stamp).replace('{kind}', kindLabel)
