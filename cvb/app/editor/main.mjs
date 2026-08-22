@@ -543,7 +543,7 @@ function buildExportButton() {
 
 function buildHeader() {
   // 这一页没有独立的界面语言切换:界面语言跟着文档栏的事实语言走(见 factsLang 注释)。
-  // 首页与 /apply 的页眉照旧有 —— 那两页没有事实轴。
+  // 首页的选择器列的也是事实语种(全站一个语言概念);/apply 只有主题开关。
   return h(
     'header',
     { class: 'app-header' },
