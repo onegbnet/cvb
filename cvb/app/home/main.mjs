@@ -178,7 +178,8 @@ function buildHeader(langsInfo, displayLang) {
             window.location.reload();
           },
         },
-        langsInfo.langs.map(({ lang: code }) =>
+        // 空库时真相源虚拟在场(同 /edit 文档栏)—— 零选项的空选择器是错的
+        (langsInfo.langs.length ? langsInfo.langs : [{ lang: langsInfo.source }]).map(({ lang: code }) =>
           h('option', { value: code, selected: code === displayLang }, factsLangName(code))
         )
       ),

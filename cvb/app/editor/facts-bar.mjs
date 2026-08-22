@@ -31,11 +31,14 @@ export const factsLangName = (code) => FACTS_LANG_NAMES[code] || code;
  * @param {() => void} opts.onAdd
  */
 export function buildFactsBar({ langsInfo, current, onSwitch, onAdd }) {
+  // 空库(一份事实都没有)时真相源虚拟在场:你正在编辑的就是它,
+  // 第一笔保存才建行 —— 栏上不显示会像"没在编辑任何文档"
+  const langs = langsInfo.langs.length ? langsInfo.langs : [{ lang: langsInfo.source }];
   return h(
     'div',
     { class: 'facts-bar' },
     h('span', { class: 'facts-bar-label' }, tr('facts.bar.label')),
-    langsInfo.langs.map(({ lang }) =>
+    langs.map(({ lang }) =>
       h(
         'button',
         {
