@@ -32,14 +32,19 @@ export function buildLocalizedPath(page, extraQuery = {}) {
   return search ? `${page}?${search}` : page;
 }
 
+/** 只写偏好 cookie,不重载 —— 调用方自己决定去哪(切事实语言时要带着 ?flang= 走)。 */
+export async function setLanguagePref(nextLang) {
+  await fetch('/api/prefs', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ lang: nextLang }),
+  });
+}
+
 export async function switchLanguage(nextLang) {
   if (nextLang === getLanguage()) return;
   try {
-    await fetch('/api/prefs', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lang: nextLang }),
-    });
+    await setLanguagePref(nextLang);
   } finally {
     window.location.reload();
   }

@@ -3,7 +3,7 @@
 // 重记录 = 一行一条的列表,打开则整块换成那条记录的编辑器。**一条记录一次保存。**
 import { h, clear } from '../lib/dom.mjs';
 import { icon } from '../lib/icons.mjs';
-import { tr, getLanguage, buildLocalizedPath, switchLanguage } from '../lib/i18n.mjs';
+import { tr, getLanguage, buildLocalizedPath, setLanguagePref, SUPPORTED_LANGS } from '../lib/i18n.mjs';
 import {
   loadDefaultResumeConfig,
   normalizeResume,
@@ -48,12 +48,21 @@ const state = {
 
 // ---- 多语种事实(2026-08-22)----
 // factsLang = 当前打开的**事实语言**(文档身份,由 ?flang= 定,缺省真相源)。
-// 它与界面语言正交:界面语言管标签用什么语言念,factsLang 管你在编辑哪份文档。
 // 所有落库(flushSave / 快照)都按它走;`/apply` 与生成侧不带参数,永远拿真相源。
+//
+// **这一页界面语言跟着事实语言走**(2026-08-22 用户裁定统一:写某语种事实的人
+// 必然有那门语言的熟练度,拿 A 语言界面编辑 B 语言事实才怪异)。于是 /edit 上
+// 只有文档栏一个语言控件,页眉不再放界面语言切换;打开哪份文档,界面就切到
+// 对应语言。**没有对应界面包的语种界面保持不变** —— 不假装有,等 §5 那条路
+// 补上那门语言的界面包,耦合自动成立。
 let factsLang = null;
 let langsInfo = { source: 'zh', langs: [] };
 // 主动切换文档/语言时置真 —— 自家闸门已经问过了,别让 beforeunload 再拦一道
 let bypassUnloadGuard = false;
+
+/** 事实语言 → 界面语言(zh→zh-cn、en→en);没有对应界面包回 null(界面不动)。 */
+const uiLangForFacts = (code) =>
+  SUPPORTED_LANGS.find((l) => l === code || l.startsWith(`${code}-`)) || null;
 
 let saveTimer = null;
 let retryDelay = 0;
@@ -532,14 +541,8 @@ function buildExportButton() {
 // ---- 头部 ----
 
 function buildHeader() {
-  const langSwitcher = h(
-    'div',
-    { class: 'language-switcher', title: tr('editor.langSwitchHint') },
-    h('span', { class: ['lang', lang === 'zh-cn' && 'active'], onClick: () => switchLanguage('zh-cn') }, '中'),
-    h('span', { class: 'divider' }, '/'),
-    h('span', { class: ['lang', lang === 'en' && 'active'], onClick: () => switchLanguage('en') }, 'En')
-  );
-
+  // 这一页没有独立的界面语言切换:界面语言跟着文档栏的事实语言走(见 factsLang 注释)。
+  // 首页与 /apply 的页眉照旧有 —— 那两页没有事实轴。
   return h(
     'header',
     { class: 'app-header' },
@@ -588,7 +591,6 @@ function buildHeader() {
         icon('document'),
         ` ${tr('action.generate')}`
       ),
-      langSwitcher,
       // ccs theme 模块的按钮**先住在静态 HTML 里**(那个 IIFE 在脚本解析时就找它,
       // 而页眉是 JS 渲染的)。这里把节点搬进来 —— 搬动不丢监听器。
       adoptThemeToggle()
@@ -1035,6 +1037,16 @@ async function main() {
       ? requestedFlang
       : langsInfo.source;
 
+  // 界面语言跟着事实语言走:深链接(?flang=en 而 cookie 还是中文)在这儿对齐 ——
+  // 落偏好后原地重开一次;重开后两者相等,不会循环
+  const uiWanted = uiLangForFacts(factsLang);
+  if (uiWanted && uiWanted !== getLanguage()) {
+    await setLanguagePref(uiWanted);
+    bypassUnloadGuard = true;
+    location.reload();
+    return;
+  }
+
   let config = await fetchResume(factsLang);
   config = normalizeResume(config || (await loadDefaultResumeConfig()));
 
@@ -1102,6 +1114,9 @@ async function switchFactsLang(code) {
     }
   }
   bypassUnloadGuard = true;
+  // 界面语言跟着事实语言走:有对应界面包就先落偏好,重开后整页(含 ccs 组件文案)都是那门语言
+  const ui = uiLangForFacts(code);
+  if (ui && ui !== getLanguage()) await setLanguagePref(ui);
   const next = new URL(location.href);
   next.searchParams.set('flang', code);
   next.hash = '';
@@ -1135,6 +1150,8 @@ async function deleteCurrentFactsLang() {
     return false;
   }
   bypassUnloadGuard = true;
+  const ui = uiLangForFacts(langsInfo.source);
+  if (ui && ui !== getLanguage()) await setLanguagePref(ui);
   const next = new URL(location.href);
   next.searchParams.delete('flang');
   next.hash = '';
