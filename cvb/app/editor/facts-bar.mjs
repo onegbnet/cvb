@@ -31,9 +31,10 @@ export const factsLangName = (code) => FACTS_LANG_NAMES[code] || code;
  * @param {() => void} opts.onAdd
  */
 export function buildFactsBar({ langsInfo, current, onSwitch, onAdd }) {
-  // 空库(一份事实都没有)时真相源虚拟在场:你正在编辑的就是它,
-  // 第一笔保存才建行 —— 栏上不显示会像"没在编辑任何文档"
-  const langs = langsInfo.langs.length ? langsInfo.langs : [{ lang: langsInfo.source }];
+  // 空库(一份事实都没有)时**当前编辑的语种**虚拟在场:第一笔保存才建行并
+  // 确立真相源 —— 栏上不显示会像"没在编辑任何文档"
+  const langs = langsInfo.langs.length ? langsInfo.langs : [{ lang: current }];
+  const sourceLang = langsInfo.source || (langsInfo.langs.length ? null : current);
   return h(
     'div',
     { class: 'facts-bar' },
@@ -48,7 +49,7 @@ export function buildFactsBar({ langsInfo, current, onSwitch, onAdd }) {
           onClick: () => lang !== current && onSwitch(lang),
         },
         factsLangName(lang),
-        lang === langsInfo.source ? h('span', { class: 'facts-source-tag' }, tr('facts.source.tag')) : null
+        lang === sourceLang ? h('span', { class: 'facts-source-tag' }, tr('facts.source.tag')) : null
       )
     ),
     h('button', { type: 'button', class: 'facts-lang facts-lang-add', onClick: onAdd }, `＋ ${tr('facts.add')}`)

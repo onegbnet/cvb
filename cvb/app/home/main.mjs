@@ -178,8 +178,8 @@ function buildHeader(langsInfo, displayLang) {
             window.location.reload();
           },
         },
-        // 空库时真相源虚拟在场(同 /edit 文档栏)—— 零选项的空选择器是错的
-        (langsInfo.langs.length ? langsInfo.langs : [{ lang: langsInfo.source }]).map(({ lang: code }) =>
+        // 空库时当前语种虚拟在场(同 /edit 文档栏)—— 零选项的空选择器是错的
+        (langsInfo.langs.length ? langsInfo.langs : [{ lang: displayLang }]).map(({ lang: code }) =>
           h('option', { value: code, selected: code === displayLang }, factsLangName(code))
         )
       ),
@@ -232,7 +232,7 @@ async function main() {
   // 首页显示哪份事实 = 界面语言对应的语种(存在时),否则真相源 ——
   // 不存在时把界面吸附回真相源的语言:「日语界面看着中文事实」那个错配态
   // 不再可能停留(2026-08-22 用户报出)。
-  let langsInfo = { source: 'zh', langs: [{ lang: 'zh' }] };
+  let langsInfo = { source: null, langs: [] };
   try {
     langsInfo = await listFactsLangs();
   } catch (err) {
@@ -242,7 +242,10 @@ async function main() {
     }
   }
   const uiPrimary = factsLangOfUi(lang);
-  const displayLang = langsInfo.langs.some((l) => l.lang === uiPrimary) ? uiPrimary : langsInfo.source;
+  // 空库沿用当前界面语言(真相源由第一笔事实确立,没有"缺省中文")
+  const displayLang = langsInfo.langs.some((l) => l.lang === uiPrimary)
+    ? uiPrimary
+    : langsInfo.source || uiPrimary;
   const uiWanted = uiLangForFacts(displayLang, lang, SUPPORTED_LANGS);
   if (uiWanted && uiWanted !== lang) {
     await setLanguagePref(uiWanted);

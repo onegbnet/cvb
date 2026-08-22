@@ -57,7 +57,8 @@ const state = {
 // 对应语言。**没有对应界面包的语种界面保持不变** —— 不假装有,等 §5 那条路
 // 补上那门语言的界面包,耦合自动成立。
 let factsLang = null;
-let langsInfo = { source: 'zh', langs: [] };
+// source 为 null = 空库,真相源尚未确立(由第一笔事实确立;见 worker)
+let langsInfo = { source: null, langs: [] };
 // 主动切换文档/语言时置真 —— 自家闸门已经问过了,别让 beforeunload 再拦一道
 let bypassUnloadGuard = false;
 
@@ -1040,7 +1041,9 @@ async function main() {
       ? requestedFlang
       : langsInfo.langs.some((l) => l.lang === uiPrimary)
         ? uiPrimary
-        : langsInfo.source;
+        // 空库(source=null)沿用当前界面语言:泰语浏览器的新站就从泰语事实开写,
+        // 第一笔保存确立它为真相源 —— 没有任何"缺省中文"
+        : langsInfo.source || uiPrimary;
 
   // 界面语言跟着事实语言走:深链接(?flang=en 而 cookie 还是中文)在这儿对齐 ——
   // 落偏好后原地重开一次;重开后两者同族,不会循环
