@@ -32,7 +32,7 @@ const when = (iso, lang) => {
  * @param {(key: string) => Promise<boolean>} opts.onRestore 点了"恢复"——**确认与执行都在上层**
  *   (它握着 state 与未保存闸门);resolve true 表示覆盖真的发生了
  */
-export function createSnapshots({ lang, onRestore }) {
+export function createSnapshots({ lang, factsLang, onRestore }) {
   const root = h('div', { class: 'snap' });
   const listEl = h('div', { class: 'snap-list' });
   const noteEl = h('input', {
@@ -50,7 +50,7 @@ export function createSnapshots({ lang, onRestore }) {
     listEl.append(h('p', { class: 'snap-empty' }, tr('snapshot.loading')));
     let snapshots = [];
     try {
-      ({ snapshots } = await listSnapshots());
+      ({ snapshots } = await listSnapshots(factsLang));
     } catch (err) {
       clear(listEl);
       listEl.append(h('p', { class: 'snap-empty' }, String(err.message || err)));
@@ -175,7 +175,7 @@ export function createSnapshots({ lang, onRestore }) {
           class: 'btn',
           onClick: async () => {
             try {
-              await createSnapshot(noteEl.value.trim());
+              await createSnapshot(noteEl.value.trim(), '', factsLang);
               noteEl.value = '';
               toast(true, tr('snapshot.created'));
               refresh();

@@ -28,6 +28,70 @@
   padding: 24px 20px 64px;
 }
 
+/* ---- 事实语言的文档栏(facts-bar.mjs)----
+   与页眉的界面语言切换是两个正交轴:这条栏是**文档身份**(在编辑哪份语言的事实),
+   语言名用自名(中文/English)自我标识,栏标签才随界面语言走。 */
+.facts-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  max-width: var(--max-width);
+  margin: 0 auto 14px;
+}
+
+.facts-bar-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.facts-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.facts-lang:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.facts-lang.is-current {
+  border-color: var(--accent);
+  color: var(--accent);
+  cursor: default;
+}
+
+.facts-source-tag {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.facts-lang-add {
+  border-style: dashed;
+  color: var(--text-secondary);
+}
+
+.facts-add-note {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.facts-add-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
 .editor-content {
   display: grid;
   grid-template-columns: 180px minmax(0, 1fr);

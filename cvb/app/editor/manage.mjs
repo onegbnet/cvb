@@ -17,7 +17,7 @@ import { createSnapshots } from './snapshots.mjs';
  * @param {() => Node} opts.exportControl  导出
  * @param {(key: string) => Promise<boolean>} opts.onRestore 点了"恢复"——由上层确认并执行
  */
-export function openManageDrawer({ lang, importControl, exportControl, onRestore }) {
+export function openManageDrawer({ lang, factsLang, factsSource, importControl, exportControl, onRestore, onDeleteLang }) {
   if (!window.Overlay || typeof window.Overlay.show !== 'function') return null;
 
   // **不配说明句**:「导入」「导出」「快照」这几个词自己说得清,
@@ -58,6 +58,7 @@ export function openManageDrawer({ lang, importControl, exportControl, onRestore
       'snapshot.title',
       createSnapshots({
         lang,
+        factsLang,
         // 恢复成功了这个抽屉就该让路 —— 文档已经整份换过,再压着它没有意义
         onRestore: async (key) => {
           const ok = await onRestore(key);
@@ -65,7 +66,30 @@ export function openManageDrawer({ lang, importControl, exportControl, onRestore
           return ok;
         },
       })
-    )
+    ),
+    // 当前打开的是非真相源语种时,多一块「语言版本」:删除当前语种(真相源不可删,
+    // 所以真相源下这一块整个不出现 —— 不摆一个永远禁用的按钮)
+    factsLang && factsSource && factsLang !== factsSource && typeof onDeleteLang === 'function'
+      ? group(
+          'facts.group',
+          h(
+            'div',
+            { class: 'mng-row' },
+            h(
+              'button',
+              {
+                type: 'button',
+                class: 'btn',
+                onClick: async () => {
+                  const ok = await onDeleteLang();
+                  if (ok) handle && handle.close();
+                },
+              },
+              tr('facts.delete')
+            )
+          )
+        )
+      : null
   );
 
   const handle = window.Overlay.show({

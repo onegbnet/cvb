@@ -18,9 +18,13 @@ import {
   createSnapshot,
   fetchSnapshotConfig,
   restoreSnapshot,
+  listFactsLangs,
+  createFactsLang,
+  deleteFactsLang,
   isUnauthorized,
   redirectToUnlock,
 } from '../lib/api.mjs';
+import { buildFactsBar, openAddLangDialog, factsLangName } from './facts-bar.mjs';
 import { SECTIONS, sectionModules, MODULES, getModuleFields, getModuleName, moduleIssues } from './modules.mjs';
 import { confirmAction } from '../lib/confirm.mjs';
 import { adoptThemeToggle } from '../lib/theme.mjs';
@@ -41,6 +45,15 @@ const SAVE_DEBOUNCE_MS = 600;
 const state = {
   config: null,
 };
+
+// ---- 多语种事实(2026-08-22)----
+// factsLang = 当前打开的**事实语言**(文档身份,由 ?flang= 定,缺省真相源)。
+// 它与界面语言正交:界面语言管标签用什么语言念,factsLang 管你在编辑哪份文档。
+// 所有落库(flushSave / 快照)都按它走;`/apply` 与生成侧不带参数,永远拿真相源。
+let factsLang = null;
+let langsInfo = { source: 'zh', langs: [] };
+// 主动切换文档/语言时置真 —— 自家闸门已经问过了,别让 beforeunload 再拦一道
+let bypassUnloadGuard = false;
 
 let saveTimer = null;
 let retryDelay = 0;
@@ -80,7 +93,7 @@ const flushSave = async () => {
     // **只作用在发出去的那一份,不回写 state.config**:stampMeta 会剔掉空值
     //(标准给 email/url 标了 format,空串过不了官方校验器),而正在编辑的对象
     // 需要保留骨架 —— 把 `profiles: []`、`location: {}` 这类剔掉,界面下一次渲染就炸。
-    await saveResume(stampMeta(state.config));
+    await saveResume(stampMeta(state.config), factsLang);
     saveState.dirty = false;
     saveState.error = '';
     retryDelay = 0;
@@ -304,7 +317,7 @@ function confirmImport(incoming, raw) {
     apply: async ({ snapshot }) => {
       if (snapshot) {
         try {
-          await createSnapshot('', 'before-import');
+          await createSnapshot('', 'before-import', factsLang);
         } catch (err) {
           // 还没有任何事实(第一次导入):没有可留的东西,不是失败
           if (!(err && err.code === 'RESUME_NOT_FOUND')) {
@@ -556,11 +569,14 @@ function buildHeader() {
           onClick: () =>
             openManageDrawer({
               lang,
+              factsLang,
+              factsSource: langsInfo.source,
               importControl: buildImportButton,
               exportControl: buildExportButton,
               // 恢复的确认与执行都在这一层(它握着 state / 未保存闸门),
               // 抽屉与快照列表只负责"点了哪一条"
               onRestore: confirmRestoreSnapshot,
+              onDeleteLang: deleteCurrentFactsLang,
             }),
         },
         icon('settings'),
@@ -1009,7 +1025,17 @@ async function main() {
     return;
   }
 
-  let config = await fetchResume();
+  // 事实语言:?flang= 指定,没列出的/没带的回落真相源(worker 侧同一约定)
+  try {
+    langsInfo = await listFactsLangs();
+  } catch { /* 语言清单取不到就按单语世界画,编辑照常 */ }
+  const requestedFlang = params.get('flang');
+  factsLang =
+    requestedFlang && langsInfo.langs.some((l) => l.lang === requestedFlang)
+      ? requestedFlang
+      : langsInfo.source;
+
+  let config = await fetchResume(factsLang);
   config = normalizeResume(config || (await loadDefaultResumeConfig()));
 
   state.config = config;
@@ -1017,6 +1043,8 @@ async function main() {
   // 离开页面前拦一道:顶栏的「返回首页」「生成简历」都是普通链接,
   // 而此刻可能有①未提交的条目编辑,或②还在 600ms 防抖窗口里没落库的改动。
   window.addEventListener('beforeunload', (e) => {
+    // 主动切换事实语言时自家闸门已经问过并 flush 过 —— 别再拦第二道
+    if (bypassUnloadGuard) return;
     // **看 dirty 而不是看定时器**:保存失败后定时器已置空,而那正是最该拦的时刻
     if (!hasPendingEdit() && !saveState.dirty) return;
     e.preventDefault();
@@ -1041,11 +1069,77 @@ async function main() {
     h(
       'div',
       { class: 'resume-editor' },
+      buildFactsBar({
+        langsInfo,
+        current: factsLang,
+        onSwitch: switchFactsLang,
+        onAdd: () =>
+          openAddLangDialog({
+            existing: langsInfo.langs.map((l) => l.lang),
+            onPick: addFactsLang,
+          }),
+      }),
       h('div', { class: 'editor-content' }, indexEl, docEl)
     )
   );
   // 字样统一由 renderSaveStatus 写,这里落第一笔(元素在 buildHeader 里才造出来)
   renderSaveStatus();
+}
+
+/**
+ * 切换事实语言 = **打开另一份文档**:未提交的先问、没落盘的先 flush,
+ * 然后整页按 ?flang= 重开 —— 状态全部从头来,和换文档的心智一致。
+ */
+async function switchFactsLang(code) {
+  if (code === factsLang) return;
+  if (hasPendingEdit() && !(await confirmAction(tr('editor.pendingEdit')))) return;
+  if (saveState.dirty) {
+    clearTimeout(saveTimer);
+    await flushSave();
+    if (saveState.dirty) {
+      window.Toast && window.Toast.err(saveState.error || tr('editor.saveFailed'));
+      return;
+    }
+  }
+  bypassUnloadGuard = true;
+  const next = new URL(location.href);
+  next.searchParams.set('flang', code);
+  next.hash = '';
+  location.href = next.toString();
+}
+
+/** 新增语种(服务端以真相源为底稿克隆),建完直接打开它。 */
+async function addFactsLang(code) {
+  try {
+    await createFactsLang(code);
+  } catch (err) {
+    if (isUnauthorized(err)) {
+      redirectToUnlock();
+      return;
+    }
+    window.Toast && window.Toast.err(String(err.message || err));
+    return;
+  }
+  await switchFactsLang(code);
+}
+
+/** 删除当前语种版本(仅非真相源;快照留着,可由恢复再立起来)。 */
+async function deleteCurrentFactsLang() {
+  const name = factsLangName(factsLang);
+  const ok = await confirmAction(tr('facts.delete.confirm').replace('{name}', name));
+  if (!ok) return false;
+  try {
+    await deleteFactsLang(factsLang);
+  } catch (err) {
+    window.Toast && window.Toast.err(String(err.message || err));
+    return false;
+  }
+  bypassUnloadGuard = true;
+  const next = new URL(location.href);
+  next.searchParams.delete('flang');
+  next.hash = '';
+  location.href = next.toString();
+  return true;
 }
 
 main().catch((err) => {

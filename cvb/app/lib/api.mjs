@@ -32,21 +32,51 @@ export async function fetchAuth() {
   }
 }
 
-/** 读简历(公开)。无数据返回 null。 */
-export async function fetchResume() {
-  const res = await fetch('/api/resume');
+// 多语种事实:`flang` 指定语种文档,不传 = 真相源(worker 侧同一约定)
+const withFlang = (path, flang) => (flang ? `${path}?flang=${encodeURIComponent(flang)}` : path);
+
+/** 读简历。无数据返回 null。 */
+export async function fetchResume(flang) {
+  const res = await fetch(withFlang('/api/resume', flang));
   if (res.status === 404) return null;
   const payload = await jsonOrThrow(res);
   return payload.config;
 }
 
 /** 保存简历(需解锁)。 */
-export async function saveResume(config) {
+export async function saveResume(config, flang) {
   return jsonOrThrow(
-    await fetch('api/resume', {
+    await fetch(withFlang('/api/resume', flang), {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(config),
+    })
+  );
+}
+
+/** 事实语言清单:{ source, langs: [{lang, updatedAt}] }。 */
+export async function listFactsLangs() {
+  return jsonOrThrow(await fetch('/api/resume/langs'));
+}
+
+/** 新增语种(服务端以真相源为底稿克隆)。 */
+export async function createFactsLang(lang) {
+  return jsonOrThrow(
+    await fetch('/api/resume/langs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lang }),
+    })
+  );
+}
+
+/** 删除一个语种版本(真相源不可删;它的快照留着,可由恢复再立起来)。 */
+export async function deleteFactsLang(lang) {
+  return jsonOrThrow(
+    await fetch('/api/resume/langs', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lang }),
     })
   );
 }
@@ -65,8 +95,8 @@ export async function uploadAvatar(file) {
 
 /** 把当前服务端简历存为 R2 快照(需解锁)。 */
 /** 快照 —— 服务端的还原点。「导出配置」是下载到本机,那是另一回事。 */
-export async function listSnapshots() {
-  return jsonOrThrow(await fetch('/api/snapshots'));
+export async function listSnapshots(flang) {
+  return jsonOrThrow(await fetch(withFlang('/api/snapshots', flang)));
 }
 
 /**
@@ -75,9 +105,9 @@ export async function listSnapshots() {
  * @param {''|'before-restore'|'before-import'} [kind] **不可改属性**:是不是覆盖前自动留的。
  *   它与 note 分开存 —— 早先塞在 note 里当哨兵,而 note 现在能改,一改名哨兵就没了。
  */
-export async function createSnapshot(note = '', kind = '') {
+export async function createSnapshot(note = '', kind = '', flang) {
   return jsonOrThrow(
-    await fetch('/api/snapshots', {
+    await fetch(withFlang('/api/snapshots', flang), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ note, kind }),
