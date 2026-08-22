@@ -184,6 +184,8 @@ export default {
   'facts.add.title': 'Aldoni lingvan version',
   'facts.add.note': 'Klonita el la fonto de vero: datoj, ligiloj kaj kontaktinformoj transiras; reverku la prozon.',
   'facts.group': 'Lingvaj versioj',
+  'facts.makeSource': 'Fari ĉi tiun la fonto',
+  'facts.makeSource.confirm': 'Ĉu fari {name} la fonto? Generado de vivresumoj kaj klonado de novaj lingvoj komenciĝos de ĝi.',
   'facts.delete': 'Forigi ĉi tiun lingvan version',
   'facts.delete.confirm': 'Ĉu forigi la version "{name}"? Ĝiaj momentfotoj restas kaj povas restarigi ĝin.',
   'manage.importOnly': 'Nur JSON Resume',

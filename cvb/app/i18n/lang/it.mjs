@@ -184,6 +184,8 @@ export default {
   'facts.add.title': 'Aggiungi una versione linguistica',
   'facts.add.note': 'Clonata dalla fonte: date, link e recapiti vengono ripresi; i testi vanno riscritti.',
   'facts.group': 'Versioni linguistiche',
+  'facts.makeSource': 'Imposta come fonte',
+  'facts.makeSource.confirm': 'Impostare {name} come fonte? La generazione del CV e i cloni delle nuove lingue partiranno da questa versione.',
   'facts.delete': 'Elimina questa versione linguistica',
   'facts.delete.confirm': 'Eliminare la versione {name}? Le sue istantanee restano e possono ripristinarla.',
   'manage.importOnly': 'Solo JSON Resume',

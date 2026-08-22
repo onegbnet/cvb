@@ -184,6 +184,8 @@ export default {
   'facts.add.title': 'Sprachversion hinzufügen',
   'facts.add.note': 'Vom Original geklont: Datumsangaben, Links und Kontaktdaten werden übernommen; die Texte schreiben Sie neu.',
   'facts.group': 'Sprachversionen',
+  'facts.makeSource': 'Als Original festlegen',
+  'facts.makeSource.confirm': '{name} als Original festlegen? Lebenslauf-Erstellung und neue Sprachversionen gehen künftig davon aus.',
   'facts.delete': 'Diese Sprachversion löschen',
   'facts.delete.confirm': 'Die Version „{name}“ löschen? Ihre Snapshots bleiben erhalten und können sie wiederherstellen.',
   'manage.importOnly': 'Nur JSON Resume',

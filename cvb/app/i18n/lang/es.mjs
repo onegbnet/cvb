@@ -184,6 +184,8 @@ export default {
   'facts.add.title': 'Añadir una versión de idioma',
   'facts.add.note': 'Clonada de la fuente de verdad: las fechas, los enlaces y los datos de contacto se conservan; reescribe los textos.',
   'facts.group': 'Versiones de idioma',
+  'facts.makeSource': 'Establecer como fuente',
+  'facts.makeSource.confirm': '¿Establecer {name} como fuente? La generación del currículum y los clones de nuevos idiomas partirán de esta versión.',
   'facts.delete': 'Eliminar esta versión de idioma',
   'facts.delete.confirm': '¿Eliminar la versión {name}? Sus instantáneas se conservan y permiten restaurarla.',
   'manage.importOnly': 'Solo JSON Resume',

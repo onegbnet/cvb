@@ -70,6 +70,17 @@ export async function createFactsLang(lang) {
   );
 }
 
+/** 改判真相源(生成侧缺省读取与新语种克隆的底稿都跟着换)。 */
+export async function setFactsSource(lang) {
+  return jsonOrThrow(
+    await fetch('/api/resume/langs', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source: lang }),
+    })
+  );
+}
+
 /** 删除一个语种版本(真相源不可删;它的快照留着,可由恢复再立起来)。 */
 export async function deleteFactsLang(lang) {
   return jsonOrThrow(

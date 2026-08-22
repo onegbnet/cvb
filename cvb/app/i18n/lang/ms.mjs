@@ -184,6 +184,8 @@ export default {
   'facts.add.title': 'Tambah versi bahasa',
   'facts.add.note': 'Diklon daripada sumber asal: tarikh, pautan dan maklumat hubungan dibawa bersama; tulis semula teksnya.',
   'facts.group': 'Versi bahasa',
+  'facts.makeSource': 'Jadikan sumber',
+  'facts.makeSource.confirm': 'Jadikan {name} sebagai sumber? Penjanaan resume dan klon bahasa baharu akan bermula daripadanya.',
   'facts.delete': 'Padam versi bahasa ini',
   'facts.delete.confirm': 'Padam versi {name}? Syot kilatnya dikekalkan dan boleh memulihkannya.',
   'manage.importOnly': 'JSON Resume sahaja',

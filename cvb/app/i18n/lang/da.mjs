@@ -184,6 +184,8 @@ export default {
   'facts.add.title': 'Tilføj en sprogversion',
   'facts.add.note': 'Klones fra kilden: datoer, links og kontaktoplysninger følger med; teksten skal skrives om.',
   'facts.group': 'Sprogversioner',
+  'facts.makeSource': 'Gør til kilde',
+  'facts.makeSource.confirm': 'Gør {name} til kilde? CV-generering og kloner af nye sprog tager udgangspunkt i den.',
   'facts.delete': 'Slet denne sprogversion',
   'facts.delete.confirm': 'Slet versionen {name}? Dens øjebliksbilleder bevares og kan gendanne den.',
   'manage.importOnly': 'Kun JSON Resume',

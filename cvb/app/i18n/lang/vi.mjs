@@ -184,6 +184,8 @@ export default {
   'facts.add.title': 'Thêm phiên bản ngôn ngữ',
   'facts.add.note': 'Được nhân bản từ bản gốc: ngày tháng, liên kết và thông tin liên hệ giữ nguyên; phần văn xuôi hãy viết lại.',
   'facts.group': 'Phiên bản ngôn ngữ',
+  'facts.makeSource': 'Đặt làm bản gốc',
+  'facts.makeSource.confirm': 'Đặt {name} làm bản gốc? Việc tạo CV và nhân bản ngôn ngữ mới sẽ dựa trên bản này.',
   'facts.delete': 'Xóa phiên bản ngôn ngữ này',
   'facts.delete.confirm': 'Xóa phiên bản {name}? Các bản chụp nhanh của nó vẫn được giữ và có thể khôi phục lại phiên bản này.',
   'manage.importOnly': 'Chỉ hỗ trợ JSON Resume',

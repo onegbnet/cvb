@@ -184,6 +184,8 @@ export default {
   'facts.add.title': 'הוספת גרסת שפה',
   'facts.add.note': 'משוכפל ממקור האמת: תאריכים, קישורים ופרטי קשר עוברים כפי שהם; את הטקסט יש לכתוב מחדש.',
   'facts.group': 'גרסאות שפה',
+  'facts.makeSource': 'הפוך למקור',
+  'facts.makeSource.confirm': 'להפוך את {name} למקור? יצירת קורות החיים ושכפול שפות חדשות יתבססו על גרסה זו.',
   'facts.delete': 'מחק גרסת שפה זו',
   'facts.delete.confirm': 'למחוק את גרסת {name}? תמונות המצב שלה נשמרות וניתן לשחזר אותה מהן.',
   'manage.importOnly': 'JSON Resume בלבד',

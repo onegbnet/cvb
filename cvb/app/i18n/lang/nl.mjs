@@ -184,6 +184,8 @@ export default {
   'facts.add.title': 'Taalversie toevoegen',
   'facts.add.note': 'Gekloond van de bronversie: datums, links en contactgegevens gaan mee; herschrijf de lopende tekst.',
   'facts.group': 'Taalversies',
+  'facts.makeSource': 'Instellen als bron',
+  'facts.makeSource.confirm': '{name} instellen als bron? Cv-generatie en klonen van nieuwe talen gaan hiervan uit.',
   'facts.delete': 'Deze taalversie verwijderen',
   'facts.delete.confirm': 'De versie {name} verwijderen? De bijbehorende snapshots blijven bewaard en kunnen deze versie herstellen.',
   'manage.importOnly': 'Alleen JSON Resume',

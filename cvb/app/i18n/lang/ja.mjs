@@ -184,6 +184,8 @@ export default {
   'facts.add.title': '言語版を追加',
   'facts.add.note': '原本を複製して作成：日付・リンク・連絡先はそのまま引き継ぎ、文章は書き直す。',
   'facts.group': '言語版',
+  'facts.makeSource': '原本にする',
+  'facts.makeSource.confirm': '{name} を原本にしますか？履歴書の生成と新しい言語版の複製はこれを基にします。',
   'facts.delete': 'この言語版を削除',
   'facts.delete.confirm': '「{name}」版を削除しますか？スナップショットは保持され、復元可能。',
   'manage.importOnly': 'JSON Resume のみ対応',

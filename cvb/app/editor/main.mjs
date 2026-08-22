@@ -21,6 +21,7 @@ import {
   listFactsLangs,
   createFactsLang,
   deleteFactsLang,
+  setFactsSource,
   isUnauthorized,
   redirectToUnlock,
 } from '../lib/api.mjs';
@@ -580,6 +581,7 @@ function buildHeader() {
               // 抽屉与快照列表只负责"点了哪一条"
               onRestore: confirmRestoreSnapshot,
               onDeleteLang: deleteCurrentFactsLang,
+              onMakeSource: makeCurrentFactsSource,
             }),
         },
         icon('settings'),
@@ -1145,6 +1147,22 @@ async function addFactsLang(code) {
     return;
   }
   await switchFactsLang(code);
+}
+
+/** 把当前语种改判为真相源(生成侧缺省读取与克隆底稿跟着换)。 */
+async function makeCurrentFactsSource() {
+  const name = factsLangName(factsLang);
+  const ok = await confirmAction(tr('facts.makeSource.confirm').replace('{name}', name));
+  if (!ok) return false;
+  try {
+    await setFactsSource(factsLang);
+  } catch (err) {
+    window.Toast && window.Toast.err(String(err.message || err));
+    return false;
+  }
+  bypassUnloadGuard = true;
+  location.reload(); // 真相源标记要重画;当前文档没变,原地重开即可
+  return true;
 }
 
 /** 删除当前语种版本(仅非真相源;快照留着,可由恢复再立起来)。 */

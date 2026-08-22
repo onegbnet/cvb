@@ -184,6 +184,8 @@ export default {
   'facts.add.title': '新增語言版本',
   'facts.add.note': '以真相源為底稿複製一份：日期、連結、聯絡方式直接帶過去，文字自己重寫。',
   'facts.group': '語言版本',
+  'facts.makeSource': '設為真相源',
+  'facts.makeSource.confirm': '把「{name}」設為真相源？產生履歷與新增語種的克隆都將以它為底稿。',
   'facts.delete': '刪除此語言版本',
   'facts.delete.confirm': '刪除「{name}」版本？它的快照會保留，可從快照還原。',
   'manage.importOnly': '僅支援 JSON Resume',

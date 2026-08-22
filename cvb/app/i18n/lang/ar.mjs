@@ -184,6 +184,8 @@ export default {
   'facts.add.title': 'إضافة نسخة لغوية',
   'facts.add.note': 'تُستنسخ من المصدر الأصلي: التواريخ والروابط وبيانات الاتصال تُنقل كما هي؛ أعد كتابة النصوص بنفسك.',
   'facts.group': 'النسخ اللغوية',
+  'facts.makeSource': 'تعيين كمصدر',
+  'facts.makeSource.confirm': 'هل تريد تعيين {name} كمصدر؟ سيعتمد إنشاء السيرة الذاتية واستنساخ اللغات الجديدة عليه.',
   'facts.delete': 'حذف هذه النسخة اللغوية',
   'facts.delete.confirm': 'هل تريد حذف نسخة {name}؟ تبقى لقطاتها محفوظة ويمكن استعادتها منها.',
   'manage.importOnly': 'JSON Resume فقط',

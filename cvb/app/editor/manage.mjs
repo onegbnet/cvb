@@ -17,7 +17,7 @@ import { createSnapshots } from './snapshots.mjs';
  * @param {() => Node} opts.exportControl  导出
  * @param {(key: string) => Promise<boolean>} opts.onRestore 点了"恢复"——由上层确认并执行
  */
-export function openManageDrawer({ lang, factsLang, factsSource, importControl, exportControl, onRestore, onDeleteLang }) {
+export function openManageDrawer({ lang, factsLang, factsSource, importControl, exportControl, onRestore, onDeleteLang, onMakeSource }) {
   if (!window.Overlay || typeof window.Overlay.show !== 'function') return null;
 
   // **不配说明句**:「导入」「导出」「快照」这几个词自己说得清,
@@ -75,6 +75,21 @@ export function openManageDrawer({ lang, factsLang, factsSource, importControl, 
           h(
             'div',
             { class: 'mng-row' },
+            // 改判真相源在删除之前 —— 想删真相源的路就是「先把别的语种立起来」
+            typeof onMakeSource === 'function'
+              ? h(
+                  'button',
+                  {
+                    type: 'button',
+                    class: 'btn',
+                    onClick: async () => {
+                      const ok = await onMakeSource();
+                      if (ok) handle && handle.close();
+                    },
+                  },
+                  tr('facts.makeSource')
+                )
+              : null,
             h(
               'button',
               {

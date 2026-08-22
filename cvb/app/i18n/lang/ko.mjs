@@ -184,6 +184,8 @@ export default {
   'facts.add.title': '언어 버전 추가',
   'facts.add.note': '원본을 복제해 만듭니다. 날짜·링크·연락처는 그대로 가져오고, 문장은 직접 다시 작성하세요.',
   'facts.group': '언어 버전',
+  'facts.makeSource': '원본으로 설정',
+  'facts.makeSource.confirm': '{name}을(를) 원본으로 설정할까요? 이력서 생성과 새 언어 버전 복제가 이를 기준으로 합니다.',
   'facts.delete': '이 언어 버전 삭제',
   'facts.delete.confirm': '{name} 버전을 삭제할까요? 스냅샷은 보존되며, 스냅샷으로 복원할 수 있습니다.',
   'manage.importOnly': 'JSON Resume만 지원',

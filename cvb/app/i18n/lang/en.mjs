@@ -184,6 +184,8 @@ export default {
   'facts.add.title': 'Add a language version',
   'facts.add.note': 'Cloned from the source of truth: dates, links and contact details carry over; rewrite the prose.',
   'facts.group': 'Language versions',
+  'facts.makeSource': 'Make this the source',
+  'facts.makeSource.confirm': 'Make {name} the source of truth? Resume generation and new-language clones will start from it.',
   'facts.delete': 'Delete this language version',
   'facts.delete.confirm': 'Delete the {name} version? Its snapshots are kept and can restore it.',
   'manage.importOnly': 'JSON Resume only',
