@@ -296,6 +296,17 @@ header.app-header .back-link .icon svg {
 }
 
 /* ---- 语言切换 ---- */
+/* 20 门语言的选择器(首页页眉;/edit 的界面语言跟着事实语言走,没有它) */
+.lang-select {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+  color: var(--text);
+}
+
 .language-switcher {
   display: inline-flex;
   align-items: center;
@@ -471,6 +482,7 @@ header.app-header .back-link .icon svg {
 
   /* 语言与主题移出滚动流钉到右上角 —— 留在可横滚的行里会被切掉一半 */
   header.app-header .header-actions .language-switcher,
+  header.app-header .header-actions .lang-select,
   header.app-header .header-actions .theme-toggle {
     position: absolute;
     top: 8px;
@@ -481,7 +493,8 @@ header.app-header .back-link .icon svg {
     right: 12px;
   }
 
-  header.app-header .header-actions .language-switcher {
+  header.app-header .header-actions .language-switcher,
+  header.app-header .header-actions .lang-select {
     right: 52px;
   }
 

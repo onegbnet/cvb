@@ -10,20 +10,15 @@
 import { h } from '../lib/dom.mjs';
 import { tr } from '../lib/i18n.mjs';
 
-/** 常见语言的自名。不是 i18n 表 —— 自名与界面语言无关,这正是它防混淆的原理。 */
+import { UI_LANG_NAMES } from '../lib/lang-names.mjs';
+
+/**
+ * 事实语言的自名:取界面语言官方清单里的**主语言子标签**(zh-cn/zh-tw 归并成 zh)。
+ * 自名与界面语言无关 —— 这正是它自我标识的原理。
+ */
 const FACTS_LANG_NAMES = {
   zh: '中文',
-  en: 'English',
-  ja: '日本語',
-  ko: '한국어',
-  de: 'Deutsch',
-  fr: 'Français',
-  es: 'Español',
-  pt: 'Português',
-  it: 'Italiano',
-  ru: 'Русский',
-  ar: 'العربية',
-  nl: 'Nederlands',
+  ...Object.fromEntries(Object.entries(UI_LANG_NAMES).filter(([code]) => !code.includes('-'))),
 };
 
 export const factsLangName = (code) => FACTS_LANG_NAMES[code] || code;

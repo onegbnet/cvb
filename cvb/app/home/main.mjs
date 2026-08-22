@@ -22,7 +22,8 @@
 // 从「查看历史」里继续才是追加版本 —— 所以这几个口子必须在入口就分开,不是装饰。
 // 「查看历史」等投递记录落地后再加,不提前画一个点不动的按钮。
 import { h, clear } from '../lib/dom.mjs';
-import { tr, getLanguage, switchLanguage } from '../lib/i18n.mjs';
+import { tr, getLanguage, switchLanguage, SUPPORTED_LANGS } from '../lib/i18n.mjs';
+import { UI_LANG_NAMES } from '../lib/lang-names.mjs';
 import { adoptThemeToggle } from '../lib/theme.mjs';
 import { fetchResume, isUnauthorized, redirectToUnlock } from '../lib/api.mjs';
 import { normalizeResume } from '../lib/schema.mjs';
@@ -62,7 +63,7 @@ const lastModified = (config) => {
   if (!iso) return '';
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleDateString(lang === 'en' ? 'en' : 'zh-CN', {
+  return d.toLocaleDateString(lang, {
     year: 'numeric',
     month: 'numeric',
     day: 'numeric',
@@ -161,12 +162,18 @@ function buildHeader() {
     h(
       'span',
       { class: 'header-actions' },
+      // 20 门语言两枚字排不下 —— 照 ccs i18n-engine 的官方清单做成选择器,选项用自名
       h(
-        'div',
-        { class: 'language-switcher', title: tr('editor.langSwitchHint') },
-        h('span', { class: ['lang', lang === 'zh-cn' && 'active'], onClick: () => switchLanguage('zh-cn') }, '中'),
-        h('span', { class: 'divider' }, '/'),
-        h('span', { class: ['lang', lang === 'en' && 'active'], onClick: () => switchLanguage('en') }, 'En')
+        'select',
+        {
+          class: 'lang-select',
+          title: tr('editor.langSwitchHint'),
+          'aria-label': tr('editor.langSwitchHint'),
+          onChange: (e) => switchLanguage(e.target.value),
+        },
+        SUPPORTED_LANGS.map((code) =>
+          h('option', { value: code, selected: code === lang }, UI_LANG_NAMES[code] || code)
+        )
       ),
       adoptThemeToggle()
     )

@@ -5,7 +5,13 @@
 // - tr(key) 读全局 T;window.tr 供 ccs overlay 内建 label 使用。
 // - 切换语言 = POST /api/prefs { lang } → Set-Cookie → reload。
 
-export const SUPPORTED_LANGS = ['zh-cn', 'en'];
+// 镜像 ccs 的 SUPPORTED_LANGS_DEFAULT(mjs/runtime/i18n-engine.mjs)——
+// 浏览器模块进不了 ccs 的 mjs/,抄一份;顺序照它(zh 的 uiLangForFacts 匹配
+// 依赖 zh-cn 排在 zh-tw 前)。
+export const SUPPORTED_LANGS = [
+  'en', 'eo', 'fr', 'de', 'es', 'it', 'nl', 'da', 'zh-cn', 'zh-tw',
+  'ja', 'ko', 'ms', 'vi', 'th', 'ta', 'my', 'uk', 'he', 'ar',
+];
 
 export function getLanguage() {
   const lang = (document.documentElement.lang || '').toLowerCase();

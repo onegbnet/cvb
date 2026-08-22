@@ -1006,7 +1006,7 @@ async function viewSnapshot(key, note = '') {
   app.append(
     renderSnapshotView(normalizeResume(raw), {
       when: when && !Number.isNaN(when.getTime())
-        ? when.toLocaleString(lang === 'en' ? 'en' : 'zh-CN', {
+        ? when.toLocaleString(lang, {
             year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })
         : '',
       note: note.slice(0, 120),
