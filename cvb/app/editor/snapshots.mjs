@@ -67,7 +67,10 @@ export function createSnapshots({ lang, factsLang, onRestore }) {
       // 此前是「时间」「副标题」两栏并排,而绝大多数快照的副标题是空的:
       // 两栏各占地方,一栏还常年没内容。合成一个可改的名字,行短一半。
       const kindLabel = s.kind ? tr('snapshot.autoKind') : '';
-      const defaultLabel = kindLabel ? `${stamp}（${kindLabel}）` : stamp;
+      // 括号形制随语言(中文全角、拉丁半角),模板住语言表,别写死在这里
+      const defaultLabel = kindLabel
+        ? tr('snapshot.autoName').replace('{name}', stamp).replace('{kind}', kindLabel)
+        : stamp;
       const label = s.note || defaultLabel;
 
       // 四个动作一律用记号 —— 写成字(改备注 / 查看 / 恢复 / 删除)会把一行挤满,
@@ -76,7 +79,7 @@ export function createSnapshots({ lang, factsLang, onRestore }) {
       const iconBtn = (name, actLabel, onClick) =>
         h(
           'button',
-          { type: 'button', class: 'snap-act', title: actLabel, 'aria-label': `${actLabel}：${label}`, onClick },
+          { type: 'button', class: 'snap-act', title: actLabel, 'aria-label': `${actLabel}${tr('punct.labelSep')}${label}`, onClick },
           icon(name)
         );
 
@@ -140,7 +143,7 @@ export function createSnapshots({ lang, factsLang, onRestore }) {
             {
               class: 'snap-act',
               title: tr('snapshot.view'),
-              'aria-label': `${tr('snapshot.view')}：${label}`,
+              'aria-label': `${tr('snapshot.view')}${tr('punct.labelSep')}${label}`,
               // 名字随 URL 带过去 —— 它只在列表的元数据里,快照正文里没有,
               // 而横幅上"这是哪一份"正需要它
               href: `/edit?snapshot=${encodeURIComponent(s.key)}&note=${encodeURIComponent(label)}`,
