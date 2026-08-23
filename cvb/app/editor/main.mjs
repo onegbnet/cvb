@@ -1185,12 +1185,44 @@ const openTranslateProgress = () =>
     closable: { escape: false, clickOutside: false, closeButton: false },
   });
 
-/** 新增语种的底稿怎么来是个决定,决定摆成按钮(2026-08-23 用户裁定,并于同日
- *  改判语种平权:**没有哪一份是真相源**):
- *  「从所选语种翻译」(重点色)—— 来源在**所有已有语种**里挑(缺省当前打开的这份),
- *  AI 把散文译成目标语言,语言中立字段直接带过去;「建立空白文档」—— 从零开始。
- *  翻译失败不建档(Toast 报错,可重试或改选空白)。
- *  空库一份都没有,没什么可翻 —— 跳过选择,直接建档并确立默认语种(探针钉着这条)。 */
+/** 来源语种选择框(加语种与逐条翻译共用):语种按钮网格,关框/取消回 ''。 */
+const pickSourceLang = (candidates) =>
+  new Promise((resolve) => {
+    let chosen = '';
+    const body = h(
+      'div',
+      { class: 'ovw-confirm' },
+      h(
+        'div',
+        { class: 'facts-add-grid' },
+        candidates.map(({ lang }) =>
+          h(
+            'button',
+            { type: 'button', class: 'btn facts-add-item', onClick: () => { chosen = lang; handle.close(); } },
+            factsLangName(lang)
+          )
+        )
+      ),
+      h(
+        'div',
+        { class: 'fadd-actions' },
+        h('button', { type: 'button', class: 'btn btn-small', onClick: () => handle.close() }, tr('action.cancel'))
+      )
+    );
+    const handle = window.Overlay.show({
+      variant: 'box',
+      title: tr('translate.pickSource'),
+      body,
+      onClose: () => resolve(chosen),
+    });
+  });
+
+/** 新增语种,两步走(2026-08-24 用户裁定「先单选空白还是翻译」——
+ *  底稿方式是先决选择,来源语种是次级选择,不该搅在一层):
+ *  第一步按钮二选:「从已有语种翻译」(重点色)/「建立空白文档」/取消;
+ *  选了翻译,第二步在**所有已有语种**里挑来源(语种平权;只有一门时跳过这步)。
+ *  翻译失败不建档(Toast 报错,可重试或改走空白)。
+ *  空库一份都没有,没什么可翻 —— 两步都跳过,直接建档并确立默认语种(探针钉着这条)。 */
 async function addFactsLang(code) {
   if (!langsInfo || !langsInfo.langs.length) {
     try {
@@ -1204,63 +1236,54 @@ async function addFactsLang(code) {
     return;
   }
 
-  const choice = await new Promise((resolve) => {
+  const mode = await new Promise((resolve) => {
     let chosen = '';
-    // 来源语种选择器:所有已有语种,缺省当前打开的这份(语种平权,谁都可以当底稿)
-    const srcSelect = h(
-      'select',
-      { class: 'fc-input fadd-src' },
-      langsInfo.langs.map(({ lang }) =>
-        h('option', { value: lang, ...(lang === factsLang ? { selected: 'selected' } : {}) }, factsLangName(lang))
-      )
-    );
     const body = h(
       'div',
       { class: 'ovw-confirm' },
-      h('p', { class: 'ovw-note' }, tr('facts.add.note')),
-      h('label', { class: 'fadd-src-row' }, `${tr('facts.add.from')}${tr('punct.labelSep')}`, srcSelect)
+      h('p', { class: 'ovw-note' }, tr('facts.add.note'))
     );
     const handle = window.Overlay.show({
       variant: 'box',
       title: `${tr('facts.add.title')}${tr('punct.labelSep')}${factsLangName(code)}`,
       body,
-      onClose: () => resolve(chosen || { kind: 'cancel' }),
+      onClose: () => resolve(chosen || 'cancel'),
     });
     const pick = (v) => { chosen = v; handle.close(); };
     body.append(
       h(
         'div',
         { class: 'fadd-actions' },
-        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick({ kind: 'cancel' }) }, tr('action.cancel')),
-        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick({ kind: 'blank' }) }, tr('facts.add.blank')),
+        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('cancel') }, tr('action.cancel')),
+        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('blank') }, tr('facts.add.blank')),
         h(
           'button',
-          {
-            type: 'button',
-            class: 'btn btn-small btn-accent',
-            onClick: () => pick({ kind: 'translate', from: srcSelect.value }),
-          },
+          { type: 'button', class: 'btn btn-small btn-accent', onClick: () => pick('translate') },
           tr('facts.add.translate')
         )
       )
     );
   });
-  if (choice.kind === 'cancel') return;
+  if (mode === 'cancel') return;
 
   let seedOpts = { seed: 'empty' };
   let progress = null;
-  if (choice.kind === 'translate') {
+  if (mode === 'translate') {
+    // 只有一门语种时没什么可挑,直接用它;多门才弹来源选择
+    const from =
+      langsInfo.langs.length === 1 ? langsInfo.langs[0].lang : await pickSourceLang(langsInfo.langs);
+    if (!from) return;
     // 来源可能就是当前打开的这份且有防抖中的改动 —— 先落盘再取,译的才是最新事实
     clearTimeout(saveTimer);
     await flushSave();
     progress = openTranslateProgress();
     try {
-      const src = await fetchResume(choice.from);
+      const src = await fetchResume(from);
       const translated = await translateResumeConfig({
         config: src.config,
-        sourceLang: choice.from,
+        sourceLang: from,
         targetLang: code,
-        sourceLabel: `${factsLangName(choice.from)} (${choice.from})`,
+        sourceLabel: `${factsLangName(from)} (${from})`,
         targetLabel: `${factsLangName(code)} (${code})`,
       });
       seedOpts = { config: translated };
@@ -1296,31 +1319,7 @@ async function addFactsLang(code) {
 async function openEntryTranslate({ module, index, isList = false, onApply }) {
   const sources = (langsInfo ? langsInfo.langs : []).filter(({ lang }) => lang !== factsLang);
   if (!sources.length) return;
-  const from = await new Promise((resolve) => {
-    let chosen = '';
-    const body = h(
-      'div',
-      { class: 'ovw-confirm' },
-      h('p', { class: 'ovw-note' }, tr('translate.pickSource')),
-      h(
-        'div',
-        { class: 'facts-add-grid' },
-        sources.map(({ lang }) =>
-          h(
-            'button',
-            { type: 'button', class: 'btn facts-add-item', onClick: () => { chosen = lang; handle.close(); } },
-            factsLangName(lang)
-          )
-        )
-      )
-    );
-    const handle = window.Overlay.show({
-      variant: 'box',
-      title: tr('translate.entry'),
-      body,
-      onClose: () => resolve(chosen),
-    });
-  });
+  const from = sources.length === 1 ? sources[0].lang : await pickSourceLang(sources);
   if (!from) return;
 
   const progress = openTranslateProgress();

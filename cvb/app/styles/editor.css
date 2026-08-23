@@ -1173,16 +1173,6 @@
   margin-top: 12px;
 }
 
-/* 加语种框的来源选择行:标签 + 下拉一行排开 */
-.fadd-src-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-  color: var(--text-secondary);
-}
-.fadd-src { flex: 1; min-width: 0; }
-
 /* 逐条翻译按钮所在行:靠右、不与内容抢宽度 */
 .trx-row {
   display: flex;
