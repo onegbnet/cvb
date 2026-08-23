@@ -1278,9 +1278,11 @@ async function addFactsLang(code) {
     await flushSave();
     progress = openTranslateProgress();
     try {
-      const src = await fetchResume(from);
+      // fetchResume 直接回 config 本体(不是 {config} 包裹)—— 拿错层曾静默建出空文档
+      const srcConfig = await fetchResume(from);
+      if (!srcConfig) throw new Error(tr('translate.noCounterpart'));
       const translated = await translateResumeConfig({
-        config: src.config,
+        config: srcConfig,
         sourceLang: from,
         targetLang: code,
         sourceLabel: `${factsLangName(from)} (${from})`,
@@ -1324,8 +1326,9 @@ async function openEntryTranslate({ module, index, isList = false, onApply }) {
 
   const progress = openTranslateProgress();
   try {
-    const src = await fetchResume(from);
-    const srcValue = module.get(src.config);
+    // fetchResume 直接回 config 本体(不是 {config} 包裹)
+    const srcConfig = await fetchResume(from);
+    const srcValue = srcConfig ? module.get(srcConfig) : null;
     const unit = isList ? srcValue : module.kind === 'list' ? (srcValue || [])[index] : srcValue;
     const hasContent = isList ? Array.isArray(unit) && unit.length : unit && Object.keys(unit).length;
     if (!hasContent) {

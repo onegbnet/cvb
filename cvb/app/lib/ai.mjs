@@ -79,6 +79,13 @@ const buildImprovePrompt = ({ label, sourceText, context }) => {
  * 失败会抛(错误消息已本地化),调用方决定不建档。
  */
 export async function translateResumeConfig({ config, sourceLang, targetLang, sourceLabel, targetLabel }) {
+  // 来源必须是真文档对象:undefined/null 走下面的空映射短路会静默产出 {},
+  // 「翻译」就变成了「建空档」——大声失败,别装作译完了(真机点击抓到过)
+  if (!config || typeof config !== 'object') {
+    const err = new Error(tr('ai.failed'));
+    err.code = 'AI_BAD_REQUEST';
+    throw err;
+  }
   const entries = collectTranslatables(config);
   if (!Object.keys(entries).length) return applyTranslations(config, {});
   const payload = await post('api/ai/translate', {
