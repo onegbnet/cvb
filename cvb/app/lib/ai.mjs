@@ -97,7 +97,17 @@ export async function translateResumeConfig({ config, sourceLabel, targetLabel }
   const payload = await post('api/ai/translate', {
     prompt: buildTranslatePrompt({ entries, sourceLabel, targetLabel }),
   });
-  return applyTranslations(config, (payload && payload.translations) || {});
+  const map = (payload && payload.translations) || {};
+  // 合法却**空**的映射不是成功,是失败的另一张脸:照单全收会建出一份没翻译的
+  // 纯克隆 —— 正是「不能是简单克隆」否掉的结果。一条都没对上就按失败处理(不建档);
+  // 部分命中放行:没译到的槽保持源语言,进编辑器自己改。
+  const hit = Object.keys(entries).some((k) => typeof map[k] === 'string' && map[k].trim());
+  if (!hit) {
+    const err = new Error(tr('ai.parseFailed'));
+    err.code = 'AI_INVALID_RESPONSE';
+    throw err;
+  }
+  return applyTranslations(config, map);
 }
 
 /**
