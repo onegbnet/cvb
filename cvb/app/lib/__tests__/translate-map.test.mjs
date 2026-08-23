@@ -24,14 +24,21 @@ const CONFIG = {
   meta: { version: 'v1' },
 };
 
-test('collect:散文/名称槽位进映射,语言中立字段(日期/URL/邮箱/电话/国家码/meta)不进', () => {
+test('collect:散文/名称槽进映射;语言中立字段与**人名**(根本不翻)不进', () => {
   const entries = collectTranslatables(CONFIG);
-  expect(entries['basics.name']).toBe('三 张');
+  expect(entries['basics.name']).toBeUndefined(); // 姓名根本不翻译(2026-08-23 用户裁定)
   expect(entries['basics.location.city']).toBe('上海');
   expect(entries['work.0.highlights.1']).toBe('主导网关重写');
   expect(entries['skills.0.keywords.0']).toBe('分布式系统');
+  // 不翻的是**人名**(basics.name / references[].name);公司名 work.*.name、
+  // 技能名 skills.*.name 是要翻的 —— 别把"字段叫 name"当成"是人名"
+  expect(entries['work.0.name']).toBe('某某科技');
   const keys = Object.keys(entries).join('\n');
   expect(keys).not.toMatch(/email|url|phone|Date|countryCode|postalCode|meta/);
+  // references[].name 同为人名,不进映射
+  const withRef = collectTranslatables({ ...CONFIG, references: [{ name: '王 老师', reference: '极为可靠' }] });
+  expect(withRef['references.0.name']).toBeUndefined();
+  expect(withRef['references.0.reference']).toBe('极为可靠');
 });
 
 test('apply:同一数组的多条译文都落位(setter 按当前值重铺,不互相覆盖)', () => {
@@ -42,13 +49,15 @@ test('apply:同一数组的多条译文都落位(setter 按当前值重铺,不�
   expect(out.work[0].highlights).toEqual(['Cut P99 from 800ms to 120ms', 'Led the gateway rewrite']);
 });
 
-test('apply:编造的路径与非字符串值落不进任何地方,结构一字不多', () => {
+test('apply:编造的路径、非字符串值、**人名路径**都落不进任何地方', () => {
   const out = applyTranslations(CONFIG, {
     'basics.invented': '塞不进去',
+    'basics.name': 'San Zhang', // 人名不是可写槽 —— 谁给译文都落不进
     'work.0.evil': 'x',
     'work.9.name': '越界',
     'skills.0.keywords.0': 42,
   });
+  expect(out.basics.name).toBe('三 张');
   expect(JSON.stringify(Object.keys(out.basics).sort())).toBe(JSON.stringify(Object.keys(CONFIG.basics).sort()));
   expect(out.work[0].evil).toBeUndefined();
   expect(out.work.length).toBe(1);
@@ -57,9 +66,9 @@ test('apply:编造的路径与非字符串值落不进任何地方,结构一字�
 
 test('apply:深拷贝上写,入参原样不动;空映射 = 克隆恒等', () => {
   const before = JSON.stringify(CONFIG);
-  const out = applyTranslations(CONFIG, { 'basics.name': 'San Zhang' });
+  const out = applyTranslations(CONFIG, { 'basics.label': 'Senior Backend Engineer' });
   expect(JSON.stringify(CONFIG)).toBe(before);
-  expect(out.basics.name).toBe('San Zhang');
+  expect(out.basics.label).toBe('Senior Backend Engineer');
   expect(JSON.stringify(applyTranslations(CONFIG, {}))).toBe(before);
 });
 

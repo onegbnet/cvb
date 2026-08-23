@@ -5,7 +5,11 @@
 // 语言中立字段(日期/URL/邮箱/电话/国家码/邮编/meta)不进映射,原样带过去 ——
 // 这正是「新增语种以真相源为底稿」承诺的那一半。
 
-const BASICS_STRINGS = ['name', 'label', 'summary'];
+// 人名**根本不进映射**(2026-08-23 用户裁定「姓名根本不翻译」):姓名是身份标识,
+// 不是待翻译的散文 —— 实测没有一条机器路靠得住(DeepL 把「三 张」直译成
+// "Three Zhangs";LLM 转写同名两次拼法不同、还会 2 段变 3 段撕破姓名存储契约)。
+// basics.name 与 references[].name 原样带过去,要改进编辑器自己改。
+const BASICS_STRINGS = ['label', 'summary'];
 const LOCATION_STRINGS = ['address', 'city', 'region'];
 
 // 每个列表节:哪些字段是字符串、哪些是字符串数组。没列出的(url/date/score…)不碰。
@@ -19,7 +23,7 @@ const SECTIONS = {
   skills: { strings: ['name', 'level'], lists: ['keywords'] },
   languages: { strings: ['language', 'fluency'], lists: [] },
   interests: { strings: ['name'], lists: ['keywords'] },
-  references: { strings: ['name', 'reference'], lists: [] },
+  references: { strings: ['reference'], lists: [] }, // name 是人名,不翻(见上)
   // projects.type 是 portfolio 标记(值是约定),不翻
   projects: { strings: ['name', 'description', 'entity'], lists: ['highlights', 'keywords', 'roles'] },
 };
