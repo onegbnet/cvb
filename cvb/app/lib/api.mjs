@@ -59,13 +59,17 @@ export async function listFactsLangs() {
   return jsonOrThrow(await fetch('/api/resume/langs'));
 }
 
-/** 新增语种(服务端以真相源为底稿克隆)。 */
-export async function createFactsLang(lang) {
+/** 新增语种。底稿三选:config = 客户端译好的完整文档(「翻译真相源」),
+ *  seed:'empty' = 空白文档;都不带 = 克隆真相源(遗留契约,空库建档也走它)。 */
+export async function createFactsLang(lang, { seed, config } = {}) {
+  const body = { lang };
+  if (config) body.config = config;
+  else if (seed) body.seed = seed;
   return jsonOrThrow(
     await fetch('/api/resume/langs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lang }),
+      body: JSON.stringify(body),
     })
   );
 }
@@ -81,14 +85,15 @@ export async function setFactsSource(lang) {
   );
 }
 
-/** 删除一个语种版本(真相源不可删;它的快照留着,可由恢复再立起来)。
- *  snapshot=true 让服务端先留一份「删除保护」快照再删行(留不成不删)。 */
-export async function deleteFactsLang(lang, { snapshot = true } = {}) {
+/** 删除一个语种版本(真相源不可删)。快照处置两个开关:
+ *  snapshot=true 删行前留一份「删除保护」(留不成不删);
+ *  purge=true 连既有历史快照一并清掉(清不成不删)。 */
+export async function deleteFactsLang(lang, { snapshot = true, purge = false } = {}) {
   return jsonOrThrow(
     await fetch('/api/resume/langs', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lang, snapshot }),
+      body: JSON.stringify({ lang, snapshot, purge }),
     })
   );
 }

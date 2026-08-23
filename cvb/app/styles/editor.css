@@ -1163,8 +1163,9 @@
   gap: 8px;
 }
 
-/* 删语种的三选项行:形态同 .ovw-actions,类分开 —— 共用类会让探针一次选中两个框的按钮 */
-.fdel-actions {
+/* 删语种/加语种的选项行:形态同 .ovw-actions,类分开 —— 共用类会让探针一次选中两个框的按钮 */
+.fdel-actions,
+.fadd-actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;

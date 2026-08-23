@@ -26,6 +26,7 @@ import {
   redirectToUnlock,
 } from '../lib/api.mjs';
 import { buildFactsBar, openAddLangDialog, factsLangName } from './facts-bar.mjs';
+import { translateResumeConfig } from '../lib/ai.mjs';
 import { factsLangOfUi, uiLangForFacts as uiForFacts } from '../lib/lang-names.mjs';
 import { SECTIONS, sectionModules, MODULES, getModuleFields, getModuleName, moduleIssues } from './modules.mjs';
 import { confirmAction } from '../lib/confirm.mjs';
@@ -1141,18 +1142,90 @@ async function switchFactsLang(code) {
   location.href = next.toString();
 }
 
-/** 新增语种(服务端以真相源为底稿克隆),建完直接打开它。 */
+/** 新增语种的底稿怎么来是个决定,决定摆成按钮(2026-08-23 用户裁定
+ *  「克隆不能是简单克隆,要翻译」+「也要给不克隆的选项」):
+ *  「翻译真相源底稿」(重点色)—— AI 把散文译成目标语言,语言中立字段直接带过去;
+ *  「建立空白文档」—— 从零开始。翻译失败不建档(Toast 报错,可重试或改选空白)。
+ *  空库没有真相源,没什么可翻 —— 跳过选择,直接建档并确立真相源(探针钉着这条)。 */
 async function addFactsLang(code) {
-  try {
-    await createFactsLang(code);
-  } catch (err) {
-    if (isUnauthorized(err)) {
-      redirectToUnlock();
+  if (!langsInfo || !langsInfo.source) {
+    try {
+      await createFactsLang(code);
+    } catch (err) {
+      if (isUnauthorized(err)) return redirectToUnlock();
+      window.Toast && window.Toast.err(String(err.message || err));
       return;
     }
+    await switchFactsLang(code);
+    return;
+  }
+
+  const choice = await new Promise((resolve) => {
+    let chosen = '';
+    const body = h(
+      'div',
+      { class: 'ovw-confirm' },
+      h('p', { class: 'ovw-note' }, tr('facts.add.note'))
+    );
+    const handle = window.Overlay.show({
+      variant: 'box',
+      title: `${tr('facts.add.title')}${tr('punct.labelSep')}${factsLangName(code)}`,
+      body,
+      onClose: () => resolve(chosen || 'cancel'),
+    });
+    const pick = (v) => { chosen = v; handle.close(); };
+    body.append(
+      h(
+        'div',
+        { class: 'fadd-actions' },
+        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('cancel') }, tr('action.cancel')),
+        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('blank') }, tr('facts.add.blank')),
+        h(
+          'button',
+          { type: 'button', class: 'btn btn-small btn-accent', onClick: () => pick('translate') },
+          tr('facts.add.translate')
+        )
+      )
+    );
+  });
+  if (choice === 'cancel') return;
+
+  let seedOpts = { seed: 'empty' };
+  let progress = null;
+  if (choice === 'translate') {
+    // 真相源可能就是当前打开的这份且有防抖中的改动 —— 先落盘再取,译的才是最新事实
+    clearTimeout(saveTimer);
+    await flushSave();
+    progress = window.Overlay.show({
+      variant: 'box',
+      title: tr('facts.add.translating'),
+      body: h('div', { class: 'ai-loading' }, h('div', { class: 'spinner' }), h('span', {}, tr('ai.loading'))),
+      closable: { escape: false, clickOutside: false, closeButton: false },
+    });
+    try {
+      const src = await fetchResume();
+      const translated = await translateResumeConfig({
+        config: src.config,
+        sourceLabel: `${factsLangName(langsInfo.source)} (${langsInfo.source})`,
+        targetLabel: `${factsLangName(code)} (${code})`,
+      });
+      seedOpts = { config: translated };
+    } catch (err) {
+      progress.close();
+      if (isUnauthorized(err)) return redirectToUnlock();
+      window.Toast && window.Toast.err(String(err.message || err));
+      return;
+    }
+  }
+  try {
+    await createFactsLang(code, seedOpts);
+  } catch (err) {
+    if (progress) progress.close();
+    if (isUnauthorized(err)) return redirectToUnlock();
     window.Toast && window.Toast.err(String(err.message || err));
     return;
   }
+  if (progress) progress.close();
   await switchFactsLang(code);
 }
 
@@ -1172,10 +1245,12 @@ async function makeCurrentFactsSource() {
   return true;
 }
 
-/** 删除当前语种版本(仅非真相源;既有快照留着,可由恢复再立起来)。
- *  留不留「删除保护」快照是个决定,决定摆成按钮(同整份覆盖的三选项,不是勾选框):
- *  「删除前创建快照」(重点色)/「直接删除」/「取消」。选了留就留不成不删 ——
- *  服务端 put 在删行之前,失败整个请求失败。 */
+/** 删除当前语种版本(仅非真相源)。快照怎么处置是个决定,决定摆成按钮
+ * (同整份覆盖那套,不是勾选框),三档(2026-08-23 用户裁定):
+ *  「保留全部快照」(重点色)—— 留删前快照,历史也都在,恢复任一份可把语种再立起来;
+ *  「只留删前快照」—— 清掉历史,只留删除时刻这一份;
+ *  「一份不留」—— 什么都不留,重新添加语种时同全新语种(克隆真相源起步)。
+ *  说了留就留不成不删、说了清就清不成不删 —— 服务端 put/清理都在删行之前,失败整个请求失败。 */
 async function deleteCurrentFactsLang() {
   const name = factsLangName(factsLang);
   const choice = await new Promise((resolve) => {
@@ -1199,19 +1274,23 @@ async function deleteCurrentFactsLang() {
         'div',
         { class: 'fdel-actions' },
         h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('cancel') }, tr('action.cancel')),
-        // 「直接删除」不加重点色:能选,但不该是默认那一档
-        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('direct') }, tr('facts.delete.direct')),
+        // 危险的两档不加重点色:能选,但不该是默认那一档
+        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('wipe') }, tr('facts.delete.wipe')),
+        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('keepFinal') }, tr('facts.delete.keepFinal')),
         h(
           'button',
-          { type: 'button', class: 'btn btn-small btn-accent', onClick: () => pick('snapshot') },
-          tr('facts.delete.withSnapshot')
+          { type: 'button', class: 'btn btn-small btn-accent', onClick: () => pick('keepAll') },
+          tr('facts.delete.keepAll')
         )
       )
     );
   });
   if (choice === 'cancel') return false;
   try {
-    await deleteFactsLang(factsLang, { snapshot: choice === 'snapshot' });
+    await deleteFactsLang(factsLang, {
+      snapshot: choice !== 'wipe',
+      purge: choice !== 'keepAll',
+    });
   } catch (err) {
     window.Toast && window.Toast.err(String(err.message || err));
     return false;
