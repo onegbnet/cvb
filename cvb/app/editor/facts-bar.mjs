@@ -30,7 +30,8 @@ export const factsLangName = (code) => FACTS_LANG_NAMES[code] || code;
  */
 export function buildFactsBar({ langsInfo, current, onSwitch, onAdd }) {
   // 空库(一份事实都没有)时**当前编辑的语种**虚拟在场:第一笔保存才建行并
-  // 确立真相源 —— 栏上不显示会像"没在编辑任何文档"
+  // 确立默认语种 —— 栏上不显示会像"没在编辑任何文档"。
+  // 语种平权(2026-08-23):source 标记只剩「默认」的管线语义(不带语言参数读哪份)
   const langs = langsInfo.langs.length ? langsInfo.langs : [{ lang: current }];
   const sourceLang = langsInfo.source || (langsInfo.langs.length ? null : current);
   return h(
@@ -56,7 +57,7 @@ export function buildFactsBar({ langsInfo, current, onSwitch, onAdd }) {
 
 /**
  * 「添加语言」框:常见语言里挑一门(已有的不列)。
- * 框里那一句是**行为陈述**(点了会发生什么:以真相源为底稿克隆),不是说明书。
+ * 框里那一句是**行为陈述**(点了会发生什么:从所选语种翻译或建空白),不是说明书。
  * @param {object} opts
  * @param {string[]} opts.existing 已有语种
  * @param {(code: string) => void} opts.onPick

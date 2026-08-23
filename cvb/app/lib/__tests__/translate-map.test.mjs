@@ -1,6 +1,6 @@
 // 翻译映射的常驻回归网:结构永不出客户端 ——
 // collect 只给散文/名称槽位,apply 只往既有字符串槽写(编造的路径落不进任何地方)。
-import { collectTranslatables, applyTranslations } from '../translate-map.mjs';
+import { collectTranslatables, applyTranslations, wrapUnit, unwrapUnit } from '../translate-map.mjs';
 
 const CONFIG = {
   basics: {
@@ -61,4 +61,26 @@ test('apply:深拷贝上写,入参原样不动;空映射 = 克隆恒等', () => 
   expect(JSON.stringify(CONFIG)).toBe(before);
   expect(out.basics.name).toBe('San Zhang');
   expect(JSON.stringify(applyTranslations(CONFIG, {}))).toBe(before);
+});
+
+test('wrapUnit/unwrapUnit:单元与 mini-config 对偶(逐条翻译的桥)', () => {
+  // 重记录一条:按分节名平铺到索引 0
+  const rec = { name: '某某科技', position: '后端工程师', startDate: '2020-04' };
+  const mini = wrapUnit('work', rec);
+  expect(collectTranslatables(mini)['work.0.position']).toBe('后端工程师');
+  expect(unwrapUnit('work', mini)).toEqual(rec);
+
+  // 行内整组:整个数组来回
+  const rows = [{ language: '中文', fluency: '母语' }, { language: '英语', fluency: '流利' }];
+  const miniList = wrapUnit('languages', rows);
+  expect(collectTranslatables(miniList)['languages.1.fluency']).toBe('流利');
+  expect(unwrapUnit('languages', miniList, { isList: true })).toEqual(rows);
+
+  // 身份块单例:summary 住 basics 下、location 住 basics.location 下
+  const sum = wrapUnit('summary', { label: '资深后端工程师', summary: '十年经验' });
+  expect(collectTranslatables(sum)['basics.label']).toBe('资深后端工程师');
+  expect(unwrapUnit('summary', sum)).toEqual({ label: '资深后端工程师', summary: '十年经验' });
+  const loc = wrapUnit('location', { city: '上海', countryCode: 'CN' });
+  expect(collectTranslatables(loc)['basics.location.city']).toBe('上海');
+  expect(unwrapUnit('location', loc)).toEqual({ city: '上海', countryCode: 'CN' });
 });

@@ -74,6 +74,36 @@ export const collectTranslatables = (config) => {
   return entries;
 };
 
+// ---- 条目级翻译的桥(2026-08-23 语种平权:任一条目可从任一语种的对应条目翻译)----
+// 编辑器的「单元」(一条重记录 / 身份块的三个单例 / 一个行内节的整组行)包成
+// translate-map 认识的 mini-config,翻完再解回 —— 收集/写回逻辑因此零分叉。
+// 对应关系按**分节 + 索引**(标准记录没有稳定 id,位置是唯一的结构性对应)。
+
+const UNIT_WRAP = {
+  // 身份块三单例:各自住 basics 下的自然位置
+  basics: { wrap: (v) => ({ basics: { ...v } }), unwrap: (c) => ({ ...(c.basics || {}) }) },
+  summary: { wrap: (v) => ({ basics: { ...v } }), unwrap: (c) => ({ ...(c.basics || {}) }) },
+  location: {
+    wrap: (v) => ({ basics: { location: { ...v } } }),
+    unwrap: (c) => ({ ...((c.basics && c.basics.location) || {}) }),
+  },
+};
+
+/** 单元 → mini-config。列表节(重记录一条 / 行内整组)按分节名平铺。 */
+export const wrapUnit = (moduleKey, unit) => {
+  const special = UNIT_WRAP[moduleKey];
+  if (special) return special.wrap(unit || {});
+  return { [moduleKey]: Array.isArray(unit) ? unit.map((it) => ({ ...it })) : [{ ...(unit || {}) }] };
+};
+
+/** mini-config → 单元(与 wrapUnit 对偶;isList 指该单元本来就是整组行)。 */
+export const unwrapUnit = (moduleKey, mini, { isList = false } = {}) => {
+  const special = UNIT_WRAP[moduleKey];
+  if (special) return special.unwrap(mini || {});
+  const arr = Array.isArray((mini || {})[moduleKey]) ? mini[moduleKey] : [];
+  return isList ? arr : arr[0] || {};
+};
+
 /**
  * 把译文按路径写回(深拷贝上写,不动入参)。
  * 只认 collect 会给出的路径 —— 模型编造的路径落不进任何地方。

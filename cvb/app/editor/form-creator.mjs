@@ -737,6 +737,21 @@ export function createFormCreator({ fields, value = {}, onSubmit, onCancel, aiCo
     refreshActions();
   };
 
+  /**
+   * 整组回填(逐条翻译等外部来源):只动 next 里有的键,**不动初值** ——
+   * 表单因此变脏、保存解锁,落不落库仍归「一条记录一次保存」契约管;取消照旧整组复原。
+   */
+  root.applyValues = (next) => {
+    for (const field of fields) {
+      if (!(field.attributeId in next)) continue;
+      values[field.attributeId] = next[field.attributeId];
+      resetControl(field, values[field.attributeId]);
+      const errorEl = errorEls.get(field.attributeId);
+      if (errorEl) errorEl.textContent = '';
+    }
+    refreshActions();
+  };
+
   refreshActions();
 
   return root;

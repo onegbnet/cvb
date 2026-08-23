@@ -199,8 +199,22 @@ export function createInlineRows({ fields, items, onChange }) {
     return row;
   }
 
-  for (const record of data) root.append(buildRow(record, false));
-  root.append(buildRow({}, true));
+  const renderRows = () => {
+    for (const record of data) root.append(buildRow(record, false));
+    root.append(buildRow({}, true));
+  };
+  renderRows();
+
+  /**
+   * 整节重铺(逐条翻译等外部来源):换掉内部数据、重建所有行,并照常走 onChange ——
+   * 于是上层的暂存/脏态自动跟上,落不落库仍归整节「保存」管,「取消」照旧复原。
+   */
+  root.setItems = (next) => {
+    data = (Array.isArray(next) ? next : []).map((it) => ({ ...it }));
+    for (const row of [...root.querySelectorAll('.inl-row')]) row.remove();
+    renderRows();
+    push();
+  };
 
   return root;
 }

@@ -17,7 +17,7 @@ import { createSnapshots } from './snapshots.mjs';
  * @param {() => Node} opts.exportControl  导出
  * @param {(key: string) => Promise<boolean>} opts.onRestore 点了"恢复"——由上层确认并执行
  */
-export function openManageDrawer({ lang, factsLang, factsSource, importControl, exportControl, onRestore, onDeleteLang, onMakeSource }) {
+export function openManageDrawer({ lang, factsLang, factsSource, factsExists, importControl, exportControl, onRestore, onDeleteLang, onMakeSource }) {
   if (!window.Overlay || typeof window.Overlay.show !== 'function') return null;
 
   // **不配说明句**:「导入」「导出」「快照」这几个词自己说得清,
@@ -67,16 +67,16 @@ export function openManageDrawer({ lang, factsLang, factsSource, importControl, 
         },
       })
     ),
-    // 当前打开的是非真相源语种时,多一块「语言版本」:删除当前语种(真相源不可删,
-    // 所以真相源下这一块整个不出现 —— 不摆一个永远禁用的按钮)
-    factsLang && factsSource && factsLang !== factsSource && typeof onDeleteLang === 'function'
+    // 「语言版本」组:语种平权(2026-08-23)—— **任何**真实语种都可删
+    //(删到最后一份就是空库);「设为默认」只在当前不是默认语种时出现
+    //(默认只是管线语义:不带语言参数的读取用哪份)。空库的虚拟文档没有行,组不出现。
+    factsLang && factsExists && typeof onDeleteLang === 'function'
       ? group(
           'facts.group',
           h(
             'div',
             { class: 'mng-row' },
-            // 改判真相源在删除之前 —— 想删真相源的路就是「先把别的语种立起来」
-            typeof onMakeSource === 'function'
+            typeof onMakeSource === 'function' && factsLang !== factsSource
               ? h(
                   'button',
                   {

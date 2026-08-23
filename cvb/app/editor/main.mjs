@@ -27,6 +27,7 @@ import {
 } from '../lib/api.mjs';
 import { buildFactsBar, openAddLangDialog, factsLangName } from './facts-bar.mjs';
 import { translateResumeConfig } from '../lib/ai.mjs';
+import { wrapUnit, unwrapUnit } from '../lib/translate-map.mjs';
 import { factsLangOfUi, uiLangForFacts as uiForFacts } from '../lib/lang-names.mjs';
 import { SECTIONS, sectionModules, MODULES, getModuleFields, getModuleName, moduleIssues } from './modules.mjs';
 import { confirmAction } from '../lib/confirm.mjs';
@@ -583,6 +584,8 @@ function buildHeader() {
               lang,
               factsLang,
               factsSource: langsInfo.source,
+              // 空库的虚拟文档没有行,删不得 —— 语言组只在真实语种上出现
+              factsExists: langsInfo.langs.some((l) => l.lang === factsLang),
               importControl: buildImportButton,
               exportControl: buildExportButton,
               // 恢复的确认与执行都在这一层(它握着 state / 未保存闸门),
@@ -766,7 +769,11 @@ function buildObjectBlock(module) {
     },
   });
   pendingEls.push(form);
-  return form;
+  // 逐条翻译:译文经 applyValues 进表单(变脏、可取消),落库仍看「保存」
+  const trxBtn = entryTranslateButton(() =>
+    openEntryTranslate({ module, onApply: (unit) => form.applyValues(unit) })
+  );
+  return trxBtn ? h('div', {}, h('div', { class: 'trx-row' }, trxBtn), form) : form;
 }
 
 /**
@@ -832,7 +839,22 @@ function buildInlineBlock(module) {
     )
   );
 
-  const wrap = h('div', { class: 'inl-block' }, rows, footerEl);
+  // 逐条翻译(行内节按整节:行太小放不下第四个控件):译文经 setItems 进暂存,
+  // 落库仍看整节「保存」,「取消」照旧复原。profiles 没有可翻内容,不摆按钮。
+  const trxBtn =
+    module.key === 'profiles'
+      ? null
+      : entryTranslateButton(() =>
+          openEntryTranslate({ module, isList: true, onApply: (items) => rows.setItems(items) })
+        );
+
+  const wrap = h(
+    'div',
+    { class: 'inl-block' },
+    trxBtn ? h('div', { class: 'trx-row' }, trxBtn) : null,
+    rows,
+    footerEl
+  );
   wrap.hasPendingEdit = isDirty;
   pendingEls.push(wrap);
   return wrap;
@@ -894,6 +916,17 @@ function buildRecordEditor() {
   });
   pendingEls.push(form);
 
+  // 逐条翻译:对应按分节+索引取来源语种同位置那条;新建的还没有位置,不摆按钮
+  const trxBtn = isNew
+    ? null
+    : entryTranslateButton(() =>
+        openEntryTranslate({
+          module,
+          index: openRecord.index,
+          onApply: (unit) => form.applyValues(unit),
+        })
+      );
+
   return h(
     'div',
     { class: 'rec-editor' },
@@ -902,7 +935,8 @@ function buildRecordEditor() {
       { class: 'crumb' },
       h('button', { type: 'button', class: 'crumb-back', onClick: back }, icon('back'), tr('action.back')),
       h('span', { class: 'crumb-sep' }, '/'),
-      h('span', { class: 'crumb-here' }, getModuleName(module))
+      h('span', { class: 'crumb-here' }, getModuleName(module)),
+      trxBtn ? h('span', { class: 'crumb-trx' }, trxBtn) : null
     ),
     h('h1', { class: 'rec-editor-title' },
       isNew ? `${tr('action.add')} · ${getModuleName(module)}` : String(value[module.summaryField] || tr('editor.untitledItem'))),
@@ -1142,13 +1176,23 @@ async function switchFactsLang(code) {
   location.href = next.toString();
 }
 
-/** 新增语种的底稿怎么来是个决定,决定摆成按钮(2026-08-23 用户裁定
- *  「克隆不能是简单克隆,要翻译」+「也要给不克隆的选项」):
- *  「翻译真相源底稿」(重点色)—— AI 把散文译成目标语言,语言中立字段直接带过去;
- *  「建立空白文档」—— 从零开始。翻译失败不建档(Toast 报错,可重试或改选空白)。
- *  空库没有真相源,没什么可翻 —— 跳过选择,直接建档并确立真相源(探针钉着这条)。 */
+/** 翻译等待圈(加语种与逐条翻译共用)。 */
+const openTranslateProgress = () =>
+  window.Overlay.show({
+    variant: 'box',
+    title: tr('facts.add.translating'),
+    body: h('div', { class: 'ai-loading' }, h('div', { class: 'spinner' }), h('span', {}, tr('ai.loading'))),
+    closable: { escape: false, clickOutside: false, closeButton: false },
+  });
+
+/** 新增语种的底稿怎么来是个决定,决定摆成按钮(2026-08-23 用户裁定,并于同日
+ *  改判语种平权:**没有哪一份是真相源**):
+ *  「从所选语种翻译」(重点色)—— 来源在**所有已有语种**里挑(缺省当前打开的这份),
+ *  AI 把散文译成目标语言,语言中立字段直接带过去;「建立空白文档」—— 从零开始。
+ *  翻译失败不建档(Toast 报错,可重试或改选空白)。
+ *  空库一份都没有,没什么可翻 —— 跳过选择,直接建档并确立默认语种(探针钉着这条)。 */
 async function addFactsLang(code) {
-  if (!langsInfo || !langsInfo.source) {
+  if (!langsInfo || !langsInfo.langs.length) {
     try {
       await createFactsLang(code);
     } catch (err) {
@@ -1162,53 +1206,61 @@ async function addFactsLang(code) {
 
   const choice = await new Promise((resolve) => {
     let chosen = '';
+    // 来源语种选择器:所有已有语种,缺省当前打开的这份(语种平权,谁都可以当底稿)
+    const srcSelect = h(
+      'select',
+      { class: 'fc-input fadd-src' },
+      langsInfo.langs.map(({ lang }) =>
+        h('option', { value: lang, ...(lang === factsLang ? { selected: 'selected' } : {}) }, factsLangName(lang))
+      )
+    );
     const body = h(
       'div',
       { class: 'ovw-confirm' },
-      h('p', { class: 'ovw-note' }, tr('facts.add.note'))
+      h('p', { class: 'ovw-note' }, tr('facts.add.note')),
+      h('label', { class: 'fadd-src-row' }, `${tr('facts.add.from')}${tr('punct.labelSep')}`, srcSelect)
     );
     const handle = window.Overlay.show({
       variant: 'box',
       title: `${tr('facts.add.title')}${tr('punct.labelSep')}${factsLangName(code)}`,
       body,
-      onClose: () => resolve(chosen || 'cancel'),
+      onClose: () => resolve(chosen || { kind: 'cancel' }),
     });
     const pick = (v) => { chosen = v; handle.close(); };
     body.append(
       h(
         'div',
         { class: 'fadd-actions' },
-        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('cancel') }, tr('action.cancel')),
-        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('blank') }, tr('facts.add.blank')),
+        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick({ kind: 'cancel' }) }, tr('action.cancel')),
+        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick({ kind: 'blank' }) }, tr('facts.add.blank')),
         h(
           'button',
-          { type: 'button', class: 'btn btn-small btn-accent', onClick: () => pick('translate') },
+          {
+            type: 'button',
+            class: 'btn btn-small btn-accent',
+            onClick: () => pick({ kind: 'translate', from: srcSelect.value }),
+          },
           tr('facts.add.translate')
         )
       )
     );
   });
-  if (choice === 'cancel') return;
+  if (choice.kind === 'cancel') return;
 
   let seedOpts = { seed: 'empty' };
   let progress = null;
-  if (choice === 'translate') {
-    // 真相源可能就是当前打开的这份且有防抖中的改动 —— 先落盘再取,译的才是最新事实
+  if (choice.kind === 'translate') {
+    // 来源可能就是当前打开的这份且有防抖中的改动 —— 先落盘再取,译的才是最新事实
     clearTimeout(saveTimer);
     await flushSave();
-    progress = window.Overlay.show({
-      variant: 'box',
-      title: tr('facts.add.translating'),
-      body: h('div', { class: 'ai-loading' }, h('div', { class: 'spinner' }), h('span', {}, tr('ai.loading'))),
-      closable: { escape: false, clickOutside: false, closeButton: false },
-    });
+    progress = openTranslateProgress();
     try {
-      const src = await fetchResume();
+      const src = await fetchResume(choice.from);
       const translated = await translateResumeConfig({
         config: src.config,
-        sourceLang: langsInfo.source,
+        sourceLang: choice.from,
         targetLang: code,
-        sourceLabel: `${factsLangName(langsInfo.source)} (${langsInfo.source})`,
+        sourceLabel: `${factsLangName(choice.from)} (${choice.from})`,
         targetLabel: `${factsLangName(code)} (${code})`,
       });
       seedOpts = { config: translated };
@@ -1231,7 +1283,85 @@ async function addFactsLang(code) {
   await switchFactsLang(code);
 }
 
-/** 把当前语种改判为真相源(生成侧缺省读取与克隆底稿跟着换)。 */
+/**
+ * 逐条翻译(2026-08-23 语种平权的第二半):某个「单元」(一条重记录 / 身份块单例 /
+ * 行内整节)从任一已有语种的**对应位置**取内容翻译过来。对应按分节 + 索引 ——
+ * 标准记录没有稳定 id,位置是唯一的结构性对应。译文只回填表单/暂存,
+ * **不直接落库**:落不落仍归「一条记录一次保存」契约管。
+ * @param {object} opts.module 分节模块
+ * @param {number} [opts.index] 重记录的行号(身份块/行内整节不传)
+ * @param {boolean} [opts.isList] 单元是整组行(行内轻记录)
+ * @param {(unit: object|Array) => void} opts.onApply 译好的单元回填
+ */
+async function openEntryTranslate({ module, index, isList = false, onApply }) {
+  const sources = (langsInfo ? langsInfo.langs : []).filter(({ lang }) => lang !== factsLang);
+  if (!sources.length) return;
+  const from = await new Promise((resolve) => {
+    let chosen = '';
+    const body = h(
+      'div',
+      { class: 'ovw-confirm' },
+      h('p', { class: 'ovw-note' }, tr('translate.pickSource')),
+      h(
+        'div',
+        { class: 'facts-add-grid' },
+        sources.map(({ lang }) =>
+          h(
+            'button',
+            { type: 'button', class: 'btn facts-add-item', onClick: () => { chosen = lang; handle.close(); } },
+            factsLangName(lang)
+          )
+        )
+      )
+    );
+    const handle = window.Overlay.show({
+      variant: 'box',
+      title: tr('translate.entry'),
+      body,
+      onClose: () => resolve(chosen),
+    });
+  });
+  if (!from) return;
+
+  const progress = openTranslateProgress();
+  try {
+    const src = await fetchResume(from);
+    const srcValue = module.get(src.config);
+    const unit = isList ? srcValue : module.kind === 'list' ? (srcValue || [])[index] : srcValue;
+    const hasContent = isList ? Array.isArray(unit) && unit.length : unit && Object.keys(unit).length;
+    if (!hasContent) {
+      progress.close();
+      window.Toast && window.Toast.err(tr('translate.noCounterpart'));
+      return;
+    }
+    const mini = await translateResumeConfig({
+      config: wrapUnit(module.key, unit),
+      sourceLang: from,
+      targetLang: factsLang,
+      sourceLabel: `${factsLangName(from)} (${from})`,
+      targetLabel: `${factsLangName(factsLang)} (${factsLang})`,
+    });
+    progress.close();
+    onApply(unwrapUnit(module.key, mini, { isList }));
+  } catch (err) {
+    progress.close();
+    if (isUnauthorized(err)) return redirectToUnlock();
+    window.Toast && window.Toast.err(String(err.message || err));
+  }
+}
+
+/** 逐条翻译按钮(放不放由调用方决定;只有一门语种时不出现)。 */
+function entryTranslateButton(onClick) {
+  if (!langsInfo || langsInfo.langs.length < 2) return null;
+  return h(
+    'button',
+    { type: 'button', class: 'btn btn-small trx-btn', onClick },
+    tr('translate.entry')
+  );
+}
+
+/** 把当前语种设为默认(不带 ?flang= 的读取、含生成侧,改用这一份)。
+ *  语种平权:这不改任何内容语义,只挪管线指针。 */
 async function makeCurrentFactsSource() {
   const name = factsLangName(factsLang);
   const ok = await confirmAction(tr('facts.makeSource.confirm').replace('{name}', name));
@@ -1243,7 +1373,7 @@ async function makeCurrentFactsSource() {
     return false;
   }
   bypassUnloadGuard = true;
-  location.reload(); // 真相源标记要重画;当前文档没变,原地重开即可
+  location.reload(); // 「默认」标记要重画;当前文档没变,原地重开即可
   return true;
 }
 
@@ -1298,8 +1428,17 @@ async function deleteCurrentFactsLang() {
     return false;
   }
   bypassUnloadGuard = true;
-  const ui = uiForFacts(langsInfo.source, getLanguage(), SUPPORTED_LANGS);
-  if (ui && ui !== getLanguage()) await setLanguagePref(ui);
+  // 删的可能就是默认语种(服务端已把指针改指剩余中最近更新的一份,或删到空库
+  // 清掉指针)—— 重新取一次清单,别拿删除前的旧指针对齐界面
+  let nextDefault = null;
+  try {
+    const info = await listFactsLangs();
+    nextDefault = info && info.source;
+  } catch { /* 对齐失败就让重开后的 boot 自己对齐 */ }
+  if (nextDefault) {
+    const ui = uiForFacts(nextDefault, getLanguage(), SUPPORTED_LANGS);
+    if (ui && ui !== getLanguage()) await setLanguagePref(ui);
+  }
   const next = new URL(location.href);
   next.searchParams.delete('flang');
   next.hash = '';
