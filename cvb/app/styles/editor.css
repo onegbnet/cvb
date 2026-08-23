@@ -70,9 +70,17 @@
   cursor: default;
 }
 
-.facts-source-tag {
-  font-size: 0.72rem;
-  color: var(--text-secondary);
+/* 默认语种的记号:重点色圆点,不写字样(字样在 title/aria-label 里)。
+   它总排在最前(服务端排序),点 + 位置一起说「这是缺省读取的那份」。 */
+.facts-lang.is-default::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 6px;
+  vertical-align: middle;
 }
 
 .facts-lang-add {

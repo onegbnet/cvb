@@ -43,12 +43,20 @@ export function buildFactsBar({ langsInfo, current, onSwitch, onAdd }) {
         'button',
         {
           type: 'button',
-          class: ['facts-lang', lang === current && 'is-current'],
+          // 默认语种不写字样(2026-08-24 用户裁定):它本来就排在最前(服务端排序,
+          // 有用例钉着),芯片上一枚重点色圆点(CSS 伪元素)标记即可;
+          // 字样退进 title 与 aria-label —— 悬停与读屏仍说得出「默认」
+          class: ['facts-lang', lang === current && 'is-current', lang === sourceLang && 'is-default'],
           'aria-pressed': lang === current ? 'true' : 'false',
+          ...(lang === sourceLang
+            ? {
+                title: tr('facts.source.tag'),
+                'aria-label': `${factsLangName(lang)}${tr('punct.labelSep')}${tr('facts.source.tag')}`,
+              }
+            : {}),
           onClick: () => lang !== current && onSwitch(lang),
         },
-        factsLangName(lang),
-        lang === sourceLang ? h('span', { class: 'facts-source-tag' }, tr('facts.source.tag')) : null
+        factsLangName(lang)
       )
     ),
     h('button', { type: 'button', class: 'facts-lang facts-lang-add', onClick: onAdd }, `＋ ${tr('facts.add')}`)
