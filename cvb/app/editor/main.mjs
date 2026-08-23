@@ -1206,6 +1206,8 @@ async function addFactsLang(code) {
       const src = await fetchResume();
       const translated = await translateResumeConfig({
         config: src.config,
+        sourceLang: langsInfo.source,
+        targetLang: code,
         sourceLabel: `${factsLangName(langsInfo.source)} (${langsInfo.source})`,
         targetLabel: `${factsLangName(code)} (${code})`,
       });

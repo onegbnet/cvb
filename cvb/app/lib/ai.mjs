@@ -72,30 +72,21 @@ const buildImprovePrompt = ({ label, sourceText, context }) => {
   ].join('\n');
 };
 
-// 翻译任务的指令用英文写死(面向模型,不随界面语言变);语言身份用「自名 (code)」表达。
-// 姓名那条规则对应 §3 的存储次序契约:空格分段的段数与次序是「名 中间名 姓」的边界,译丢了姓就读不出来了。
-const buildTranslatePrompt = ({ entries, sourceLabel, targetLabel }) => [
-  `Task: translate the VALUES of the JSON map below — the text content of a resume — from ${sourceLabel} into ${targetLabel}.`,
-  'Rules:',
-  '- Person names: render them the way the target language conventionally writes them, but KEEP the number and order of space-separated parts (given [middle] family).',
-  '- Proper nouns (companies, schools, products): use their official name in the target language if one exists; otherwise transliterate.',
-  '- Match the register of professional resume writing in the target language. Translate faithfully; invent nothing.',
-  '- Dates, URLs and contact details are intentionally absent from the map — do not add any.',
-  '- Return a strict JSON object: {"translations":{<exactly the same keys as the input>:"<translated value>"}}. No other output.',
-  'Input:',
-  JSON.stringify({ entries }),
-].join('\n');
-
 /**
  * 整份翻译(新增语种「翻译真相源底稿」):收集散文槽位 → 一次翻译 → 按路径写回。
  * 结构不出客户端;纯语言中立的文档(零散文)不发请求,等同克隆。
+ * 后端(DeepL 正文 + LLM 人名转写,或整包 LLM 回落)由服务端选,契约见 server/routes/ai.js。
  * 失败会抛(错误消息已本地化),调用方决定不建档。
  */
-export async function translateResumeConfig({ config, sourceLabel, targetLabel }) {
+export async function translateResumeConfig({ config, sourceLang, targetLang, sourceLabel, targetLabel }) {
   const entries = collectTranslatables(config);
   if (!Object.keys(entries).length) return applyTranslations(config, {});
   const payload = await post('api/ai/translate', {
-    prompt: buildTranslatePrompt({ entries, sourceLabel, targetLabel }),
+    entries,
+    sourceLang,
+    targetLang,
+    sourceLabel,
+    targetLabel,
   });
   const map = (payload && payload.translations) || {};
   // 合法却**空**的映射不是成功,是失败的另一张脸:照单全收会建出一份没翻译的
