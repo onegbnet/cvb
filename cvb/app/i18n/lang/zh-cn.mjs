@@ -12,7 +12,7 @@ export default {
   "home.apply.state": "选模板,用 {latex} 引擎编译出 PDF",
   "home.edit.title": "编辑事实",
   "home.apply.title": "生成简历",
-  "home.apply.wip": "职位定向裁剪与投递记录尚未接入",
+  'home.apply.wip': '职位定向裁剪与发布尚未接入',
 
   // ---- 导航模块 ----
   // ---- 一级导航(版块)----

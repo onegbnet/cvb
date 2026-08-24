@@ -11,7 +11,7 @@ export default {
   "home.apply.state": "Kies een sjabloon, compileer een PDF met {latex}",
   "home.edit.title": "Feiten bewerken",
   "home.apply.title": "Cv genereren",
-  "home.apply.wip": "Vacaturegerichte afstemming en sollicitatiegeschiedenis zijn nog niet beschikbaar",
+  'home.apply.wip': 'Vacaturegericht bijschaven en publiceren zijn nog niet beschikbaar',
 
   'section.personal': 'Persoonlijk',
   'section.education': 'Opleiding',

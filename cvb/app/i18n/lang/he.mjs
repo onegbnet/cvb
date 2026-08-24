@@ -11,7 +11,7 @@ export default {
   "home.apply.state": "בחר תבנית והפק PDF באמצעות {latex}",
   "home.edit.title": "עריכת העובדות",
   "home.apply.title": "יצירת קורות חיים",
-  "home.apply.wip": "התאמה ממוקדת למשרה והיסטוריית הגשות טרם חוברו",
+  'home.apply.wip': 'התאמה למשרה ופרסום עדיין לא זמינים',
 
   'section.personal': 'פרטים אישיים',
   'section.education': 'השכלה',

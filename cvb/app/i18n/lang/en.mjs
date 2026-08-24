@@ -11,7 +11,7 @@ export default {
   "home.apply.state": "Pick a template, compile a PDF with {latex}",
   "home.edit.title": "Edit the facts",
   "home.apply.title": "Generate a resume",
-  "home.apply.wip": "Job-targeted tailoring and application history are not wired up yet",
+  'home.apply.wip': 'Job-targeted tailoring and publishing are not wired up yet',
 
   'section.personal': 'Personal',
   'section.education': 'Education',

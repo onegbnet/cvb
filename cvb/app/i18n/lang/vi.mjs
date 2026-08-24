@@ -11,7 +11,7 @@ export default {
   "home.apply.state": "Chọn mẫu, biên dịch PDF bằng {latex}",
   "home.edit.title": "Chỉnh sửa dữ kiện",
   "home.apply.title": "Tạo CV",
-  "home.apply.wip": "Tính năng tùy chỉnh theo vị trí ứng tuyển và lịch sử ứng tuyển chưa sẵn sàng",
+  'home.apply.wip': 'Tinh chỉnh theo tin tuyển dụng và xuất bản chưa khả dụng',
 
   'section.personal': 'Cá nhân',
   'section.education': 'Học vấn',

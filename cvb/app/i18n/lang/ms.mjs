@@ -11,7 +11,7 @@ export default {
   "home.apply.state": "Pilih templat, kompilkan PDF dengan {latex}",
   "home.edit.title": "Sunting fakta",
   "home.apply.title": "Jana resume",
-  "home.apply.wip": "Penyesuaian mengikut jawatan dan sejarah permohonan belum tersedia",
+  'home.apply.wip': 'Penyesuaian khusus jawatan dan penerbitan belum tersedia',
 
   'section.personal': 'Peribadi',
   'section.education': 'Pendidikan',

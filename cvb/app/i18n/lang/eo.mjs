@@ -11,7 +11,7 @@ export default {
   "home.apply.state": "Elektu ŝablonon, kompilu PDF per {latex}",
   "home.edit.title": "Redakti la faktojn",
   "home.apply.title": "Generi vivresumon",
-  "home.apply.wip": "Alĝustigo laŭ posteno kaj kandidatiĝa historio ankoraŭ ne disponeblas",
+  'home.apply.wip': 'Laborspecifa adapto kaj publikigo ankoraŭ ne disponeblas',
 
   'section.personal': 'Personaj informoj',
   'section.education': 'Edukado',

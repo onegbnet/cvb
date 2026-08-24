@@ -11,7 +11,7 @@ export default {
   "home.apply.state": "Scegli un modello e compila un PDF con {latex}",
   "home.edit.title": "Modifica i fatti",
   "home.apply.title": "Genera un curriculum",
-  "home.apply.wip": "L'adattamento mirato alla posizione e lo storico delle candidature non sono ancora attivi",
+  'home.apply.wip': "L'adattamento mirato all'annuncio e la pubblicazione non sono ancora disponibili",
 
   'section.personal': 'Dati personali',
   'section.education': 'Istruzione',

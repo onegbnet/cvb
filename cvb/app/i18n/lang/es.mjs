@@ -11,7 +11,7 @@ export default {
   "home.apply.state": "Elige una plantilla y compila un PDF con {latex}",
   "home.edit.title": "Editar los hechos",
   "home.apply.title": "Generar un currículum",
-  "home.apply.wip": "El ajuste según el puesto y el historial de candidaturas aún no están disponibles",
+  'home.apply.wip': 'La adaptación al puesto y la publicación aún no están disponibles',
 
   'section.personal': 'Personal',
   'section.education': 'Formación',

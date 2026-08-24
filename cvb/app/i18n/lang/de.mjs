@@ -11,7 +11,7 @@ export default {
   "home.apply.state": "Vorlage wählen, PDF mit {latex} kompilieren",
   "home.edit.title": "Fakten bearbeiten",
   "home.apply.title": "Lebenslauf erstellen",
-  "home.apply.wip": "Stellenbezogener Zuschnitt und Bewerbungsverlauf sind noch nicht angebunden",
+  'home.apply.wip': 'Stellenspezifisches Zuschneiden und Veröffentlichen sind noch nicht angebunden',
 
   'section.personal': 'Persönliches',
   'section.education': 'Ausbildung',
