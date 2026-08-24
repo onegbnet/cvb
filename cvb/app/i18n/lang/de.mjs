@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'Heruntergeladen; ein Snapshot wurde auf dem Server gespeichert',
 
   'preview.noData': 'Noch keine Lebenslaufdaten',
+
+  'apply.target': 'Bewerbung in',
+
+  'apply.layout': 'Layout',
+
+  'apply.facts': 'Faktensprache',
+
+  'spec.au': 'Australien',
+
+  'spec.nz': 'Neuseeland',
+
+  'spec.cn': 'Festlandchina',
   'preview.snapshotSaved': 'Snapshot auf dem Server gespeichert',
   'preview.present': 'heute',
   'preview.yearsSuffix': ' Jahre Erfahrung',

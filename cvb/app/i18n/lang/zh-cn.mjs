@@ -279,6 +279,12 @@ export default {
 
   // ---- 预览 ----
   'preview.noData': '暂无简历数据',
+  'apply.target': '投递目标',
+  'apply.layout': '版式',
+  'apply.facts': '事实语种',
+  'spec.au': '澳大利亚',
+  'spec.nz': '新西兰',
+  'spec.cn': '中国大陆',
   'preview.snapshotSaved': '已存快照到服务端',
   'preview.present': '至今',
   'preview.yearsSuffix': '年经验',

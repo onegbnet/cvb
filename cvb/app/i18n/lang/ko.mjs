@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': '다운로드했으며, 서버에 스냅샷을 남겼습니다',
 
   'preview.noData': '아직 이력서 데이터가 없습니다',
+
+  'apply.target': '지원 지역',
+
+  'apply.layout': '레이아웃',
+
+  'apply.facts': '사실 언어',
+
+  'spec.au': '호주',
+
+  'spec.nz': '뉴질랜드',
+
+  'spec.cn': '중국 본토',
   'preview.snapshotSaved': '서버에 스냅샷을 저장했습니다',
   'preview.present': '현재',
   'preview.yearsSuffix': '년 경력',

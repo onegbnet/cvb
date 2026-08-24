@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'ダウンロードが完了し、サーバーにスナップショットを保存しました',
 
   'preview.noData': '履歴書データがまだありません',
+
+  'apply.target': '応募先',
+
+  'apply.layout': 'レイアウト',
+
+  'apply.facts': '事実の言語',
+
+  'spec.au': 'オーストラリア',
+
+  'spec.nz': 'ニュージーランド',
+
+  'spec.cn': '中国大陸',
   'preview.snapshotSaved': 'サーバーにスナップショットを保存しました',
   'preview.present': '現在',
   'preview.yearsSuffix': '年の経験',

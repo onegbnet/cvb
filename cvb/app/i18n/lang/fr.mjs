@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'Téléchargé, et un instantané a été conservé sur le serveur',
 
   'preview.noData': 'Aucune donnée de CV pour l’instant',
+
+  'apply.target': 'Candidature en',
+
+  'apply.layout': 'Mise en page',
+
+  'apply.facts': 'Langue des faits',
+
+  'spec.au': 'Australie',
+
+  'spec.nz': 'Nouvelle-Zélande',
+
+  'spec.cn': 'Chine continentale',
   'preview.snapshotSaved': 'Instantané enregistré sur le serveur',
   'preview.present': 'aujourd’hui',
   'preview.yearsSuffix': ' ans d’expérience',

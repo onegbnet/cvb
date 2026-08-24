@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'Dimuat turun, dan satu syot kilat disimpan pada pelayan',
 
   'preview.noData': 'Belum ada data resume',
+
+  'apply.target': 'Memohon di',
+
+  'apply.layout': 'Susun atur',
+
+  'apply.facts': 'Bahasa fakta',
+
+  'spec.au': 'Australia',
+
+  'spec.nz': 'New Zealand',
+
+  'spec.cn': 'China Tanah Besar',
   'preview.snapshotSaved': 'Syot kilat disimpan pada pelayan',
   'preview.present': 'Kini',
   'preview.yearsSuffix': ' tahun pengalaman',

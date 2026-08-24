@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'ဒေါင်းလုဒ်လုပ်ပြီး၊ ဆာဗာပေါ်တွင် အရန်မိတ္တူ တစ်ခု သိမ်းထားသည်',
 
   'preview.noData': 'CV ဒေတာ မရှိသေး',
+
+  'apply.target': 'လျှောက်ထားမည့်နေရာ',
+
+  'apply.layout': 'အပြင်အဆင်',
+
+  'apply.facts': 'အချက်အလက်ဘာသာစကား',
+
+  'spec.au': 'ဩစတြေးလျ',
+
+  'spec.nz': 'နယူးဇီလန်',
+
+  'spec.cn': 'တရုတ်ပြည်မ',
   'preview.snapshotSaved': 'ဆာဗာသို့ အရန်မိတ္တူ သိမ်းပြီး',
   'preview.present': 'ယခုထိ',
   'preview.yearsSuffix': ' နှစ် အတွေ့အကြုံ',

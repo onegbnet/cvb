@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'הקובץ הורד, ותמונת מצב נשמרה בשרת',
 
   'preview.noData': 'אין עדיין נתוני קורות חיים',
+
+  'apply.target': 'מגיש מועמדות ב',
+
+  'apply.layout': 'פריסה',
+
+  'apply.facts': 'שפת העובדות',
+
+  'spec.au': 'אוסטרליה',
+
+  'spec.nz': 'ניו זילנד',
+
+  'spec.cn': 'סין',
   'preview.snapshotSaved': 'תמונת מצב נשמרה בשרת',
   'preview.present': 'היום',
   'preview.yearsSuffix': ' שנות ניסיון',

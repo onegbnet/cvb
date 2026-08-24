@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'Elŝutita, kaj momentfoto estis konservita en la servilo',
 
   'preview.noData': 'Ankoraŭ neniuj vivresumaj datumoj',
+
+  'apply.target': 'Kandidatiĝo en',
+
+  'apply.layout': 'Aranĝo',
+
+  'apply.facts': 'Lingvo de faktoj',
+
+  'spec.au': 'Aŭstralio',
+
+  'spec.nz': 'Nov-Zelando',
+
+  'spec.cn': 'Kontinenta Ĉinio',
   'preview.snapshotSaved': 'Momentfoto konservita en la servilo',
   'preview.present': 'Nun',
   'preview.yearsSuffix': ' jaroj da sperto',

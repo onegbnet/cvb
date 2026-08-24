@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'ดาวน์โหลดแล้ว และได้เก็บสแนปช็อตไว้บนเซิร์ฟเวอร์',
 
   'preview.noData': 'ยังไม่มีข้อมูลเรซูเม่',
+
+  'apply.target': 'สมัครงานที่',
+
+  'apply.layout': 'รูปแบบ',
+
+  'apply.facts': 'ภาษาของข้อเท็จจริง',
+
+  'spec.au': 'ออสเตรเลีย',
+
+  'spec.nz': 'นิวซีแลนด์',
+
+  'spec.cn': 'จีนแผ่นดินใหญ่',
   'preview.snapshotSaved': 'บันทึกสแนปช็อตไปยังเซิร์ฟเวอร์แล้ว',
   'preview.present': 'ปัจจุบัน',
   'preview.yearsSuffix': ' ปีประสบการณ์',

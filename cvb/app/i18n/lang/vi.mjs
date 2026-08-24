@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'Đã tải xuống và lưu một bản chụp nhanh trên máy chủ',
 
   'preview.noData': 'Chưa có dữ liệu CV',
+
+  'apply.target': 'Ứng tuyển tại',
+
+  'apply.layout': 'Bố cục',
+
+  'apply.facts': 'Ngôn ngữ dữ kiện',
+
+  'spec.au': 'Úc',
+
+  'spec.nz': 'New Zealand',
+
+  'spec.cn': 'Trung Quốc đại lục',
   'preview.snapshotSaved': 'Đã lưu bản chụp nhanh lên máy chủ',
   'preview.present': 'Hiện tại',
   'preview.yearsSuffix': ' năm kinh nghiệm',

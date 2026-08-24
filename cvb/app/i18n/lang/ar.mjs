@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'تم التنزيل، وحُفظت لقطة على الخادم',
 
   'preview.noData': 'لا توجد بيانات سيرة ذاتية بعد',
+
+  'apply.target': 'التقديم في',
+
+  'apply.layout': 'التنسيق',
+
+  'apply.facts': 'لغة الحقائق',
+
+  'spec.au': 'أستراليا',
+
+  'spec.nz': 'نيوزيلندا',
+
+  'spec.cn': 'الصين',
   'preview.snapshotSaved': 'حُفظت لقطة على الخادم',
   'preview.present': 'حتى الآن',
   'preview.yearsSuffix': ' سنوات خبرة',

@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'Gedownload; er is een snapshot op de server opgeslagen',
 
   'preview.noData': 'Nog geen cv-gegevens',
+
+  'apply.target': 'Solliciteren in',
+
+  'apply.layout': 'Opmaak',
+
+  'apply.facts': 'Feitentaal',
+
+  'spec.au': 'Australië',
+
+  'spec.nz': 'Nieuw-Zeeland',
+
+  'spec.cn': 'Vasteland van China',
   'preview.snapshotSaved': 'Snapshot op de server opgeslagen',
   'preview.present': 'Heden',
   'preview.yearsSuffix': ' jaar ervaring',

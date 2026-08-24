@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'Downloadet, og et øjebliksbillede blev gemt på serveren',
 
   'preview.noData': 'Ingen CV-data endnu',
+
+  'apply.target': 'Ansøger i',
+
+  'apply.layout': 'Layout',
+
+  'apply.facts': 'Faktasprog',
+
+  'spec.au': 'Australien',
+
+  'spec.nz': 'New Zealand',
+
+  'spec.cn': 'Fastlandskina',
   'preview.snapshotSaved': 'Øjebliksbillede gemt på serveren',
   'preview.present': 'Nu',
   'preview.yearsSuffix': ' års erfaring',

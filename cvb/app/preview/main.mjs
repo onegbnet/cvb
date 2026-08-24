@@ -1,4 +1,12 @@
-// 生成简历(/apply):工具栏(返回/模板切换/导出/下载 PDF) + PDF 渲染。
+// 生成简历(/apply)。**2026-08-24 重做**(用户:「把现在的生成简历界面去掉,重新设计」):
+// 这一页要按顺序回答三个问题 —— **投到哪里 → 用哪套版式 → 用哪份语种事实**,然后出 PDF。
+//
+// 「投到哪里」是**投递规格**(app/apply/specs.mjs):国别(将来可细到 国别-职种 /
+// 国别-地域),背后对应一份 `culture/<id>.md` 语料。**规格的内容对用户不可见**
+// (用户裁定):字体、页数、照片政策这些是机器该遵守的约束,不是摆给求职者读的功课;
+// 它在背后决定可选哪几套版式、PDF 文件名怎么起,并将来作为 AI 定向裁剪的当地上下文。
+// 换规格时版式跟着换 —— 拿中文模板投澳洲是文化不合规,不是个人偏好。
+//
 // **主题面板已删**(2026-08-15):meta.cvb.theme 属于生成侧参数,而三套模板一个都不读它。
 //
 // **纯 PDF 形态**:HTML 模板层已于 2026-08-14 整体退役,预览只有一条路 ——
@@ -22,17 +30,20 @@ import {
 import {
   fetchResume,
   saveResume,
+  listFactsLangs,
   isUnauthorized,
   redirectToUnlock,
 } from '../lib/api.mjs';
 import {
   TEX_TEMPLATES,
   DEFAULT_TEMPLATE,
-  templateGroups,
   resolveTemplate,
   texTemplateMacros,
   texTemplateFonts,
 } from '../tex/templates/index.mjs';
+import { APPLY_SPECS, DEFAULT_SPEC, resolveSpec, specById, templateForSpec, pdfFileNameFor } from '../apply/specs.mjs';
+import { splitName } from '../lib/name-parts.mjs';
+import { factsLangName } from '../editor/facts-bar.mjs';
 import { texEngineAssets } from '../tex/writer.mjs';
 import { compileTex, isEngineConfigured, fetchEngineAsset, templateBase } from '../lib/tex-engine.mjs';
 import { createPdfView, ZOOM_LIMITS } from '../lib/pdf-view.mjs';
@@ -43,7 +54,10 @@ document.title = tr('app.previewTitle');
 const state = {
   rawConfig: null, // 服务端原始配置(PUT 时用)
   config: null, // 按语言解析后的渲染配置
+  spec: DEFAULT_SPEC, // 投到哪里(决定可选版式与文件名惯例)
   template: DEFAULT_TEMPLATE,
+  factsLang: '', // 用哪份语种事实(空 = 默认语种)
+  langs: [], // 已有事实的语种清单
 };
 
 // ---- 简历渲染(PDF 单一路) ----
@@ -416,15 +430,12 @@ function renderResume() {
 // ---- PDF 下载 ----
 
 function pdfFileName() {
-  const raw = (state.config && state.config.basics && state.config.basics.name) || 'resume';
-  const safe =
-    String(raw)
-      .replace(/[\\/:*?"<>|]+/g, '-')
-      .replace(/\s+/g, '-')
-      .replace(/^-+|-+$/g, '') || 'resume';
+  const raw = (state.config && state.config.basics && state.config.basics.name) || '';
   const d = new Date();
   const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  return `${safe}-${date}.pdf`;
+  // 文件名也归规格管:nz 官方点名 `名-姓-CV.pdf`,别的规格用「姓名-日期」。
+  // 规格不摆在界面上,但确实按当地规矩办事(见 app/apply/specs.mjs)。
+  return pdfFileNameFor({ specId: state.spec, nameParts: splitName(raw), fallbackName: raw, date });
 }
 
 function downloadPdf() {
@@ -586,30 +597,112 @@ function buildPdfViewControls() {
   return pdfViewItemEl;
 }
 
-function buildToolbar(pageEl) {
-  const select = h(
-    'select',
-    {
-      class: 'preview-template-select',
-      onChange: (e) => {
-        state.template = resolveTemplate(e.target.value);
-        const url = new URL(window.location.href);
-        url.searchParams.set('template', state.template);
-        window.history.replaceState({}, '', url.toString());
-        renderResume();
+/** 一排单选芯片(目标 / 版式 / 语种共用;选中态与 /edit 文档栏同一套语汇)。 */
+function chipRow(labelKey, options, current, onPick) {
+  const chips = options.map(({ value, text }) =>
+    h(
+      'button',
+      {
+        type: 'button',
+        class: ['apply-chip', value === current && 'is-on'],
+        'aria-pressed': value === current ? 'true' : 'false',
+        onClick: () => value !== current && onPick(value),
       },
-    },
-    templateGroups().map((group) =>
-      h(
-        'optgroup',
-        { label: tr(`group.${group.id}`) },
-        group.templates.map((id) =>
-          h('option', { value: id, selected: id === state.template }, tr(`template.${id}`))
-        )
-      )
+      text
     )
   );
+  return h(
+    'div',
+    { class: 'apply-row' },
+    h('span', { class: 'apply-row-label' }, tr(labelKey)),
+    h('div', { class: 'apply-chips' }, chips)
+  );
+}
 
+/** 把当前选择写回 URL —— 刷新/分享链接回到同一套设置(模板此前就是这么做的)。 */
+function syncUrl() {
+  const url = new URL(window.location.href);
+  url.searchParams.set('spec', state.spec);
+  url.searchParams.set('template', state.template);
+  if (state.factsLang) url.searchParams.set('flang', state.factsLang);
+  else url.searchParams.delete('flang');
+  window.history.replaceState({}, '', url.toString());
+}
+
+/**
+ * 选择区:**投到哪里 → 用哪套版式 → 用哪份语种事实**。
+ * 三段各一行芯片,顺序即决定顺序 —— 规格换了版式跟着换(不合规的自动回落),
+ * 所以规格在最上面。只有一套版式 / 一门语种时那一行不出现:没有选择就别摆控件。
+ */
+function buildSelectionBar() {
+  const bar = h('div', { class: 'apply-bar' });
+  const rebuild = () => {
+    clear(bar);
+    bar.append(
+      chipRow(
+        'apply.target',
+        APPLY_SPECS.map((s) => ({ value: s.id, text: tr(s.labelKey) })),
+        state.spec,
+        (v) => {
+          state.spec = v;
+          state.template = templateForSpec(v, state.template); // 版式跟着规格走
+          syncUrl();
+          rebuild();
+          renderResume();
+        }
+      )
+    );
+    const templates = specById(state.spec).templates;
+    if (templates.length > 1) {
+      bar.append(
+        chipRow(
+          'apply.layout',
+          templates.map((id) => ({ value: id, text: tr(`template.${id}`) })),
+          state.template,
+          (v) => {
+            state.template = v;
+            syncUrl();
+            rebuild();
+            renderResume();
+          }
+        )
+      );
+    }
+    if (state.langs.length > 1) {
+      bar.append(
+        chipRow(
+          'apply.facts',
+          state.langs.map(({ lang: code }) => ({ value: code, text: factsLangName(code) })),
+          state.factsLang,
+          async (v) => {
+            state.factsLang = v;
+            syncUrl();
+            rebuild();
+            await loadFacts();
+            renderResume();
+          }
+        )
+      );
+    }
+  };
+  rebuild();
+  return bar;
+}
+
+/** 取当前选中语种的那份事实。 */
+async function loadFacts() {
+  try {
+    const cfg = await fetchResume(state.factsLang || undefined);
+    state.rawConfig = normalizeResume(cfg || (await loadDefaultResumeConfig()));
+  } catch (err) {
+    if (isUnauthorized(err)) return redirectToUnlock();
+    window.Toast && window.Toast.err(String(err.message || err));
+    return;
+  }
+  state.config = state.rawConfig;
+}
+
+function buildToolbar(pageEl) {
   pdfBtnEl = h(
     'button',
     { type: 'button', class: 'btn btn-primary preview-pdf-btn', onClick: () => downloadPdf() },
@@ -636,29 +729,6 @@ function buildToolbar(pageEl) {
     h(
       'div',
       { class: 'preview-actions' },
-      h('div', { class: 'preview-action-item' }, select),
-      h(
-        'div',
-        { class: 'preview-action-item' },
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'btn',
-            onClick: async () => {
-              if (!state.rawConfig) {
-                window.Toast.err(tr('preview.noData'));
-                return;
-              }
-              // 只下载。快照是编辑事实那边的独立功能,不该由"导出"顺手代劳
-              exportDataToLocal(JSON.stringify(state.rawConfig, null, 2), 'resume.json');
-              window.Toast.ok(tr('editor.exportOk'));
-            },
-          },
-          icon('download'),
-          ` ${tr('action.export')}`
-        )
-      ),
       buildPdfViewControls(),
       printItemEl,
       pdfItemEl,
@@ -673,12 +743,22 @@ function buildToolbar(pageEl) {
 // ---- 组装 ----
 
 async function main() {
-  state.rawConfig = normalizeResume((await fetchResume()) || (await loadDefaultResumeConfig()));
-  state.config = state.rawConfig;
+  const params = new URLSearchParams(window.location.search);
+  // 三样选择都不进简历数据(那是**生成侧的参数**,不是求职者的事实,见 §3):
+  // URL 参数优先,否则用缺省 —— 刷新与分享链接因此回到同一套设置
+  state.spec = resolveSpec(params.get('spec'));
+  state.template = templateForSpec(state.spec, resolveTemplate(params.get('template')));
 
-  const urlTemplate = new URLSearchParams(window.location.search).get('template');
-  // 模板不再存进简历数据(那是生成侧的选择):URL 参数优先,否则用默认模板
-  state.template = resolveTemplate(urlTemplate);
+  try {
+    const info = await listFactsLangs();
+    state.langs = (info && info.langs) || [];
+  } catch { /* 取不到就当只有一份:少一行芯片,不挡出 PDF */ }
+  const wanted = params.get('flang');
+  state.factsLang =
+    wanted && state.langs.some((l) => l.lang === wanted)
+      ? wanted
+      : (state.langs.find((l) => l.lang === (state.langs[0] && state.langs[0].lang)) || {}).lang || '';
+  await loadFacts();
 
   const app = document.getElementById('app');
   clear(app);
@@ -694,7 +774,11 @@ async function main() {
 
   renderResume();
 
-  pageEl.append(buildToolbar(pageEl), h('div', { class: 'preview-content' }, shellEl));
+  pageEl.append(
+    buildToolbar(pageEl),
+    buildSelectionBar(),
+    h('div', { class: 'preview-content' }, shellEl)
+  );
   app.append(pageEl);
 }
 

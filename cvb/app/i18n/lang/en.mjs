@@ -258,6 +258,18 @@ export default {
   'editor.exportOk': 'Downloaded, and a snapshot was kept on the server',
 
   'preview.noData': 'No resume data yet',
+
+  'apply.target': 'Applying in',
+
+  'apply.layout': 'Layout',
+
+  'apply.facts': 'Facts',
+
+  'spec.au': 'Australia',
+
+  'spec.nz': 'New Zealand',
+
+  'spec.cn': 'China',
   'preview.snapshotSaved': 'Snapshot saved to server',
   'preview.present': 'Present',
   'preview.yearsSuffix': ' yrs experience',

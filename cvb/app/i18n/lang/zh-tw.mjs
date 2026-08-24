@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': '已匯出到本機，並在伺服器端留了一份快照',
 
   'preview.noData': '尚無履歷資料',
+
+  'apply.target': '投遞目標',
+
+  'apply.layout': '版式',
+
+  'apply.facts': '事實語言',
+
+  'spec.au': '澳洲',
+
+  'spec.nz': '紐西蘭',
+
+  'spec.cn': '中國大陸',
   'preview.snapshotSaved': '已將快照儲存至伺服器',
   'preview.present': '至今',
   'preview.yearsSuffix': '年經驗',

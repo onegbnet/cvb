@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'Descargado; se guardó una instantánea en el servidor',
 
   'preview.noData': 'Aún no hay datos del currículum',
+
+  'apply.target': 'Postulación en',
+
+  'apply.layout': 'Formato',
+
+  'apply.facts': 'Idioma de los hechos',
+
+  'spec.au': 'Australia',
+
+  'spec.nz': 'Nueva Zelanda',
+
+  'spec.cn': 'China continental',
   'preview.snapshotSaved': 'Instantánea guardada en el servidor',
   'preview.present': 'Actualidad',
   'preview.yearsSuffix': ' años de experiencia',

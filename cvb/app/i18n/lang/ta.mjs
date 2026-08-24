@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'பதிவிறக்கப்பட்டது; சேவையகத்தில் ஒரு ஸ்னாப்ஷாட் வைக்கப்பட்டது',
 
   'preview.noData': 'சுயவிவரக் குறிப்புத் தரவு இன்னும் இல்லை',
+
+  'apply.target': 'விண்ணப்பிக்கும் இடம்',
+
+  'apply.layout': 'அமைப்பு',
+
+  'apply.facts': 'உண்மைகளின் மொழி',
+
+  'spec.au': 'ஆஸ்திரேலியா',
+
+  'spec.nz': 'நியூசிலாந்து',
+
+  'spec.cn': 'சீனா',
   'preview.snapshotSaved': 'ஸ்னாப்ஷாட் சேவையகத்தில் சேமிக்கப்பட்டது',
   'preview.present': 'தற்போது வரை',
   'preview.yearsSuffix': ' ஆண்டுகள் அனுபவம்',

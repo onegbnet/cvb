@@ -257,6 +257,18 @@ export default {
   'editor.exportOk': 'Завантажено; знімок збережено на сервері',
 
   'preview.noData': 'Даних резюме ще немає',
+
+  'apply.target': 'Подача в',
+
+  'apply.layout': 'Макет',
+
+  'apply.facts': 'Мова фактів',
+
+  'spec.au': 'Австралія',
+
+  'spec.nz': 'Нова Зеландія',
+
+  'spec.cn': 'Материковий Китай',
   'preview.snapshotSaved': 'Знімок збережено на сервері',
   'preview.present': 'дотепер',
   'preview.yearsSuffix': ' р. досвіду',
