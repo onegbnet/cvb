@@ -190,6 +190,7 @@ export default {
   'facts.makeSource.confirm': 'להגדיר את גרסת {name} כברירת מחדל? קריאות ללא ציון שפה (כולל יצירת קורות החיים) ישתמשו בגרסה זו.',
   'facts.delete': 'מחק גרסת שפה זו',
   'facts.delete.confirm': 'למחוק את גרסת {name}? מה שאפשר יהיה לשחזר תלוי בתמונות המצב שנשמרות.',
+  'facts.delete.pickDefault': 'איזו גרסה תהיה ברירת המחדל?',
   'facts.delete.keepAll': 'שמור את כל תמונות המצב',
   'facts.delete.keepFinal': 'שמור רק את תמונת המצב האחרונה',
   'facts.delete.wipe': 'אל תשמור דבר',

@@ -190,6 +190,7 @@ export default {
   'facts.makeSource.confirm': 'تعيين نسخة {name} كنسخة افتراضية؟ ستستخدمها عمليات القراءة دون تحديد لغة (بما في ذلك إنشاء السيرة الذاتية).',
   'facts.delete': 'حذف هذه النسخة اللغوية',
   'facts.delete.confirm': 'هل تريد حذف نسخة {name}؟ ما يمكن استعادته لاحقًا يعتمد على اللقطات التي تُبقيها.',
+  'facts.delete.pickDefault': 'أي نسخة تصبح الافتراضية؟',
   'facts.delete.keepAll': 'الإبقاء على جميع اللقطات',
   'facts.delete.keepFinal': 'الإبقاء على اللقطة الأخيرة فقط',
   'facts.delete.wipe': 'عدم الإبقاء على أي لقطة',

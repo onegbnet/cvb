@@ -190,6 +190,7 @@ export default {
   'facts.makeSource.confirm': 'Angiv versionen {name} som standard? Læsninger uden sprogparameter (herunder cv-generering) bruger derefter denne version.',
   'facts.delete': 'Slet denne sprogversion',
   'facts.delete.confirm': 'Slet versionen {name}? Hvad du senere kan gendanne, afhænger af de øjebliksbilleder, du beholder.',
+  'facts.delete.pickDefault': 'Hvilken version bliver standard?',
   'facts.delete.keepAll': 'Behold alle øjebliksbilleder',
   'facts.delete.keepFinal': 'Behold kun det sidste øjebliksbillede',
   'facts.delete.wipe': 'Behold intet',

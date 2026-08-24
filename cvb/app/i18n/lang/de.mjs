@@ -190,6 +190,7 @@ export default {
   'facts.makeSource.confirm': 'Die Version „{name}“ als Standard festlegen? Zugriffe ohne Sprachangabe (einschließlich der Lebenslauf-Erstellung) verwenden dann diese Fassung.',
   'facts.delete': 'Diese Sprachversion löschen',
   'facts.delete.confirm': 'Die Version „{name}“ löschen? Was sich später wiederherstellen lässt, hängt von den behaltenen Snapshots ab.',
+  'facts.delete.pickDefault': 'Welche Version wird zum Standard?',
   'facts.delete.keepAll': 'Alle Snapshots behalten',
   'facts.delete.keepFinal': 'Nur den letzten Snapshot behalten',
   'facts.delete.wipe': 'Nichts behalten',

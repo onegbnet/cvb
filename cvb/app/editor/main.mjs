@@ -1208,8 +1208,9 @@ const openTranslateProgress = () =>
     closable: { escape: false, clickOutside: false, closeButton: false },
   });
 
-/** 来源语种选择框(加语种与逐条翻译共用):语种按钮网格,关框/取消回 ''。 */
-const pickSourceLang = (candidates) =>
+/** 语种选择框(加语种来源 / 逐条翻译来源 / 删默认时指定新默认共用):
+ *  语种按钮网格,关框或取消回 ''。 */
+const pickSourceLang = (candidates, title = tr('translate.pickSource')) =>
   new Promise((resolve) => {
     let chosen = '';
     const body = h(
@@ -1234,7 +1235,7 @@ const pickSourceLang = (candidates) =>
     );
     const handle = window.Overlay.show({
       variant: 'box',
-      title: tr('translate.pickSource'),
+      title,
       body,
       onClose: () => resolve(chosen),
     });
@@ -1480,6 +1481,17 @@ async function makeCurrentFactsSource() {
  *  说了留就留不成不删、说了清就清不成不删 —— 服务端 put/清理都在删行之前,失败整个请求失败。 */
 async function deleteCurrentFactsLang() {
   const name = factsLangName(factsLang);
+  // 默认语种的不变量(2026-08-24 用户成文):删默认且**删后剩不止一个**时,
+  // 新默认必须由用户显式指定 —— 先问这一句,取消就整个不删(服务端也挡着,
+  // 不带 newDefault 会被 400 拒回,界面这一步是把决定摆到人面前,不是唯一防线)。
+  let newDefault = '';
+  if (langsInfo && factsLang === langsInfo.source) {
+    const rest = langsInfo.langs.filter(({ lang }) => lang !== factsLang);
+    if (rest.length >= 2) {
+      newDefault = await pickSourceLang(rest, tr('facts.delete.pickDefault'));
+      if (!newDefault) return false;
+    }
+  }
   const choice = await new Promise((resolve) => {
     let chosen = '';
     const body = h(
@@ -1517,6 +1529,7 @@ async function deleteCurrentFactsLang() {
     await deleteFactsLang(factsLang, {
       snapshot: choice !== 'wipe',
       purge: choice !== 'keepAll',
+      newDefault,
     });
   } catch (err) {
     window.Toast && window.Toast.err(String(err.message || err));

@@ -190,6 +190,7 @@ export default {
   'facts.makeSource.confirm': 'Ĉu agordi la version "{name}" kiel defaŭltan? Legoj sen lingva parametro (inkluzive la kreadon de la vivresumo) uzos ĉi tiun version.',
   'facts.delete': 'Forigi ĉi tiun lingvan version',
   'facts.delete.confirm': 'Ĉu forigi la version "{name}"? Kio estos restaŭrebla poste dependas de la momentfotoj, kiujn vi konservas.',
+  'facts.delete.pickDefault': 'Kiu versio iĝu la defaŭlta?',
   'facts.delete.keepAll': 'Konservi ĉiujn momentfotojn',
   'facts.delete.keepFinal': 'Konservi nur la lastan momentfoton',
   'facts.delete.wipe': 'Konservi nenion',

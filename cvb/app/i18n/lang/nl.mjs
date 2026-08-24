@@ -190,6 +190,7 @@ export default {
   'facts.makeSource.confirm': 'De versie {name} als standaard instellen? Lezen zonder taalparameter (waaronder het genereren van het cv) gebruikt dan deze versie.',
   'facts.delete': 'Deze taalversie verwijderen',
   'facts.delete.confirm': 'De taalversie {name} verwijderen? Wat je later kunt herstellen, hangt af van de snapshots die je bewaart.',
+  'facts.delete.pickDefault': 'Welke versie wordt de standaard?',
   'facts.delete.keepAll': 'Alle snapshots bewaren',
   'facts.delete.keepFinal': 'Alleen de laatste snapshot bewaren',
   'facts.delete.wipe': 'Niets bewaren',

@@ -88,12 +88,12 @@ export async function setFactsSource(lang) {
 /** 删除一个语种版本(真相源不可删)。快照处置两个开关:
  *  snapshot=true 删行前留一份「删除保护」(留不成不删);
  *  purge=true 连既有历史快照一并清掉(清不成不删)。 */
-export async function deleteFactsLang(lang, { snapshot = true, purge = false } = {}) {
+export async function deleteFactsLang(lang, { snapshot = true, purge = false, newDefault = '' } = {}) {
   return jsonOrThrow(
     await fetch('/api/resume/langs', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lang, snapshot, purge }),
+      body: JSON.stringify({ lang, snapshot, purge, newDefault }),
     })
   );
 }

@@ -190,6 +190,7 @@ export default {
   'facts.makeSource.confirm': 'ตั้งเวอร์ชัน {name} เป็นค่าเริ่มต้นหรือไม่ การอ่านที่ไม่ระบุภาษา (รวมถึงการสร้างเรซูเม่) จะใช้เวอร์ชันนี้',
   'facts.delete': 'ลบเวอร์ชันภาษานี้',
   'facts.delete.confirm': 'ลบเวอร์ชัน {name}? สิ่งที่กู้คืนได้ในภายหลังขึ้นอยู่กับสแนปช็อตที่เก็บไว้',
+  'facts.delete.pickDefault': 'ให้เวอร์ชันใดเป็นค่าเริ่มต้น',
   'facts.delete.keepAll': 'เก็บสแนปช็อตทั้งหมด',
   'facts.delete.keepFinal': 'เก็บเฉพาะสแนปช็อตล่าสุด',
   'facts.delete.wipe': 'ไม่เก็บอะไรเลย',

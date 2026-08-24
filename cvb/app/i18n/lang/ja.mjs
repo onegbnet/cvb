@@ -190,6 +190,7 @@ export default {
   'facts.makeSource.confirm': '「{name}」を既定にしますか？言語を指定しない読み取り（履歴書の生成を含む）はこの版を使います。',
   'facts.delete': 'この言語版を削除',
   'facts.delete.confirm': '「{name}」版を削除しますか？残すスナップショットで、あとから復元できる範囲が決まります。',
+  'facts.delete.pickDefault': 'どの言語版を既定にしますか？',
   'facts.delete.keepAll': 'すべてのスナップショットを残す',
   'facts.delete.keepFinal': '削除時のスナップショットだけ残す',
   'facts.delete.wipe': '何も残さない',

@@ -190,6 +190,7 @@ export default {
   'facts.makeSource.confirm': 'Définir la version {name} par défaut ? Les lectures sans paramètre de langue (dont la génération du CV) utiliseront cette version.',
   'facts.delete': 'Supprimer cette version linguistique',
   'facts.delete.confirm': 'Supprimer la version {name} ? Ce qui pourra être restauré plus tard dépend des instantanés conservés.',
+  'facts.delete.pickDefault': 'Quelle version devient la version par défaut ?',
   'facts.delete.keepAll': 'Conserver tous les instantanés',
   'facts.delete.keepFinal': 'Ne conserver que le dernier instantané',
   'facts.delete.wipe': 'Ne rien conserver',

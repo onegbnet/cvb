@@ -190,6 +190,7 @@ export default {
   'facts.makeSource.confirm': 'Impostare la versione {name} come predefinita? Le letture senza lingua indicata (inclusa la generazione del curriculum) useranno questa versione.',
   'facts.delete': 'Elimina questa versione linguistica',
   'facts.delete.confirm': 'Eliminare la versione {name}? Ciò che potrai ripristinare dipende dalle istantanee conservate.',
+  'facts.delete.pickDefault': 'Quale versione diventa predefinita?',
   'facts.delete.keepAll': 'Conserva tutte le istantanee',
   'facts.delete.keepFinal': "Conserva solo l'ultima istantanea",
   'facts.delete.wipe': 'Non conservare nulla',

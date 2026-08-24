@@ -190,6 +190,7 @@ export default {
   'facts.makeSource.confirm': 'Jadikan versi {name} sebagai lalai? Bacaan tanpa parameter bahasa (termasuk penjanaan resume) akan menggunakan versi ini.',
   'facts.delete': 'Padam versi bahasa ini',
   'facts.delete.confirm': 'Padam versi {name}? Apa yang boleh dipulihkan kelak bergantung pada syot kilat yang disimpan.',
+  'facts.delete.pickDefault': 'Versi mana yang menjadi lalai?',
   'facts.delete.keepAll': 'Simpan semua syot kilat',
   'facts.delete.keepFinal': 'Simpan syot kilat terakhir sahaja',
   'facts.delete.wipe': 'Jangan simpan apa-apa',

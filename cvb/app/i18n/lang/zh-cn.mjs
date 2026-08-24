@@ -206,6 +206,7 @@ export default {
   'facts.makeSource.confirm': '把「{name}」设为默认语种？不带语言参数的读取（含生成简历）将使用这一份。',
   'facts.delete': '删除此语言版本',
   'facts.delete.confirm': '删除「{name}」版本？留下的快照决定将来能恢复什么。',
+  'facts.delete.pickDefault': '哪一份成为默认语种？',
   'facts.delete.keepAll': '保留全部快照',
   'facts.delete.keepFinal': '只留删前快照',
   'facts.delete.wipe': '一份不留',

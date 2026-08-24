@@ -191,6 +191,7 @@ export default {
   'facts.makeSource.confirm': 'Make {name} the default? Reads without a language parameter (including resume generation) will use it.',
   'facts.delete': 'Delete this language version',
   'facts.delete.confirm': 'Delete the {name} version? What you can restore later depends on the snapshots you keep.',
+  'facts.delete.pickDefault': 'Which version becomes the default?',
   'facts.delete.keepAll': 'Keep all snapshots',
   'facts.delete.keepFinal': 'Keep only the final snapshot',
   'facts.delete.wipe': 'Keep nothing',

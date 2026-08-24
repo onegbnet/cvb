@@ -190,6 +190,7 @@ export default {
   'facts.makeSource.confirm': '{name} 버전을 기본으로 설정하시겠습니까? 언어를 지정하지 않은 읽기(이력서 생성 포함)에 이 버전이 사용됩니다.',
   'facts.delete': '이 언어 버전 삭제',
   'facts.delete.confirm': '{name} 버전을 삭제하시겠습니까? 남겨 둔 스냅샷에 따라 나중에 복원할 수 있는 범위가 정해집니다.',
+  'facts.delete.pickDefault': '어느 버전을 기본으로 하시겠습니까?',
   'facts.delete.keepAll': '모든 스냅샷 유지',
   'facts.delete.keepFinal': '삭제 시점 스냅샷만 유지',
   'facts.delete.wipe': '아무것도 남기지 않음',
