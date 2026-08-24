@@ -191,6 +191,8 @@ export default {
   'facts.delete': 'Slet denne sprogversion',
   'facts.delete.confirm': 'Slet versionen {name}? Hvad du senere kan gendanne, afhænger af de øjebliksbilleder, du beholder.',
   'facts.delete.pickDefault': 'Hvilken version bliver standard?',
+  'facts.delete.nextAuto': 'Efter sletning bliver {name} standard.',
+  'facts.delete.lastOne': 'Dette er den sidste sprogversion — faktabasen bliver tom.',
   'facts.delete.keepAll': 'Behold alle øjebliksbilleder',
   'facts.delete.keepFinal': 'Behold kun det sidste øjebliksbillede',
   'facts.delete.wipe': 'Behold intet',

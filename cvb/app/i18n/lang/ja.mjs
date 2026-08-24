@@ -191,6 +191,8 @@ export default {
   'facts.delete': 'この言語版を削除',
   'facts.delete.confirm': '「{name}」版を削除しますか？残すスナップショットで、あとから復元できる範囲が決まります。',
   'facts.delete.pickDefault': 'どの言語版を既定にしますか？',
+  'facts.delete.nextAuto': '削除後は「{name}」が既定になります。',
+  'facts.delete.lastOne': 'これが最後の言語版です。削除すると事実ライブラリは空になります。',
   'facts.delete.keepAll': 'すべてのスナップショットを残す',
   'facts.delete.keepFinal': '削除時のスナップショットだけ残す',
   'facts.delete.wipe': '何も残さない',

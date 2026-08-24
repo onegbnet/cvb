@@ -191,6 +191,8 @@ export default {
   'facts.delete': 'Deze taalversie verwijderen',
   'facts.delete.confirm': 'De taalversie {name} verwijderen? Wat je later kunt herstellen, hangt af van de snapshots die je bewaart.',
   'facts.delete.pickDefault': 'Welke versie wordt de standaard?',
+  'facts.delete.nextAuto': 'Na verwijdering wordt {name} de standaard.',
+  'facts.delete.lastOne': 'Dit is de laatste taalversie — de feitenopslag wordt leeg.',
   'facts.delete.keepAll': 'Alle snapshots bewaren',
   'facts.delete.keepFinal': 'Alleen de laatste snapshot bewaren',
   'facts.delete.wipe': 'Niets bewaren',

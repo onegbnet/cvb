@@ -1481,17 +1481,13 @@ async function makeCurrentFactsSource() {
  *  说了留就留不成不删、说了清就清不成不删 —— 服务端 put/清理都在删行之前,失败整个请求失败。 */
 async function deleteCurrentFactsLang() {
   const name = factsLangName(factsLang);
-  // 默认语种的不变量(2026-08-24 用户成文):删默认且**删后剩不止一个**时,
-  // 新默认必须由用户显式指定 —— 先问这一句,取消就整个不删(服务端也挡着,
-  // 不带 newDefault 会被 400 拒回,界面这一步是把决定摆到人面前,不是唯一防线)。
+  const isDefault = !!(langsInfo && factsLang === langsInfo.source);
+  const rest = langsInfo ? langsInfo.langs.filter(({ lang }) => lang !== factsLang) : [];
+  // 删一次语种要交代的事不止一件(2026-08-24 用户点出「合并并重新设计」):
+  // **一个框、一次提交** —— 里面只问真正要你决定的(新默认、快照怎么处置),
+  // 能推导的后果直接陈述(剩一个自动成为默认 / 这是最后一个)。
+  // 需要指定新默认时,提交按钮先禁着 —— 决定没做完就不该能按下去。
   let newDefault = '';
-  if (langsInfo && factsLang === langsInfo.source) {
-    const rest = langsInfo.langs.filter(({ lang }) => lang !== factsLang);
-    if (rest.length >= 2) {
-      newDefault = await pickSourceLang(rest, tr('facts.delete.pickDefault'));
-      if (!newDefault) return false;
-    }
-  }
   const choice = await new Promise((resolve) => {
     let chosen = '';
     const body = h(
@@ -1499,28 +1495,77 @@ async function deleteCurrentFactsLang() {
       { class: 'ovw-confirm' },
       h('p', { class: 'ovw-note' }, tr('facts.delete.confirm').replace('{name}', name))
     );
+
+    // 默认语种的去向:三档里只有一档需要人做决定,另两档如实陈述
+    const mustPick = isDefault && rest.length >= 2;
+    if (isDefault && rest.length === 1) {
+      body.append(
+        h('p', { class: 'fdel-fact' }, tr('facts.delete.nextAuto').replace('{name}', factsLangName(rest[0].lang)))
+      );
+    } else if (!rest.length) {
+      body.append(h('p', { class: 'fdel-fact' }, tr('facts.delete.lastOne')));
+    }
+
+    let commitBtns = [];
+    const syncCommit = () => {
+      for (const b of commitBtns) b.disabled = mustPick && !newDefault;
+    };
+    if (mustPick) {
+      const chips = rest.map(({ lang }) =>
+        h(
+          'button',
+          {
+            type: 'button',
+            class: 'btn btn-small fdel-def',
+            'aria-pressed': 'false',
+            onClick: (e) => {
+              newDefault = lang;
+              for (const c of chips) {
+                const on = c === e.currentTarget;
+                c.classList.toggle('is-on', on);
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+              }
+              syncCommit();
+            },
+          },
+          factsLangName(lang)
+        )
+      );
+      body.append(
+        h(
+          'div',
+          { class: 'fdel-def-row' },
+          h('span', { class: 'fdel-def-label' }, tr('facts.delete.pickDefault')),
+          h('div', { class: 'fdel-def-chips' }, chips)
+        )
+      );
+    }
+
     // 走 Overlay.show + 自建按钮行(同 confirmOverwrite),不走 Overlay.confirm ——
     // 后者的 doAction 契约踩过(§9);按钮行用自己的类,别蹭 .ovw-actions(§3 导入框的教训)
     const handle = window.Overlay.show({
       variant: 'box',
-      title: tr('facts.delete'),
+      title: `${tr('facts.delete')}${tr('punct.labelSep')}${name}`,
       body,
       onClose: () => resolve(chosen || 'cancel'),
     });
     const pick = (v) => { chosen = v; handle.close(); };
+    const commit = (v, label, accent) =>
+      h('button', { type: 'button', class: `btn btn-small${accent ? ' btn-accent' : ''}`, onClick: () => pick(v) }, label);
+    // 提交档按「留得多→留得少」排,重点色给最安全那档;危险档能选但不抢视线
+    const keepAll = commit('keepAll', tr('facts.delete.keepAll'), true);
+    const keepFinal = commit('keepFinal', tr('facts.delete.keepFinal'), false);
+    const wipe = commit('wipe', tr('facts.delete.wipe'), false);
+    commitBtns = [keepAll, keepFinal, wipe];
+    syncCommit();
     body.append(
       h(
         'div',
         { class: 'fdel-actions' },
         h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('cancel') }, tr('action.cancel')),
-        // 危险的两档不加重点色:能选,但不该是默认那一档
-        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('wipe') }, tr('facts.delete.wipe')),
-        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('keepFinal') }, tr('facts.delete.keepFinal')),
-        h(
-          'button',
-          { type: 'button', class: 'btn btn-small btn-accent', onClick: () => pick('keepAll') },
-          tr('facts.delete.keepAll')
-        )
+        wipe,
+        keepFinal,
+        keepAll
       )
     );
   });

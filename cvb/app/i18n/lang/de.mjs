@@ -191,6 +191,8 @@ export default {
   'facts.delete': 'Diese Sprachversion löschen',
   'facts.delete.confirm': 'Die Version „{name}“ löschen? Was sich später wiederherstellen lässt, hängt von den behaltenen Snapshots ab.',
   'facts.delete.pickDefault': 'Welche Version wird zum Standard?',
+  'facts.delete.nextAuto': 'Nach dem Löschen wird „{name}“ zum Standard.',
+  'facts.delete.lastOne': 'Dies ist die letzte Sprachversion – der Faktenbestand wird leer.',
   'facts.delete.keepAll': 'Alle Snapshots behalten',
   'facts.delete.keepFinal': 'Nur den letzten Snapshot behalten',
   'facts.delete.wipe': 'Nichts behalten',

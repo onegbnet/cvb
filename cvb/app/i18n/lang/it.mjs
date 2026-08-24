@@ -191,6 +191,8 @@ export default {
   'facts.delete': 'Elimina questa versione linguistica',
   'facts.delete.confirm': 'Eliminare la versione {name}? Ciò che potrai ripristinare dipende dalle istantanee conservate.',
   'facts.delete.pickDefault': 'Quale versione diventa predefinita?',
+  'facts.delete.nextAuto': 'Dopo l’eliminazione, {name} diventa la predefinita.',
+  'facts.delete.lastOne': 'È l’ultima versione linguistica: l’archivio dei fatti resterà vuoto.',
   'facts.delete.keepAll': 'Conserva tutte le istantanee',
   'facts.delete.keepFinal': "Conserva solo l'ultima istantanea",
   'facts.delete.wipe': 'Non conservare nulla',

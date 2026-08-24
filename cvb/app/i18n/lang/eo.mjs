@@ -191,6 +191,8 @@ export default {
   'facts.delete': 'Forigi ĉi tiun lingvan version',
   'facts.delete.confirm': 'Ĉu forigi la version "{name}"? Kio estos restaŭrebla poste dependas de la momentfotoj, kiujn vi konservas.',
   'facts.delete.pickDefault': 'Kiu versio iĝu la defaŭlta?',
+  'facts.delete.nextAuto': 'Post la forigo, "{name}" iĝas la defaŭlta.',
+  'facts.delete.lastOne': 'Ĉi tio estas la lasta lingva versio — la faktaro restos malplena.',
   'facts.delete.keepAll': 'Konservi ĉiujn momentfotojn',
   'facts.delete.keepFinal': 'Konservi nur la lastan momentfoton',
   'facts.delete.wipe': 'Konservi nenion',

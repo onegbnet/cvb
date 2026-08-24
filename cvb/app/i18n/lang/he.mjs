@@ -191,6 +191,8 @@ export default {
   'facts.delete': 'מחק גרסת שפה זו',
   'facts.delete.confirm': 'למחוק את גרסת {name}? מה שאפשר יהיה לשחזר תלוי בתמונות המצב שנשמרות.',
   'facts.delete.pickDefault': 'איזו גרסה תהיה ברירת המחדל?',
+  'facts.delete.nextAuto': 'לאחר המחיקה, {name} תהיה ברירת המחדל.',
+  'facts.delete.lastOne': 'זו גרסת השפה האחרונה — מאגר העובדות יישאר ריק.',
   'facts.delete.keepAll': 'שמור את כל תמונות המצב',
   'facts.delete.keepFinal': 'שמור רק את תמונת המצב האחרונה',
   'facts.delete.wipe': 'אל תשמור דבר',

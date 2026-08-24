@@ -191,6 +191,8 @@ export default {
   'facts.delete': 'Supprimer cette version linguistique',
   'facts.delete.confirm': 'Supprimer la version {name} ? Ce qui pourra être restauré plus tard dépend des instantanés conservés.',
   'facts.delete.pickDefault': 'Quelle version devient la version par défaut ?',
+  'facts.delete.nextAuto': 'Après la suppression, {name} devient la version par défaut.',
+  'facts.delete.lastOne': 'C’est la dernière version linguistique — la base de faits sera vide.',
   'facts.delete.keepAll': 'Conserver tous les instantanés',
   'facts.delete.keepFinal': 'Ne conserver que le dernier instantané',
   'facts.delete.wipe': 'Ne rien conserver',

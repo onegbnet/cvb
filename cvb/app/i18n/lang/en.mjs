@@ -192,6 +192,8 @@ export default {
   'facts.delete': 'Delete this language version',
   'facts.delete.confirm': 'Delete the {name} version? What you can restore later depends on the snapshots you keep.',
   'facts.delete.pickDefault': 'Which version becomes the default?',
+  'facts.delete.nextAuto': 'Once deleted, {name} becomes the default.',
+  'facts.delete.lastOne': 'This is the last language version — the facts store will be empty.',
   'facts.delete.keepAll': 'Keep all snapshots',
   'facts.delete.keepFinal': 'Keep only the final snapshot',
   'facts.delete.wipe': 'Keep nothing',

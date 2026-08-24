@@ -191,6 +191,8 @@ export default {
   'facts.delete': 'ลบเวอร์ชันภาษานี้',
   'facts.delete.confirm': 'ลบเวอร์ชัน {name}? สิ่งที่กู้คืนได้ในภายหลังขึ้นอยู่กับสแนปช็อตที่เก็บไว้',
   'facts.delete.pickDefault': 'ให้เวอร์ชันใดเป็นค่าเริ่มต้น',
+  'facts.delete.nextAuto': 'หลังลบแล้ว {name} จะเป็นค่าเริ่มต้น',
+  'facts.delete.lastOne': 'นี่เป็นเวอร์ชันภาษาสุดท้าย เมื่อลบแล้วคลังข้อเท็จจริงจะว่างเปล่า',
   'facts.delete.keepAll': 'เก็บสแนปช็อตทั้งหมด',
   'facts.delete.keepFinal': 'เก็บเฉพาะสแนปช็อตล่าสุด',
   'facts.delete.wipe': 'ไม่เก็บอะไรเลย',

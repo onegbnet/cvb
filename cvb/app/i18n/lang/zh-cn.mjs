@@ -207,6 +207,8 @@ export default {
   'facts.delete': '删除此语言版本',
   'facts.delete.confirm': '删除「{name}」版本？留下的快照决定将来能恢复什么。',
   'facts.delete.pickDefault': '哪一份成为默认语种？',
+  'facts.delete.nextAuto': '删除后，「{name}」成为默认语种。',
+  'facts.delete.lastOne': '这是最后一个语种，删除后事实库为空。',
   'facts.delete.keepAll': '保留全部快照',
   'facts.delete.keepFinal': '只留删前快照',
   'facts.delete.wipe': '一份不留',

@@ -191,6 +191,8 @@ export default {
   'facts.delete': 'Видалити цю мовну версію',
   'facts.delete.confirm': 'Видалити версію {name}? Що вдасться відновити пізніше, залежить від збережених знімків.',
   'facts.delete.pickDefault': 'Яка версія стане типовою?',
+  'facts.delete.nextAuto': 'Після видалення типовою стане {name}.',
+  'facts.delete.lastOne': 'Це остання мовна версія — сховище фактів залишиться порожнім.',
   'facts.delete.keepAll': 'Зберегти всі знімки',
   'facts.delete.keepFinal': 'Зберегти лише останній знімок',
   'facts.delete.wipe': 'Нічого не зберігати',

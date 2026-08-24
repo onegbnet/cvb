@@ -191,6 +191,8 @@ export default {
   'facts.delete': 'Xóa phiên bản ngôn ngữ này',
   'facts.delete.confirm': 'Xóa phiên bản {name}? Những gì khôi phục được sau này phụ thuộc vào các bản chụp nhanh bạn giữ lại.',
   'facts.delete.pickDefault': 'Phiên bản nào sẽ là mặc định?',
+  'facts.delete.nextAuto': 'Sau khi xóa, {name} sẽ là mặc định.',
+  'facts.delete.lastOne': 'Đây là phiên bản ngôn ngữ cuối cùng — kho dữ kiện sẽ trống.',
   'facts.delete.keepAll': 'Giữ tất cả bản chụp nhanh',
   'facts.delete.keepFinal': 'Chỉ giữ bản chụp nhanh cuối',
   'facts.delete.wipe': 'Không giữ gì',

@@ -1213,6 +1213,39 @@
 }
 .crumb-trx { margin-left: auto; }
 
+/* 删语种框里的后果陈述(不是决定,只是把要发生的事说出来) */
+.fdel-fact {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* 新默认语种的选择行:标签 + 一排单选式芯片(选中态与文档栏同一套语汇) */
+.fdel-def-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.fdel-def-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.fdel-def-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.fdel-def.is-on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
 /* 建语种时挑一份遗留快照:名字可长,一行一个,别挤成网格 */
 .fadd-snap-list {
   display: flex;
