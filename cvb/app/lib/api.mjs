@@ -32,7 +32,7 @@ export async function fetchAuth() {
   }
 }
 
-// 多语种事实:`flang` 指定语种文档,不传 = 真相源(worker 侧同一约定)
+// 多语种事实:`flang` 指定语种文档,不传 = 默认语种(worker 侧同一约定)
 const withFlang = (path, flang) => (flang ? `${path}?flang=${encodeURIComponent(flang)}` : path);
 
 /** 读简历。无数据返回 null。 */
@@ -59,8 +59,8 @@ export async function listFactsLangs() {
   return jsonOrThrow(await fetch('/api/resume/langs'));
 }
 
-/** 新增语种。底稿三选:config = 客户端译好的完整文档(「翻译真相源」),
- *  seed:'empty' = 空白文档;都不带 = 克隆真相源(遗留契约,空库建档也走它)。 */
+/** 新增语种。底稿三选:config = 客户端译好的完整文档(从所选语种翻译),
+ *  seed:'empty' = 空白文档;都不带 = 克隆默认语种(遗留契约,空库建档也走它)。 */
 export async function createFactsLang(lang, { seed, config } = {}) {
   const body = { lang };
   if (config) body.config = config;
@@ -74,7 +74,7 @@ export async function createFactsLang(lang, { seed, config } = {}) {
   );
 }
 
-/** 改判真相源(生成侧缺省读取与新语种克隆的底稿都跟着换)。 */
+/** 改判默认语种(不带 flang 的读取、含生成侧,改用这一份;只挪管线指针)。 */
 export async function setFactsSource(lang) {
   return jsonOrThrow(
     await fetch('/api/resume/langs', {
@@ -85,7 +85,7 @@ export async function setFactsSource(lang) {
   );
 }
 
-/** 删除一个语种版本(真相源不可删)。快照处置两个开关:
+/** 删除一个语种版本(任何语种都可删;删默认且剩不止一个时须带 newDefault)。快照处置两个开关:
  *  snapshot=true 删行前留一份「删除保护」(留不成不删);
  *  purge=true 连既有历史快照一并清掉(清不成不删)。 */
 export async function deleteFactsLang(lang, { snapshot = true, purge = false, newDefault = '' } = {}) {
@@ -119,7 +119,7 @@ export async function listSnapshots(flang) {
 /**
  * 建一个还原点。
  * @param {string} [note] 用户随手写的名字(可改;空着就由界面按时间算一个默认的)
- * @param {''|'before-restore'|'before-import'} [kind] **不可改属性**:是不是覆盖前自动留的。
+ * @param {''|'before-restore'|'before-import'|'before-delete'} [kind] **不可改属性**:是不是自动留的、为什么留。
  *   它与 note 分开存 —— 早先塞在 note 里当哨兵,而 note 现在能改,一改名哨兵就没了。
  */
 export async function createSnapshot(note = '', kind = '', flang) {

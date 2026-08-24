@@ -24,7 +24,7 @@
 //
 // 入口本身是语义的一部分(§8 队列 2 ⑥):从「生成简历」进去就是新建一条投递,
 // 从「查看历史」里继续才是追加版本 —— 所以这几个口子必须在入口就分开,不是装饰。
-// 「查看历史」等投递记录落地后再加,不提前画一个点不动的按钮。
+// 「查看历史」等发布(队列 2 D 段)落地后再说,不提前画一个点不动的按钮。
 import { h, clear } from '../lib/dom.mjs';
 import { tr, getLanguage, setLanguagePref, SUPPORTED_LANGS } from '../lib/i18n.mjs';
 import { factsLangOfUi, uiLangForFacts } from '../lib/lang-names.mjs';
@@ -233,8 +233,8 @@ function render(config, langsInfo, displayLang) {
 }
 
 async function main() {
-  // 首页显示哪份事实 = 界面语言对应的语种(存在时),否则真相源 ——
-  // 不存在时把界面吸附回真相源的语言:「日语界面看着中文事实」那个错配态
+  // 首页显示哪份事实 = 界面语言对应的语种(存在时),否则默认语种 ——
+  // 不存在时把界面吸附回默认语种:「日语界面看着中文事实」那个错配态
   // 不再可能停留(2026-08-22 用户报出)。
   let langsInfo = { source: null, langs: [] };
   try {
@@ -246,7 +246,7 @@ async function main() {
     }
   }
   const uiPrimary = factsLangOfUi(lang);
-  // 空库沿用当前界面语言(真相源由第一笔事实确立,没有"缺省中文")
+  // 空库沿用当前界面语言(默认语种由第一笔事实确立,没有"缺省中文")
   const displayLang = langsInfo.langs.some((l) => l.lang === uiPrimary)
     ? uiPrimary
     : langsInfo.source || uiPrimary;
