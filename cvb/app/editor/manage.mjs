@@ -17,7 +17,7 @@ import { createSnapshots } from './snapshots.mjs';
  * @param {() => Node} opts.exportControl  导出
  * @param {(key: string) => Promise<boolean>} opts.onRestore 点了"恢复"——由上层确认并执行
  */
-export function openManageDrawer({ lang, factsLang, factsSource, factsExists, importControl, aiImportControl, exportControl, onRestore, onDeleteLang, onMakeSource }) {
+export function openManageDrawer({ lang, factsLang, factsSource, factsExists, importControl, exportControl, onRestore, onDeleteLang, onMakeSource }) {
   if (!window.Overlay || typeof window.Overlay.show !== 'function') return null;
 
   // **不配说明句**:「导入」「导出」「快照」这几个词自己说得清,
@@ -53,16 +53,6 @@ export function openManageDrawer({ lang, factsLang, factsSource, factsExists, im
         )
       )
     ),
-    // **AI 导入自成一块**:上面那块只吃 JSON Resume(有格式约束),这一块吃的是
-    // 「一份人读的简历」—— PDF / Word / 一段文本,由 AI 抽成标准结构;
-    // 抽完走的仍是同一道整份覆盖闸门(差异表 + 快照保护),不新开落库口。
-    typeof aiImportControl === 'function'
-      ? group(
-          'editor.aiImport',
-          h('div', { class: 'mng-row' }, aiImportControl()),
-          h('p', { class: 'mng-note' }, tr('editor.aiImportNote'))
-        )
-      : null,
     group('action.export', h('div', { class: 'mng-row' }, exportControl())),
     group(
       'snapshot.title',

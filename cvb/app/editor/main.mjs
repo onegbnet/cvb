@@ -449,13 +449,13 @@ function importFromText(textValue) {
 function buildImportButton() {
   const fileInput = h('input', {
     type: 'file',
-    accept: 'application/json,.json',
+    accept: '.json,.pdf,.docx,.txt,.md,application/json,application/pdf,text/plain',
     style: { display: 'none' },
     onChange: async (e) => {
       const file = e.target.files && e.target.files[0];
       e.target.value = ''; // 选同一个文件两次也要能触发
       if (!file) return;
-      importFromText(await file.text());
+      await importFile(file);
     },
   });
 
@@ -482,11 +482,18 @@ function buildImportButton() {
           {
             type: 'button',
             class: 'btn btn-small btn-accent',
-            onClick: () => {
+            onClick: async () => {
               const v = paste.value.trim();
               if (!v) return;
-              // **解析失败就留在框里**,别把人辛苦贴的东西连框一起关掉
-              if (importFromText(v)) handle.close();
+              // 贴的是 JSON Resume 就直接读;是一份人读的简历就交给 AI ——
+              // **两条路一个入口**,用户不必先决定"我该用哪个导入"(2026-08-24 用户裁定)
+              if (looksLikeJson(v)) {
+                // **解析失败就留在框里**,别把人辛苦贴的东西连框一起关掉
+                if (importFromText(v)) handle.close();
+                return;
+              }
+              handle.close();
+              await runAiImport(v, openTranslateProgress());
             },
           },
           tr('action.import')
@@ -525,97 +532,60 @@ function buildImportButton() {
  * - **抽不出就如实说**:扫描件(图片型 PDF)没有文字层,报「这份文件里没有可读的文字」,
  *   不谎称解析失败,也不拿空文档去覆盖。
  */
-function buildAiImportButton() {
-  const fileInput = h('input', {
-    type: 'file',
-    accept: '.pdf,.docx,.txt,.md,application/pdf,text/plain',
-    style: { display: 'none' },
-    onChange: async (e) => {
-      const file = e.target.files && e.target.files[0];
-      e.target.value = '';
-      if (!file) return;
-      let text = '';
-      const progress = openTranslateProgress();
-      try {
-        const name = (file.name || '').toLowerCase();
-        // **老 .doc(Word 97-2003)不解析**:它是 OLE2 复合二进制,正文散在
-        // WordDocument 流的 piece table 里(fast-save 的文档还是乱序的),
-        // 跟 .docx(zip + XML)是两码事。粗解析出来的是夹着控制符的半篇文字 ——
-        // 而这些字是要喂给 AI 去抽事实的,**输入脏,抽出来的事实就脏**,
-        // 比读不出来更糟。所以如实拒绝,并给两条一步之遥的出路(另存 / 直接粘贴)。
-        if (name.endsWith('.doc')) {
-          progress.close();
-          window.Toast && window.Toast.err(tr('editor.aiImportDocLegacy'));
-          return;
-        }
-        if (name.endsWith('.pdf')) {
-          const { extractPdfText } = await import('../lib/pdf-view.mjs');
-          text = await extractPdfText(new Uint8Array(await file.arrayBuffer()));
-        } else if (name.endsWith('.docx')) {
-          const { extractDocxText } = await import('../lib/docx-text.mjs');
-          text = await extractDocxText(await file.arrayBuffer());
-        } else {
-          text = await file.text();
-        }
-      } catch (err) {
-        progress.close();
-        window.Toast && window.Toast.err(`${tr('editor.aiImportUnreadable')}${tr('punct.labelSep')}${String(err.message || err)}`);
-        return;
-      }
-      if (!text.trim()) {
-        progress.close();
-        // 扫描件就是这一档:文件读到了,里面没有文字层
-        window.Toast && window.Toast.err(tr('editor.aiImportNoText'));
-        return;
-      }
-      await runAiImport(text, progress);
-    },
-  });
+/** 贴进来的东西像不像 JSON —— 只看第一个非空字符,不试着"猜"一份坏 JSON 的意图。 */
+const looksLikeJson = (text) => /^[[{]/.test(String(text || '').trimStart());
 
-  const openTextBox = () => {
-    const paste = h('textarea', {
-      class: 'fc-textarea imp-paste',
-      rows: 12,
-      placeholder: tr('editor.aiImportPastePlaceholder'),
-      'aria-label': tr('editor.aiImportPastePlaceholder'),
-    });
-    const body = h('div', { class: 'imp-paste-box' }, paste);
-    const handle = window.Overlay.show({ variant: 'box', title: tr('editor.aiImport'), body, width: 'wide' });
-    body.append(
-      h(
-        'div',
-        { class: 'imp-paste-actions' },
-        h('button', { type: 'button', class: 'btn btn-small', onClick: () => handle.close() }, tr('action.cancel')),
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'btn btn-small btn-accent',
-            onClick: async () => {
-              const v = paste.value.trim();
-              if (!v) return;
-              handle.close();
-              await runAiImport(v, openTranslateProgress());
-            },
-          },
-          tr('editor.aiImportRun')
-        )
-      )
-    );
-    paste.focus();
-  };
-
-  return h(
-    'span',
-    { class: 'imp' },
-    h(
-      'span',
-      { class: 'mng-row' },
-      h('button', { type: 'button', class: 'btn btn-small', onClick: () => fileInput.click() }, tr('action.importFile')),
-      h('button', { type: 'button', class: 'btn btn-small', onClick: openTextBox }, tr('action.paste'))
-    ),
-    fileInput
-  );
+/**
+ * 导入一个文件:**一个入口,按内容分路** —— `.json` 直接读,
+ * PDF / Word / 文本交给 AI 抽(2026-08-24 用户裁定「不要做两个导入功能组」:
+ * 导入就是一件事,给的是什么由机器认,不该让人先选用哪个导入)。
+ */
+async function importFile(file) {
+  const name = (file.name || '').toLowerCase();
+  if (name.endsWith('.json')) {
+    importFromText(await file.text());
+    return;
+  }
+  const progress = openTranslateProgress();
+  let text = '';
+  try {
+    // **老 .doc(Word 97-2003)不解析**:它是 OLE2 复合二进制,正文散在
+    // WordDocument 流的 piece table 里(fast-save 的文档还是乱序的),
+    // 跟 .docx(zip + XML)是两码事。粗解析出来的是夹着控制符的半篇文字 ——
+    // 而这些字是要喂给 AI 去抽事实的,**输入脏,抽出来的事实就脏**,
+    // 比读不出来更糟。所以如实拒绝,并给两条一步之遥的出路(另存 / 直接粘贴)。
+    if (name.endsWith('.doc')) {
+      progress.close();
+      window.Toast && window.Toast.err(tr('editor.aiImportDocLegacy'));
+      return;
+    }
+    if (name.endsWith('.pdf')) {
+      const { extractPdfText } = await import('../lib/pdf-view.mjs');
+      text = await extractPdfText(new Uint8Array(await file.arrayBuffer()));
+    } else if (name.endsWith('.docx')) {
+      const { extractDocxText } = await import('../lib/docx-text.mjs');
+      text = await extractDocxText(await file.arrayBuffer());
+    } else {
+      text = await file.text();
+    }
+  } catch (err) {
+    progress.close();
+    window.Toast && window.Toast.err(`${tr('editor.aiImportUnreadable')}${tr('punct.labelSep')}${String(err.message || err)}`);
+    return;
+  }
+  if (!text.trim()) {
+    progress.close();
+    // 扫描件就是这一档:文件读到了,里面没有文字层
+    window.Toast && window.Toast.err(tr('editor.aiImportNoText'));
+    return;
+  }
+  // 文本文件里装的也可能是一份 JSON Resume —— 那就别绕道 AI
+  if (looksLikeJson(text)) {
+    progress.close();
+    importFromText(text);
+    return;
+  }
+  await runAiImport(text, progress);
 }
 
 /** 文本 → AI 抽取 → 归一 → 既有的整份覆盖闸门。progress 由调用方开好(它可能早就开着)。 */
@@ -731,7 +701,6 @@ function buildHeader() {
               // 空库的虚拟文档没有行,删不得 —— 语言组只在真实语种上出现
               factsExists: langsInfo.langs.some((l) => l.lang === factsLang),
               importControl: buildImportButton,
-              aiImportControl: buildAiImportButton,
               exportControl: buildExportButton,
               // 恢复的确认与执行都在这一层(它握着 state / 未保存闸门),
               // 抽屉与快照列表只负责"点了哪一条"
