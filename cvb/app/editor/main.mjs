@@ -785,11 +785,12 @@ function buildObjectBlock(module) {
     },
   });
   pendingEls.push(form);
-  // 逐条翻译:译文经 applyValues 进表单(变脏、可取消),落库仍看「保存」
-  const trxBtn = entryTranslateButton(() =>
+  // 逐条翻译:译文经 applyValues 进表单(变脏、可取消),落库仍看「保存」。
+  // 按钮不占行 —— 挂在返回值上,由装配层放进块标题行(2026-08-24 用户裁定)
+  form.trxBtn = entryTranslateButton(() =>
     openEntryTranslate({ module, onApply: (unit) => form.applyValues(unit) })
   );
-  return trxBtn ? h('div', {}, h('div', { class: 'trx-row' }, trxBtn), form) : form;
+  return form;
 }
 
 /**
@@ -855,23 +856,17 @@ function buildInlineBlock(module) {
     )
   );
 
+  const wrap = h('div', { class: 'inl-block' }, rows, footerEl);
+  wrap.hasPendingEdit = isDirty;
   // 逐条翻译(行内节按整节:行太小放不下第四个控件):译文经 setItems 进暂存,
   // 落库仍看整节「保存」,「取消」照旧复原。profiles 没有可翻内容,不摆按钮。
-  const trxBtn =
+  // 按钮不占行 —— 由装配层放进块标题行(2026-08-24 用户裁定)
+  wrap.trxBtn =
     module.key === 'profiles'
       ? null
       : entryTranslateButton(() =>
           openEntryTranslate({ module, isList: true, onApply: (items) => rows.setItems(items) })
         );
-
-  const wrap = h(
-    'div',
-    { class: 'inl-block' },
-    trxBtn ? h('div', { class: 'trx-row' }, trxBtn) : null,
-    rows,
-    footerEl
-  );
-  wrap.hasPendingEdit = isDirty;
   pendingEls.push(wrap);
   return wrap;
 }
@@ -974,7 +969,14 @@ function rerenderBlock(key) {
   // 这一段自己的编辑器实例要从拦截名单里摘掉,免得留下已 detach 的僵尸
   pendingEls = pendingEls.filter((el) => !host.contains(el));
   clear(host);
-  host.append(buildBlockBody(module));
+  const body = buildBlockBody(module);
+  host.append(body);
+  // 标题行的翻译按钮跟着换新 —— 旧按钮闭包里抓的是已 detach 的旧表单
+  if (entry.head) {
+    const stale = entry.head.querySelector('.trx-btn');
+    if (stale) stale.remove();
+    if (body.trxBtn) entry.head.append(body.trxBtn);
+  }
   const count = module.kind === 'list' ? module.get(state.config).length : 0;
   const badge = entry.title.querySelector('.blk-count');
   if (badge) badge.textContent = count > 0 ? String(count) : '';
@@ -1027,9 +1029,12 @@ function renderDoc() {
         getModuleName(module),
         h('span', { class: 'blk-count num' }, count > 0 ? String(count) : '')
       );
-      const host = h('div', { class: 'blk-body' }, buildBlockBody(module));
-      blockHosts.set(module.key, { host, title, module });
-      docEl.append(h('section', { class: 'blk', id: `m-${module.key}` }, title, host));
+      const body = buildBlockBody(module);
+      const host = h('div', { class: 'blk-body' }, body);
+      // 逐条翻译按钮与块标题同一行(h2 保持纯净 —— 按钮进标题元素会被读进可访问名)
+      const head = body.trxBtn ? h('div', { class: 'blk-head' }, title, body.trxBtn) : title;
+      blockHosts.set(module.key, { host, title, head: body.trxBtn ? head : null, module });
+      docEl.append(h('section', { class: 'blk', id: `m-${module.key}` }, head, host));
     }
   }
 

@@ -1189,10 +1189,16 @@
   margin-top: 12px;
 }
 
-/* 逐条翻译按钮所在行:靠右、不与内容抢宽度 */
-.trx-row {
+/* 逐条翻译按钮与块标题同一行:标题吃满剩余宽,按钮靠右 */
+.blk-head {
   display: flex;
-  justify-content: flex-end;
-  margin: 0 0 10px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.blk-head > .blk-title {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
 }
 .crumb-trx { margin-left: auto; }
