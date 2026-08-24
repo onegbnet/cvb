@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': '마지막 언어 버전입니다. 삭제하면 사실 저장소가 비게 됩니다.',
   'facts.delete.keepAll': '모든 스냅샷 유지',
   'facts.delete.keepFinal': '삭제 시점 스냅샷만 유지',
-  'facts.delete.wipe': '아무것도 남기지 않음',
+  'facts.delete.wipe': '스냅샷 모두 삭제',
   'manage.importOnly': 'JSON Resume만 지원',
   'manage.importSpec': '형식 안내',
   'field.basics.givenName': '이름',

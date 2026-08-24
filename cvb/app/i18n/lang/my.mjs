@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'ဤသည် နောက်ဆုံးဘာသာစကားဗားရှင်းဖြစ်သည် — ဖျက်လျှင် အချက်အလက်သိုလှောင်ရာ ဗလာဖြစ်မည်။',
   'facts.delete.keepAll': 'အရန်မိတ္တူအားလုံး ထားရန်',
   'facts.delete.keepFinal': 'ဖျက်ချိန် အရန်မိတ္တူသာ ထားရန်',
-  'facts.delete.wipe': 'ဘာမှ မထားရန်',
+  'facts.delete.wipe': 'အရန်မိတ္တူအားလုံး ဖျက်ရန်',
   'manage.importOnly': 'JSON Resume သာ လက်ခံသည်',
   'manage.importSpec': 'ပုံစံ အသေးစိတ်',
   'field.basics.givenName': 'ရှေ့အမည်',

@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'هذه آخر نسخة لغوية — سيصبح مخزن الحقائق فارغًا.',
   'facts.delete.keepAll': 'الإبقاء على جميع اللقطات',
   'facts.delete.keepFinal': 'الإبقاء على اللقطة الأخيرة فقط',
-  'facts.delete.wipe': 'عدم الإبقاء على أي لقطة',
+  'facts.delete.wipe': 'حذف جميع اللقطات',
   'manage.importOnly': 'JSON Resume فقط',
   'manage.importSpec': 'مواصفات الصيغة',
   'field.basics.givenName': 'الاسم الأول',

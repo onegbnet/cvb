@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'Ĉi tio estas la lasta lingva versio — la faktaro restos malplena.',
   'facts.delete.keepAll': 'Konservi ĉiujn momentfotojn',
   'facts.delete.keepFinal': 'Konservi nur la lastan momentfoton',
-  'facts.delete.wipe': 'Konservi nenion',
+  'facts.delete.wipe': 'Forigi ĉiujn momentfotojn',
   'manage.importOnly': 'Nur JSON Resume',
   'manage.importSpec': 'formata specifo',
   'field.basics.givenName': 'Antaŭnomo',

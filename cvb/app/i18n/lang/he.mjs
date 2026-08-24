@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'זו גרסת השפה האחרונה — מאגר העובדות יישאר ריק.',
   'facts.delete.keepAll': 'שמור את כל תמונות המצב',
   'facts.delete.keepFinal': 'שמור רק את תמונת המצב האחרונה',
-  'facts.delete.wipe': 'אל תשמור דבר',
+  'facts.delete.wipe': 'מחק את כל תמונות המצב',
   'manage.importOnly': 'JSON Resume בלבד',
   'manage.importSpec': 'מפרט הפורמט',
   'field.basics.givenName': 'שם פרטי',

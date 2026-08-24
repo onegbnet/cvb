@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'Ini versi bahasa terakhir — simpanan fakta akan kosong.',
   'facts.delete.keepAll': 'Simpan semua syot kilat',
   'facts.delete.keepFinal': 'Simpan syot kilat terakhir sahaja',
-  'facts.delete.wipe': 'Jangan simpan apa-apa',
+  'facts.delete.wipe': 'Padam semua syot kilat',
   'manage.importOnly': 'JSON Resume sahaja',
   'manage.importSpec': 'spesifikasi format',
   'field.basics.givenName': 'Nama pertama',

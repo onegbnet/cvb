@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'Це остання мовна версія — сховище фактів залишиться порожнім.',
   'facts.delete.keepAll': 'Зберегти всі знімки',
   'facts.delete.keepFinal': 'Зберегти лише останній знімок',
-  'facts.delete.wipe': 'Нічого не зберігати',
+  'facts.delete.wipe': 'Видалити всі знімки',
   'manage.importOnly': 'Лише JSON Resume',
   'manage.importSpec': 'опис формату',
   'field.basics.givenName': 'Ім’я',

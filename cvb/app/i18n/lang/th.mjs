@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'นี่เป็นเวอร์ชันภาษาสุดท้าย เมื่อลบแล้วคลังข้อเท็จจริงจะว่างเปล่า',
   'facts.delete.keepAll': 'เก็บสแนปช็อตทั้งหมด',
   'facts.delete.keepFinal': 'เก็บเฉพาะสแนปช็อตล่าสุด',
-  'facts.delete.wipe': 'ไม่เก็บอะไรเลย',
+  'facts.delete.wipe': 'ลบสแนปช็อตทั้งหมด',
   'manage.importOnly': 'รองรับเฉพาะ JSON Resume',
   'manage.importSpec': 'ข้อกำหนดรูปแบบ',
   'field.basics.givenName': 'ชื่อ',

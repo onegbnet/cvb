@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'Đây là phiên bản ngôn ngữ cuối cùng — kho dữ kiện sẽ trống.',
   'facts.delete.keepAll': 'Giữ tất cả bản chụp nhanh',
   'facts.delete.keepFinal': 'Chỉ giữ bản chụp nhanh cuối',
-  'facts.delete.wipe': 'Không giữ gì',
+  'facts.delete.wipe': 'Xóa tất cả bản chụp nhanh',
   'manage.importOnly': 'Chỉ hỗ trợ JSON Resume',
   'manage.importSpec': 'đặc tả định dạng',
   'field.basics.givenName': 'Tên',

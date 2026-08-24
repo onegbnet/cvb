@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': '這是最後一個語言版本，刪除後事實庫為空。',
   'facts.delete.keepAll': '保留全部快照',
   'facts.delete.keepFinal': '只留刪除前快照',
-  'facts.delete.wipe': '一份不留',
+  'facts.delete.wipe': '刪除全部快照',
   'manage.importOnly': '僅支援 JSON Resume',
   'manage.importSpec': '格式說明',
   'field.basics.givenName': '名',

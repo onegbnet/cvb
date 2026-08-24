@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'È l’ultima versione linguistica: l’archivio dei fatti resterà vuoto.',
   'facts.delete.keepAll': 'Conserva tutte le istantanee',
   'facts.delete.keepFinal': "Conserva solo l'ultima istantanea",
-  'facts.delete.wipe': 'Non conservare nulla',
+  'facts.delete.wipe': 'Elimina tutte le istantanee',
   'manage.importOnly': 'Solo JSON Resume',
   'manage.importSpec': 'specifica del formato',
   'field.basics.givenName': 'Nome',

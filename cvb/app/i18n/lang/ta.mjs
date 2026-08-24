@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'இதுவே கடைசி மொழிப் பதிப்பு — நீக்கினால் உண்மைக் களஞ்சியம் காலியாகும்.',
   'facts.delete.keepAll': 'எல்லா ஸ்னாப்ஷாட்டுகளையும் வைத்திரு',
   'facts.delete.keepFinal': 'இறுதி ஸ்னாப்ஷாட்டை மட்டும் வைத்திரு',
-  'facts.delete.wipe': 'எதையும் வைக்க வேண்டாம்',
+  'facts.delete.wipe': 'எல்லா ஸ்னாப்ஷாட்டுகளையும் நீக்கு',
   'manage.importOnly': 'JSON Resume மட்டுமே',
   'manage.importSpec': 'வடிவ விளக்கம்',
   'field.basics.givenName': 'முதல் பெயர்',

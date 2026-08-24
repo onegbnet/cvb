@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'Dette er den sidste sprogversion — faktabasen bliver tom.',
   'facts.delete.keepAll': 'Behold alle øjebliksbilleder',
   'facts.delete.keepFinal': 'Behold kun det sidste øjebliksbillede',
-  'facts.delete.wipe': 'Behold intet',
+  'facts.delete.wipe': 'Slet alle øjebliksbilleder',
   'manage.importOnly': 'Kun JSON Resume',
   'manage.importSpec': 'formatbeskrivelse',
   'field.basics.givenName': 'Fornavn',

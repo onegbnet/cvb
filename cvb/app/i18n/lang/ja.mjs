@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'これが最後の言語版です。削除すると事実ライブラリは空になります。',
   'facts.delete.keepAll': 'すべてのスナップショットを残す',
   'facts.delete.keepFinal': '削除時のスナップショットだけ残す',
-  'facts.delete.wipe': '何も残さない',
+  'facts.delete.wipe': 'スナップショットをすべて削除',
   'manage.importOnly': 'JSON Resume のみ対応',
   'manage.importSpec': '形式の説明',
   'field.basics.givenName': '名',

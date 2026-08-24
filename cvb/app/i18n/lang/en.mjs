@@ -196,7 +196,7 @@ export default {
   'facts.delete.lastOne': 'This is the last language version — the facts store will be empty.',
   'facts.delete.keepAll': 'Keep all snapshots',
   'facts.delete.keepFinal': 'Keep only the final snapshot',
-  'facts.delete.wipe': 'Keep nothing',
+  'facts.delete.wipe': 'Delete all snapshots',
   'manage.importOnly': 'JSON Resume only',
   'manage.importSpec': 'format spec',
   'field.basics.givenName': 'Given name',

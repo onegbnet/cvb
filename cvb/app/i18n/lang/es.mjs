@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'Es la última versión de idioma: el almacén de hechos quedará vacío.',
   'facts.delete.keepAll': 'Conservar todas las instantáneas',
   'facts.delete.keepFinal': 'Conservar solo la instantánea final',
-  'facts.delete.wipe': 'No conservar nada',
+  'facts.delete.wipe': 'Eliminar todas las instantáneas',
   'manage.importOnly': 'Solo JSON Resume',
   'manage.importSpec': 'especificación del formato',
   'field.basics.givenName': 'Nombre de pila',

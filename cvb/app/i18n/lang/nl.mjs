@@ -195,7 +195,7 @@ export default {
   'facts.delete.lastOne': 'Dit is de laatste taalversie — de feitenopslag wordt leeg.',
   'facts.delete.keepAll': 'Alle snapshots bewaren',
   'facts.delete.keepFinal': 'Alleen de laatste snapshot bewaren',
-  'facts.delete.wipe': 'Niets bewaren',
+  'facts.delete.wipe': 'Alle snapshots verwijderen',
   'manage.importOnly': 'Alleen JSON Resume',
   'manage.importSpec': 'formaatspecificatie',
   'field.basics.givenName': 'Voornaam',
