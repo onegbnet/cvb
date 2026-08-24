@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': '스냅샷 모두 삭제',
   'facts.delete.keepOne': '삭제 전 스냅샷 남기기',
   'facts.delete.keepNone': '아무것도 남기지 않음',
-  'facts.delete.confirmEmpty': '이 언어 버전은 비어 있습니다. 삭제해도 잃을 것이 없습니다.',
+  'facts.delete.confirmEmpty': '이 문서는 만든 뒤로 수정된 적이 없습니다. 직접 작성한 내용은 사라지지 않습니다.',
   'manage.importOnly': 'JSON Resume만 지원',
   'manage.importSpec': '형식 안내',
   'field.basics.givenName': '이름',

@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'スナップショットをすべて削除',
   'facts.delete.keepOne': '削除前のスナップショットを残す',
   'facts.delete.keepNone': '何も残さない',
-  'facts.delete.confirmEmpty': 'この言語版は空です。削除しても失われるものはありません。',
+  'facts.delete.confirmEmpty': 'この文書は作成後に変更されていません。あなたが書いたものは失われません。',
   'manage.importOnly': 'JSON Resume のみ対応',
   'manage.importSpec': '形式の説明',
   'field.basics.givenName': '名',

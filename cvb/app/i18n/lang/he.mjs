@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'מחק את כל תמונות המצב',
   'facts.delete.keepOne': 'לשמור תמונת מצב אחת',
   'facts.delete.keepNone': 'לא לשמור דבר',
-  'facts.delete.confirmEmpty': 'גרסת השפה הזו ריקה — שום דבר לא יאבד.',
+  'facts.delete.confirmEmpty': 'המסמך הזה לא נערך מאז שנוצר — שום דבר שכתבת לא יאבד.',
   'manage.importOnly': 'JSON Resume בלבד',
   'manage.importSpec': 'מפרט הפורמט',
   'field.basics.givenName': 'שם פרטי',

@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'Eliminar todas las instantáneas',
   'facts.delete.keepOne': 'Conservar una instantánea',
   'facts.delete.keepNone': 'No conservar nada',
-  'facts.delete.confirmEmpty': 'Esta versión de idioma está vacía: no se perderá nada.',
+  'facts.delete.confirmEmpty': 'Este documento no se ha modificado desde que se creó: no perderás nada de lo que escribiste.',
   'manage.importOnly': 'Solo JSON Resume',
   'manage.importSpec': 'especificación del formato',
   'field.basics.givenName': 'Nombre de pila',

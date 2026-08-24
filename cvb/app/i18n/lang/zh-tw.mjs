@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': '刪除全部快照',
   'facts.delete.keepOne': '留一份刪除前快照',
   'facts.delete.keepNone': '不留快照',
-  'facts.delete.confirmEmpty': '這個語言版本是空的，刪除不會遺失任何內容。',
+  'facts.delete.confirmEmpty': '這份文件自建立以來沒有變動過，刪除不會遺失你寫下的東西。',
   'manage.importOnly': '僅支援 JSON Resume',
   'manage.importSpec': '格式說明',
   'field.basics.givenName': '名',

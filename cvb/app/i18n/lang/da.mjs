@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'Slet alle øjebliksbilleder',
   'facts.delete.keepOne': 'Behold et øjebliksbillede',
   'facts.delete.keepNone': 'Behold intet',
-  'facts.delete.confirmEmpty': 'Denne sprogversion er tom — intet går tabt.',
+  'facts.delete.confirmEmpty': 'Dette dokument er ikke ændret, siden det blev oprettet — intet af dit arbejde går tabt.',
   'manage.importOnly': 'Kun JSON Resume',
   'manage.importSpec': 'formatbeskrivelse',
   'field.basics.givenName': 'Fornavn',

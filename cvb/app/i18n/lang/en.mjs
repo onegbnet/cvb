@@ -202,7 +202,7 @@ export default {
   'facts.delete.wipe': 'Delete all snapshots',
   'facts.delete.keepOne': 'Keep a snapshot of it',
   'facts.delete.keepNone': 'Keep nothing',
-  'facts.delete.confirmEmpty': 'This language version is empty — nothing will be lost.',
+  'facts.delete.confirmEmpty': 'Nothing here has been edited since it was created — nothing of yours will be lost.',
   'manage.importOnly': 'JSON Resume only',
   'manage.importSpec': 'format spec',
   'field.basics.givenName': 'Given name',

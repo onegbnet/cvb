@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'Alle snapshots verwijderen',
   'facts.delete.keepOne': 'Een snapshot bewaren',
   'facts.delete.keepNone': 'Niets bewaren',
-  'facts.delete.confirmEmpty': 'Deze taalversie is leeg — er gaat niets verloren.',
+  'facts.delete.confirmEmpty': 'Dit document is sinds het aanmaken niet gewijzigd — er gaat niets van jou verloren.',
   'manage.importOnly': 'Alleen JSON Resume',
   'manage.importSpec': 'formaatspecificatie',
   'field.basics.givenName': 'Voornaam',

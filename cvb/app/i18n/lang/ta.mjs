@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'எல்லா ஸ்னாப்ஷாட்டுகளையும் நீக்கு',
   'facts.delete.keepOne': 'நீக்கும் முன் ஒரு ஸ்னாப்ஷாட் வைத்திரு',
   'facts.delete.keepNone': 'எதையும் வைக்க வேண்டாம்',
-  'facts.delete.confirmEmpty': 'இந்த மொழிப் பதிப்பு காலியாக உள்ளது — எதுவும் இழக்கப்படாது.',
+  'facts.delete.confirmEmpty': 'இந்த ஆவணம் உருவாக்கப்பட்ட பிறகு திருத்தப்படவில்லை — நீங்கள் எழுதியது எதுவும் இழக்கப்படாது.',
   'manage.importOnly': 'JSON Resume மட்டுமே',
   'manage.importSpec': 'வடிவ விளக்கம்',
   'field.basics.givenName': 'முதல் பெயர்',

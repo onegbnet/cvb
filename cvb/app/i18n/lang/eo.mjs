@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'Forigi ĉiujn momentfotojn',
   'facts.delete.keepOne': 'Konservi unu momentfoton',
   'facts.delete.keepNone': 'Konservi nenion',
-  'facts.delete.confirmEmpty': 'Ĉi tiu lingva versio estas malplena — nenio perdiĝos.',
+  'facts.delete.confirmEmpty': 'Ĉi tiu dokumento ne estis modifita post sia kreo — nenio de via laboro perdiĝos.',
   'manage.importOnly': 'Nur JSON Resume',
   'manage.importSpec': 'formata specifo',
   'field.basics.givenName': 'Antaŭnomo',

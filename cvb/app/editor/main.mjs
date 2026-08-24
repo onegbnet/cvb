@@ -1484,14 +1484,18 @@ async function deleteCurrentFactsLang() {
   const name = factsLangName(factsLang);
   const isDefault = !!(langsInfo && factsLang === langsInfo.source);
   const rest = langsInfo ? langsInfo.langs.filter(({ lang }) => lang !== factsLang) : [];
-  // 这份文档有没有事实内容 —— 按模块注册表算,别自己数字段
-  const hasContent = MODULES.some((m) => {
-    const v = m.get(state.config);
-    if (Array.isArray(v)) return v.length > 0;
-    return v && Object.values(v).some((x) => (Array.isArray(x) ? x.length : String(x || '').trim()));
-  });
-  // 这个语种现存多少份快照(取不到就当有 —— 宁可多问一句,别默默清掉东西)
+  // 这份文档**自建立以来改过没有**(2026-08-24 用户订正判据:不是「有没有内容」——
+  // 刚翻译出来没动过的文档删了再翻一遍就有)。信号取自存储层的 createdAt/updatedAt;
+  // 清单**现取**,别用页面加载时那份(这中间可能已经保存过好几轮);
+  // 内存里还没落盘的改动同样算改过。取不到就当改过 —— 宁可多问一句。
+  let modified = true;
   let snapshotCount = 1;
+  try {
+    const fresh = await listFactsLangs();
+    const row = (fresh.langs || []).find((l) => l.lang === factsLang);
+    modified = !row || Number(row.updatedAt) > Number(row.createdAt) || saveState.dirty;
+  } catch { /* 保守 */ }
+  // 这个语种现存多少份快照(取不到就当有 —— 别默默清掉东西)
   try {
     const payload = await listSnapshots(factsLang);
     snapshotCount = ((payload && payload.snapshots) || []).length;
@@ -1501,7 +1505,7 @@ async function deleteCurrentFactsLang() {
   const planned = planDeleteQuestions({
     isDefault,
     remainingCount: rest.length,
-    hasContent,
+    modified,
     snapshotCount,
   });
 
@@ -1514,7 +1518,7 @@ async function deleteCurrentFactsLang() {
       const body = h(
         'div',
         { class: 'ovw-confirm' },
-        h('p', { class: 'ovw-note' }, hasContent || snapshotCount ? tr('facts.delete.confirm') : tr('facts.delete.confirmEmpty'))
+        h('p', { class: 'ovw-note' }, modified || snapshotCount ? tr('facts.delete.confirm') : tr('facts.delete.confirmEmpty'))
       );
 
       // 默认语种去向:要人挑的只有一档,另两档如实陈述

@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'ลบสแนปช็อตทั้งหมด',
   'facts.delete.keepOne': 'เก็บสแนปช็อตก่อนลบไว้หนึ่งรายการ',
   'facts.delete.keepNone': 'ไม่เก็บอะไรเลย',
-  'facts.delete.confirmEmpty': 'เวอร์ชันภาษานี้ว่างเปล่า การลบจะไม่ทำให้สูญเสียอะไร',
+  'facts.delete.confirmEmpty': 'เอกสารนี้ยังไม่ถูกแก้ไขนับตั้งแต่สร้าง สิ่งที่คุณเขียนจะไม่สูญหาย',
   'manage.importOnly': 'รองรับเฉพาะ JSON Resume',
   'manage.importSpec': 'ข้อกำหนดรูปแบบ',
   'field.basics.givenName': 'ชื่อ',

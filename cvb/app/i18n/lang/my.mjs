@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'အရန်မိတ္တူအားလုံး ဖျက်ရန်',
   'facts.delete.keepOne': 'ဖျက်မီ အရန်မိတ္တူတစ်ခု ထားရန်',
   'facts.delete.keepNone': 'ဘာမှ မထားရန်',
-  'facts.delete.confirmEmpty': 'ဤဘာသာစကားဗားရှင်းသည် ဗလာဖြစ်သည် — ဆုံးရှုံးမည့်အရာ မရှိပါ။',
+  'facts.delete.confirmEmpty': 'ဤစာရွက်စာတမ်းကို ဖန်တီးပြီးနောက် ပြင်ဆင်ထားခြင်း မရှိပါ — သင်ရေးထားသည့်အရာ ဆုံးရှုံးမည်မဟုတ်ပါ။',
   'manage.importOnly': 'JSON Resume သာ လက်ခံသည်',
   'manage.importSpec': 'ပုံစံ အသေးစိတ်',
   'field.basics.givenName': 'ရှေ့အမည်',

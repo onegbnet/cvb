@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'Xóa tất cả bản chụp nhanh',
   'facts.delete.keepOne': 'Giữ một bản chụp nhanh',
   'facts.delete.keepNone': 'Không giữ gì',
-  'facts.delete.confirmEmpty': 'Phiên bản ngôn ngữ này đang trống — sẽ không mất gì cả.',
+  'facts.delete.confirmEmpty': 'Tài liệu này chưa được chỉnh sửa kể từ khi tạo — bạn sẽ không mất gì mình đã viết.',
   'manage.importOnly': 'Chỉ hỗ trợ JSON Resume',
   'manage.importSpec': 'đặc tả định dạng',
   'field.basics.givenName': 'Tên',

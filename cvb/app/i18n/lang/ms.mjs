@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'Padam semua syot kilat',
   'facts.delete.keepOne': 'Simpan satu syot kilat',
   'facts.delete.keepNone': 'Jangan simpan apa-apa',
-  'facts.delete.confirmEmpty': 'Versi bahasa ini kosong — tiada apa yang akan hilang.',
+  'facts.delete.confirmEmpty': 'Dokumen ini tidak diubah sejak dicipta — tiada hasil kerja anda yang akan hilang.',
   'manage.importOnly': 'JSON Resume sahaja',
   'manage.importSpec': 'spesifikasi format',
   'field.basics.givenName': 'Nama pertama',

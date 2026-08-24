@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'Alle Snapshots löschen',
   'facts.delete.keepOne': 'Einen Snapshot behalten',
   'facts.delete.keepNone': 'Nichts behalten',
-  'facts.delete.confirmEmpty': 'Diese Sprachversion ist leer – es geht nichts verloren.',
+  'facts.delete.confirmEmpty': 'An diesem Dokument wurde seit der Erstellung nichts geändert – von Ihrer Arbeit geht nichts verloren.',
   'manage.importOnly': 'Nur JSON Resume',
   'manage.importSpec': 'Formatbeschreibung',
   'field.basics.givenName': 'Vorname',

@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'حذف جميع اللقطات',
   'facts.delete.keepOne': 'الإبقاء على لقطة واحدة',
   'facts.delete.keepNone': 'عدم الإبقاء على شيء',
-  'facts.delete.confirmEmpty': 'نسخة هذه اللغة فارغة — لن يُفقد أي شيء.',
+  'facts.delete.confirmEmpty': 'لم يُعدَّل هذا المستند منذ إنشائه — لن يُفقد شيء مما كتبته.',
   'manage.importOnly': 'JSON Resume فقط',
   'manage.importSpec': 'مواصفات الصيغة',
   'field.basics.givenName': 'الاسم الأول',

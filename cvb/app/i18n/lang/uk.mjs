@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'Видалити всі знімки',
   'facts.delete.keepOne': 'Зберегти один знімок',
   'facts.delete.keepNone': 'Нічого не зберігати',
-  'facts.delete.confirmEmpty': 'Ця мовна версія порожня — нічого не буде втрачено.',
+  'facts.delete.confirmEmpty': 'Цей документ не змінювався від часу створення — нічого з написаного вами не буде втрачено.',
   'manage.importOnly': 'Лише JSON Resume',
   'manage.importSpec': 'опис формату',
   'field.basics.givenName': 'Ім’я',

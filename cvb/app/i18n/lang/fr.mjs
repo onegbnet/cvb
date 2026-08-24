@@ -201,7 +201,7 @@ export default {
   'facts.delete.wipe': 'Supprimer tous les instantanés',
   'facts.delete.keepOne': 'Conserver un instantané',
   'facts.delete.keepNone': 'Ne rien conserver',
-  'facts.delete.confirmEmpty': 'Cette version linguistique est vide — rien ne sera perdu.',
+  'facts.delete.confirmEmpty': 'Ce document n’a pas été modifié depuis sa création — rien de ce que vous avez écrit ne sera perdu.',
   'manage.importOnly': 'JSON Resume uniquement',
   'manage.importSpec': 'spécification du format',
   'field.basics.givenName': 'Prénom',
