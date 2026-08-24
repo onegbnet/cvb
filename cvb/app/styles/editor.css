@@ -868,10 +868,14 @@
     flex: 0 0 auto;
   }
 
+  /* 卡片的窄屏内边距在 base.css(两页共用);这里只留锚点偏移与编辑器自己的壳 */
   .blk,
   .rec-editor {
-    padding: 14px;
     scroll-margin-top: 56px;
+  }
+
+  .rec-editor {
+    padding: 14px;
   }
 
   /* 轻记录在窄屏竖排:两三个输入框并排谁都不够用 */

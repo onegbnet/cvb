@@ -740,7 +740,7 @@ function buildSelectionBar() {
     syncGenerate();
   };
   rebuild();
-  return h('div', { class: 'apply-shell' }, h('section', { class: 'blk apply-card' }, bar));
+  return h('div', { class: 'apply-shell' }, h('section', { class: 'blk' }, bar));
 }
 
 /** 取当前选中语种的那份事实。 */

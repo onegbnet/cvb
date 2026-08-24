@@ -634,3 +634,11 @@ header.app-header .back-link .icon svg {
   box-shadow: var(--shadow);
   padding: 14px 16px;
 }
+
+/* 卡片的窄屏内边距 —— 与卡片本体同住共用处,否则只有 /edit 吃得到
+   (2026-08-24 真机量出 375px 下两页卡片内边距不同,就是这个原因) */
+@media (max-width: 768px) {
+  .blk {
+    padding: 14px;
+  }
+}

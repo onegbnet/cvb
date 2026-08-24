@@ -371,11 +371,6 @@
   padding: 16px 20px 0;
 }
 
-/* 选择区在卡片里 —— 与 /edit 的 .blk 同款(那边 15 个分节都是卡片) */
-.apply-card {
-  padding: 14px 16px;
-}
-
 .apply-bar {
   display: flex;
   flex-direction: column;
