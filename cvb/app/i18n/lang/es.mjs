@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'Pega un JSON Resume, o directamente el texto del currículum',
   'editor.importInvalid': 'Archivo no válido. Elige un archivo JSON Resume exportado.',
   'editor.aiImportNoText': 'No hay texto legible en ese archivo (un PDF escaneado es una imagen, no texto)',
+  'editor.aiImportWorking': 'Leyendo el currículum…',
+  'editor.restoreWorking': 'Restaurando…',
   'editor.aiImportUnreadable': 'No se pudo leer ese archivo',
   'editor.aiImportDocLegacy': '.doc (Word 97–2003) no es compatible: guárdalo como .docx o PDF, o pega el texto',
   'editor.langSwitchHint': 'Cambiar el idioma recarga la página',

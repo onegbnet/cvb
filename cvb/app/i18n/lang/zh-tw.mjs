@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': '貼 JSON Resume，或者直接貼履歷內文',
   'editor.importInvalid': '檔案格式無效，請選擇匯出的 JSON Resume 檔案',
   'editor.aiImportNoText': '這個檔案裡沒有可讀的文字（掃描件是圖片，不是文字）',
+  'editor.aiImportWorking': '正在讀取履歷…',
+  'editor.restoreWorking': '正在還原…',
   'editor.aiImportUnreadable': '這個檔案讀不出來',
   'editor.aiImportDocLegacy': '不支援 .doc（Word 97–2003）——請另存為 .docx 或 PDF，或者直接貼上內文',
   'editor.langSwitchHint': '切換語言將重新載入頁面',

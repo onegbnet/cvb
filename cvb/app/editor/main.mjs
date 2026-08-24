@@ -493,7 +493,7 @@ function buildImportButton() {
                 return;
               }
               handle.close();
-              await runAiImport(v, openTranslateProgress());
+              await runAiImport(v, openTranslateProgress('editor.aiImportWorking'));
             },
           },
           tr('action.import')
@@ -546,7 +546,7 @@ async function importFile(file) {
     importFromText(await file.text());
     return;
   }
-  const progress = openTranslateProgress();
+  const progress = openTranslateProgress('editor.aiImportWorking');
   let text = '';
   try {
     // **老 .doc(Word 97-2003)不解析**:它是 OLE2 复合二进制,正文散在
@@ -1295,11 +1295,12 @@ async function switchFactsLang(code) {
   location.href = next.toString();
 }
 
-/** 翻译等待圈(加语种与逐条翻译共用)。 */
-const openTranslateProgress = () =>
+/** 等待圈。**标题必须说明正在做什么** —— AI 导入曾复用翻译那句「正在翻译…」,
+ *  于是导入一份中文 PDF 到中文文档时,界面在撒谎(2026-08-24 用户报出)。 */
+const openTranslateProgress = (titleKey = 'facts.add.translating') =>
   window.Overlay.show({
     variant: 'box',
-    title: tr('facts.add.translating'),
+    title: tr(titleKey),
     body: h('div', { class: 'ai-loading' }, h('div', { class: 'spinner' }), h('span', {}, tr('ai.loading'))),
     closable: { escape: false, clickOutside: false, closeButton: false },
   });
@@ -1440,7 +1441,8 @@ async function addFactsLang(code) {
   if (mode === 'restore') {
     const key = leftover.length === 1 ? leftover[0].key : await pickSnapshot(leftover);
     if (!key) return;
-    const progress = openTranslateProgress();
+    // 恢复不是翻译 —— 各自的字样各自说(同 AI 导入那次的教训)
+    const progress = openTranslateProgress('editor.restoreWorking');
     try {
       // 目标语种此刻还不存在 —— 服务端按快照键推导语种建行,没有旧内容可覆盖,
       // 因此也不会(也不需要)留覆盖保护;空库时它顺带确立默认语种

@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'الصق ملف JSON Resume، أو نص السيرة الذاتية مباشرةً',
   'editor.importInvalid': 'الملف غير صالح. اختر ملف JSON Resume تم تصديره.',
   'editor.aiImportNoText': 'لا يوجد نص قابل للقراءة في هذا الملف (الملف الممسوح ضوئيًا صورة وليس نصًا)',
+  'editor.aiImportWorking': 'جارٍ قراءة السيرة الذاتية…',
+  'editor.restoreWorking': 'جارٍ الاستعادة…',
   'editor.aiImportUnreadable': 'تعذّرت قراءة هذا الملف',
   'editor.aiImportDocLegacy': 'صيغة ‎.doc‎ (Word 97–2003) غير مدعومة — احفظه بصيغة ‎.docx‎ أو PDF، أو الصق النص',
   'editor.langSwitchHint': 'تغيير اللغة يعيد تحميل الصفحة',

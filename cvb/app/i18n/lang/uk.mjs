@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'Вставте JSON Resume або просто текст резюме',
   'editor.importInvalid': 'Неправильний файл. Виберіть експортований файл JSON Resume.',
   'editor.aiImportNoText': 'У цьому файлі немає читабельного тексту (скан — це зображення, а не текст)',
+  'editor.aiImportWorking': 'Читаємо резюме…',
+  'editor.restoreWorking': 'Відновлюємо…',
   'editor.aiImportUnreadable': 'Не вдалося прочитати цей файл',
   'editor.aiImportDocLegacy': '.doc (Word 97–2003) не підтримується — збережіть як .docx чи PDF або вставте текст',
   'editor.langSwitchHint': 'Зміна мови перезавантажить сторінку',

@@ -231,6 +231,8 @@ export default {
   'editor.importPastePlaceholder': 'Paste a JSON Resume, or the résumé text itself',
   'editor.importInvalid': 'Invalid file. Please choose an exported JSON Resume file.',
   'editor.aiImportNoText': 'No readable text in that file (a scanned PDF is an image, not text)',
+  'editor.aiImportWorking': 'Reading the résumé…',
+  'editor.restoreWorking': 'Restoring…',
   'editor.aiImportUnreadable': 'Could not read that file',
   'editor.aiImportDocLegacy': '.doc (Word 97–2003) is not supported — save it as .docx or PDF, or paste the text instead',
   'editor.langSwitchHint': 'Switching language reloads the page',

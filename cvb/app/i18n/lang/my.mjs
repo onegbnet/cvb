@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'JSON Resume ကို ကူးထည့်ပါ၊ သို့မဟုတ် CV စာသားကို တိုက်ရိုက် ကူးထည့်ပါ',
   'editor.importInvalid': 'ဖိုင် မမှန်ပါ။ ထုတ်ယူထားသော JSON Resume ဖိုင်ကို ရွေးပါ။',
   'editor.aiImportNoText': 'ဤဖိုင်တွင် ဖတ်နိုင်သော စာသား မရှိပါ (စကင်ဖိုင်သည် ပုံဖြစ်သည်၊ စာသားမဟုတ်)',
+  'editor.aiImportWorking': 'CV ကို ဖတ်နေသည်…',
+  'editor.restoreWorking': 'ပြန်လည်ရယူနေသည်…',
   'editor.aiImportUnreadable': 'ဤဖိုင်ကို ဖတ်၍မရပါ',
   'editor.aiImportDocLegacy': '.doc (Word 97–2003) ကို မပံ့ပိုးပါ — .docx သို့မဟုတ် PDF အဖြစ် သိမ်းပါ၊ သို့မဟုတ် စာသားကို ကူးထည့်ပါ',
   'editor.langSwitchHint': 'ဘာသာစကား ပြောင်းလျှင် စာမျက်နှာ ပြန်ဖွင့်မည်',

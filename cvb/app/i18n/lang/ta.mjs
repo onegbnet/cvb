@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'JSON Resume ஐ ஒட்டவும், அல்லது சுயவிவரக் குறிப்பின் உரையையே ஒட்டவும்',
   'editor.importInvalid': 'தவறான கோப்பு. ஏற்றுமதி செய்யப்பட்ட JSON Resume கோப்பைத் தேர்ந்தெடுக்கவும்.',
   'editor.aiImportNoText': 'இந்தக் கோப்பில் படிக்கக்கூடிய உரை இல்லை (ஸ்கேன் செய்தது படம், உரை அல்ல)',
+  'editor.aiImportWorking': 'சுயவிவரக் குறிப்பைப் படிக்கிறது…',
+  'editor.restoreWorking': 'மீட்டெடுக்கிறது…',
   'editor.aiImportUnreadable': 'இந்தக் கோப்பைப் படிக்க முடியவில்லை',
   'editor.aiImportDocLegacy': '.doc (Word 97–2003) ஆதரிக்கப்படவில்லை — .docx அல்லது PDF ஆகச் சேமிக்கவும், அல்லது உரையை ஒட்டவும்',
   'editor.langSwitchHint': 'மொழியை மாற்றினால் பக்கம் மீண்டும் ஏற்றப்படும்',

@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'วาง JSON Resume หรือวางเนื้อหาเรซูเม่ตรง ๆ',
   'editor.importInvalid': 'ไฟล์ไม่ถูกต้อง กรุณาเลือกไฟล์ JSON Resume ที่ส่งออกไว้',
   'editor.aiImportNoText': 'ไฟล์นี้ไม่มีข้อความที่อ่านได้ (ไฟล์สแกนเป็นรูปภาพ ไม่ใช่ข้อความ)',
+  'editor.aiImportWorking': 'กำลังอ่านเรซูเม่…',
+  'editor.restoreWorking': 'กำลังกู้คืน…',
   'editor.aiImportUnreadable': 'อ่านไฟล์นี้ไม่ได้',
   'editor.aiImportDocLegacy': 'ไม่รองรับ .doc (Word 97–2003) — โปรดบันทึกเป็น .docx หรือ PDF หรือวางข้อความแทน',
   'editor.langSwitchHint': 'การเปลี่ยนภาษาจะโหลดหน้าใหม่',

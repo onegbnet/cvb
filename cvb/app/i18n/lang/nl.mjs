@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'Plak een JSON Resume, of gewoon de cv-tekst',
   'editor.importInvalid': 'Ongeldig bestand. Kies een geëxporteerd JSON Resume-bestand.',
   'editor.aiImportNoText': 'Geen leesbare tekst in dit bestand (een scan is een afbeelding, geen tekst)',
+  'editor.aiImportWorking': 'Cv wordt gelezen…',
+  'editor.restoreWorking': 'Bezig met herstellen…',
   'editor.aiImportUnreadable': 'Dit bestand kon niet worden gelezen',
   'editor.aiImportDocLegacy': '.doc (Word 97–2003) wordt niet ondersteund — sla op als .docx of PDF, of plak de tekst',
   'editor.langSwitchHint': 'Bij het wisselen van taal wordt de pagina opnieuw geladen',

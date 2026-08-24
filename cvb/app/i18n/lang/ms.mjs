@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'Tampal JSON Resume, atau terus teks resume',
   'editor.importInvalid': 'Fail tidak sah. Sila pilih fail JSON Resume yang dieksport.',
   'editor.aiImportNoText': 'Tiada teks boleh dibaca dalam fail itu (imbasan ialah imej, bukan teks)',
+  'editor.aiImportWorking': 'Membaca resume…',
+  'editor.restoreWorking': 'Memulihkan…',
   'editor.aiImportUnreadable': 'Fail itu tidak dapat dibaca',
   'editor.aiImportDocLegacy': '.doc (Word 97–2003) tidak disokong — simpan sebagai .docx atau PDF, atau tampal teksnya',
   'editor.langSwitchHint': 'Menukar bahasa akan memuat semula halaman',

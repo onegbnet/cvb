@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'Algluu JSON Resume, aŭ rekte la tekston de la vivresumo',
   'editor.importInvalid': 'Nevalida dosiero. Bonvolu elekti eksportitan JSON-Resume-dosieron.',
   'editor.aiImportNoText': 'Neniu legebla teksto en tiu dosiero (skanaĵo estas bildo, ne teksto)',
+  'editor.aiImportWorking': 'Legante la vivresumon…',
+  'editor.restoreWorking': 'Restaŭrante…',
   'editor.aiImportUnreadable': 'Ne eblis legi tiun dosieron',
   'editor.aiImportDocLegacy': '.doc (Word 97–2003) ne estas subtenata — konservu kiel .docx aŭ PDF, aŭ algluu la tekston',
   'editor.langSwitchHint': 'Ŝanĝo de lingvo reŝarĝas la paĝon',

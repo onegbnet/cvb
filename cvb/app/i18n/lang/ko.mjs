@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'JSON Resume 또는 이력서 본문을 붙여 넣으세요',
   'editor.importInvalid': '유효하지 않은 파일입니다. 내보낸 JSON Resume 파일을 선택하세요.',
   'editor.aiImportNoText': '이 파일에는 읽을 수 있는 텍스트가 없습니다(스캔본은 이미지입니다)',
+  'editor.aiImportWorking': '이력서를 읽는 중…',
+  'editor.restoreWorking': '복원 중…',
   'editor.aiImportUnreadable': '이 파일을 읽지 못했습니다',
   'editor.aiImportDocLegacy': '.doc(Word 97–2003)는 지원하지 않습니다 — .docx나 PDF로 저장하거나 본문을 붙여 넣으세요',
   'editor.langSwitchHint': '언어를 전환하면 페이지가 다시 로드됩니다',

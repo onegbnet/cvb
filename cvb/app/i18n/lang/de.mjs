@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'JSON Resume einfügen – oder gleich den Lebenslauftext',
   'editor.importInvalid': 'Ungültige Datei. Bitte eine exportierte JSON-Resume-Datei wählen.',
   'editor.aiImportNoText': 'In dieser Datei ist kein lesbarer Text (ein Scan ist ein Bild, kein Text)',
+  'editor.aiImportWorking': 'Lebenslauf wird gelesen…',
+  'editor.restoreWorking': 'Wird wiederhergestellt…',
   'editor.aiImportUnreadable': 'Diese Datei konnte nicht gelesen werden',
   'editor.aiImportDocLegacy': '.doc (Word 97–2003) wird nicht unterstützt – als .docx oder PDF speichern oder den Text einfügen',
   'editor.langSwitchHint': 'Beim Sprachwechsel wird die Seite neu geladen',

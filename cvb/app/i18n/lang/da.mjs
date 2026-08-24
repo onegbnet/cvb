@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'Indsæt et JSON Resume — eller bare cv-teksten',
   'editor.importInvalid': 'Ugyldig fil. Vælg en eksporteret JSON Resume-fil.',
   'editor.aiImportNoText': 'Ingen læsbar tekst i den fil (en scanning er et billede, ikke tekst)',
+  'editor.aiImportWorking': 'Læser cv…',
+  'editor.restoreWorking': 'Gendanner…',
   'editor.aiImportUnreadable': 'Kunne ikke læse den fil',
   'editor.aiImportDocLegacy': '.doc (Word 97–2003) understøttes ikke — gem som .docx eller PDF, eller indsæt teksten',
   'editor.langSwitchHint': 'Sprogskift genindlæser siden',

@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'JSON Resume か、履歴書の本文をそのまま貼り付け',
   'editor.importInvalid': 'ファイル形式が無効です。エクスポートした JSON Resume ファイルを選択してください',
   'editor.aiImportNoText': 'このファイルに読み取れる文字がありません（スキャン画像には文字データがありません）',
+  'editor.aiImportWorking': '履歴書を読み取り中…',
+  'editor.restoreWorking': '復元中…',
   'editor.aiImportUnreadable': 'このファイルを読み取れませんでした',
   'editor.aiImportDocLegacy': '.doc（Word 97–2003）は非対応です。.docx か PDF で保存し直すか、本文を貼り付けてください',
   'editor.langSwitchHint': '言語を切り替えるとページが再読み込みされます',

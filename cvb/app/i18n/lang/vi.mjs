@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'Dán JSON Resume, hoặc dán thẳng nội dung CV',
   'editor.importInvalid': 'Tệp không hợp lệ. Hãy chọn tệp JSON Resume đã xuất.',
   'editor.aiImportNoText': 'Tệp này không có văn bản đọc được (bản quét là hình ảnh, không phải văn bản)',
+  'editor.aiImportWorking': 'Đang đọc CV…',
+  'editor.restoreWorking': 'Đang khôi phục…',
   'editor.aiImportUnreadable': 'Không đọc được tệp này',
   'editor.aiImportDocLegacy': 'Không hỗ trợ .doc (Word 97–2003) — hãy lưu thành .docx hoặc PDF, hoặc dán nội dung',
   'editor.langSwitchHint': 'Chuyển ngôn ngữ sẽ tải lại trang',

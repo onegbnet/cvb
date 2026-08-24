@@ -230,6 +230,8 @@ export default {
   'editor.importPastePlaceholder': 'הדביקו ‏JSON Resume‏, או פשוט את טקסט קורות החיים',
   'editor.importInvalid': 'הקובץ אינו תקין. בחר קובץ JSON Resume שיוצא מהמערכת.',
   'editor.aiImportNoText': 'אין טקסט קריא בקובץ הזה (סריקה היא תמונה, לא טקסט)',
+  'editor.aiImportWorking': 'קורא את קורות החיים…',
+  'editor.restoreWorking': 'משחזר…',
   'editor.aiImportUnreadable': 'לא ניתן לקרוא את הקובץ הזה',
   'editor.aiImportDocLegacy': '‏.doc‏ (Word 97–2003) אינו נתמך — שמרו כ-‏.docx‏ או PDF, או הדביקו את הטקסט',
   'editor.langSwitchHint': 'החלפת שפה טוענת את הדף מחדש',
