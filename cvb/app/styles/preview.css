@@ -8,38 +8,6 @@
   background: var(--bg);
 }
 
-.preview-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 24px;
-  height: 56px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.preview-header .back-link {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: var(--text);
-  text-decoration: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  transition: all 0.15s ease;
-}
-
-.preview-header .back-link:hover {
-  background: var(--bg);
-  border-color: #d1d1d1;
-}
-
 .preview-actions {
   display: flex;
   align-items: center;
@@ -319,18 +287,6 @@
 /* ---- 主题设置面板(popover) ---- */
 
 @media (max-width: 768px) {
-  .preview-header {
-    height: auto;
-    padding: 12px;
-    align-items: stretch;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .preview-header .back-link {
-    width: fit-content;
-  }
-
   .preview-actions {
     width: 100%;
     gap: 10px;
@@ -356,7 +312,7 @@
   background: #fff;
 }
 
-.preview-page.is-printing .preview-header {
+.preview-page.is-printing header.app-header {
   display: none !important;
 }
 
@@ -382,7 +338,7 @@
     background: #fff !important;
   }
 
-  .preview-page .preview-header {
+  .preview-page header.app-header {
     display: none !important;
   }
 
@@ -409,13 +365,21 @@
 /* ---- 选择区(2026-08-24 重做):投到哪里 → 用哪套版式 → 用哪份语种事实 ----
    顺序即决定顺序;规格换了版式跟着换。芯片的选中态与 /edit 文档栏同一套语汇
    (accent 反色块),不发明第二种"被选中"的画法。 */
+.apply-shell {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 16px 20px 0;
+}
+
+/* 选择区在卡片里 —— 与 /edit 的 .blk 同款(那边 15 个分节都是卡片) */
+.apply-card {
+  padding: 14px 16px;
+}
+
 .apply-bar {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 12px 20px 0;
+  gap: 10px;
 }
 
 .apply-row {
@@ -431,34 +395,13 @@
   color: var(--text-secondary);
 }
 
+/* 芯片本体的样式在 base.css(.facts-lang,与 /edit 文档栏共用),这里只管排布 */
 .apply-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.apply-chip {
-  padding: 4px 12px;
-  border: 1px solid var(--border-input);
-  border-radius: var(--radius-sm);
-  background: var(--card-bg);
-  color: var(--text);
-  font: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.apply-chip:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.apply-chip.is-on {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-  cursor: default;
-}
 
 /* 生成是主动动作:空态说清「按了会发生什么」,别让人对着白板猜 */
 .pdf-placeholder {

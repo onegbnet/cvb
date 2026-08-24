@@ -45,52 +45,6 @@
   color: var(--text-secondary);
 }
 
-.facts-lang {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border: 1px solid var(--border-input);
-  border-radius: var(--radius-sm);
-  background: var(--card-bg);
-  color: var(--text);
-  font: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.facts-lang:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-/* 选中态 = 反色色块(2026-08-24 用户裁定;值照 base.css 的 .btn-accent 抄,不发明)。
-   描边高亮与 hover 态太接近,实心块才把「正打开哪份」说笃定。 */
-.facts-lang.is-current {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-  cursor: default;
-}
-
-/* 默认语种的记号:重点色圆点,不写字样(字样在 title/aria-label 里)。
-   它总排在最前(服务端排序),点 + 位置一起说「这是缺省读取的那份」。 */
-.facts-lang.is-default::before {
-  content: '';
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  margin-right: 6px;
-  vertical-align: middle;
-}
-
-/* 默认点落在反色块上时翻白 —— accent 点在 accent 底上等于隐形 */
-.facts-lang.is-default.is-current::before {
-  background: #fff;
-}
-
 .facts-lang-add {
   border-style: dashed;
   color: var(--text-secondary);

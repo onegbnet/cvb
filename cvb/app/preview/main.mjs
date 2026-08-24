@@ -484,7 +484,7 @@ const buildPrintPopupHtml = ({ title, baseUri, styles, content }) => `<!doctype 
       .preview-content { padding: 24px !important; display: flex !important; justify-content: center !important; }
       .print-resume-shell { width: 100%; max-width: 794px !important; margin: 0 auto !important; }
       .print-resume-shell .resume-content { width: 794px !important; max-width: 100% !important; margin: 0 auto !important; }
-      .preview-header { display: none !important; }
+      header.app-header { display: none !important; }
     </style>
   </head>
   <body>
@@ -618,7 +618,9 @@ function chipRow(labelKey, options, current, onPick) {
       'button',
       {
         type: 'button',
-        class: ['apply-chip', value === current && 'is-on'],
+        // 与 /edit 文档栏**同一个类**:选中态、hover、圆角、间距一次定义,
+        // 别在这里复制一份(复制就是发明第二种「被选中」的画法)
+        class: ['facts-lang', value === current && 'is-current'],
         'aria-pressed': value === current ? 'true' : 'false',
         onClick: () => value !== current && onPick(value),
       },
@@ -668,6 +670,8 @@ function syncUrl() {
  * 所以规格在最上面。只有一套版式 / 一门语种时那一行不出现:没有选择就别摆控件。
  */
 function buildSelectionBar() {
+  // 装进与 /edit 同款的卡片(.blk):那一页 15 个分节都在卡片里,
+  // 这一页的选择区没有理由是裸的
   const bar = h('div', { class: 'apply-bar' });
   const rebuild = () => {
     clear(bar);
@@ -736,7 +740,7 @@ function buildSelectionBar() {
     syncGenerate();
   };
   rebuild();
-  return bar;
+  return h('div', { class: 'apply-shell' }, h('section', { class: 'blk apply-card' }, bar));
 }
 
 /** 取当前选中语种的那份事实。 */
@@ -771,18 +775,22 @@ function buildToolbar(pageEl) {
     )
   );
 
+  // 页眉与 /edit **同一套**(header.app-header + back-link + header-title +
+  // header-actions)—— 此前这一页自带一套 .preview-header(56px、自己的圆角与
+  // transition),两页看着像两个产品(2026-08-24 用户报出「界面又漂了」)。
+  // §3.5 的规矩是照 sibling 抄、不发明,那么站内两页更不该各画各的。
   const header = h(
-    'div',
-    { class: 'preview-header' },
+    'header',
+    { class: 'app-header' },
     h('a', { class: 'back-link', href: '/edit' }, icon('back'), tr('action.backToEdit')),
     h('span', { class: 'header-title' }, tr('home.apply.title')),
     h(
-      'div',
-      { class: 'preview-actions' },
+      'span',
+      { class: 'header-actions' },
       buildPdfViewControls(),
       printItemEl,
       pdfItemEl,
-      h('div', { class: 'preview-action-item' }, adoptThemeToggle())
+      adoptThemeToggle()
     )
   );
 
