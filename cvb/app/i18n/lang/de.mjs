@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' Jahre Erfahrung',
 
   'preview.pdf.compiling': 'PDF wird kompiliert…',
+
+  'preview.pdf.generate': 'Vorschau erzeugen',
+
+  'preview.pdf.regenerate': 'Neu erzeugen',
+
+  'preview.pdf.stale': 'Einstellungen wurden seit dieser Vorschau geändert',
+
+  'preview.pdf.idle': 'Oben die Einstellungen wählen, dann die Vorschau erzeugen',
   'preview.pdf.engineLoading': 'Satz-Engine wird geladen…',
   'preview.pdf.assetLoading': 'Satz-Ressourcen werden heruntergeladen…',
   'preview.pdf.assetCached': 'Satz-Ressourcen bereit',

@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' năm kinh nghiệm',
 
   'preview.pdf.compiling': 'Đang biên dịch PDF…',
+
+  'preview.pdf.generate': 'Tạo bản xem trước',
+
+  'preview.pdf.regenerate': 'Tạo lại',
+
+  'preview.pdf.stale': 'Cài đặt đã đổi sau bản xem trước này',
+
+  'preview.pdf.idle': 'Chọn cài đặt ở trên, rồi tạo bản xem trước',
   'preview.pdf.engineLoading': 'Đang tải công cụ sắp chữ…',
   'preview.pdf.assetLoading': 'Đang tải xuống tài nguyên sắp chữ…',
   'preview.pdf.assetCached': 'Tài nguyên sắp chữ đã sẵn sàng',

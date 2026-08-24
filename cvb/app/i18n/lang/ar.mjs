@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' سنوات خبرة',
 
   'preview.pdf.compiling': 'جارٍ تنضيد ملف PDF…',
+
+  'preview.pdf.generate': 'إنشاء المعاينة',
+
+  'preview.pdf.regenerate': 'إنشاء من جديد',
+
+  'preview.pdf.stale': 'تغيّرت الإعدادات بعد هذه المعاينة',
+
+  'preview.pdf.idle': 'اختر الإعدادات أعلاه، ثم أنشئ المعاينة',
   'preview.pdf.engineLoading': 'جارٍ تحميل محرك التنضيد…',
   'preview.pdf.assetLoading': 'جارٍ تنزيل موارد التنضيد…',
   'preview.pdf.assetCached': 'موارد التنضيد جاهزة',

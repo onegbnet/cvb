@@ -291,6 +291,10 @@ export default {
 
   // 预览页 PDF(TeX 编译)
   'preview.pdf.compiling': '正在编译 PDF…',
+  'preview.pdf.generate': '生成预览',
+  'preview.pdf.regenerate': '重新生成',
+  'preview.pdf.stale': '设置已改，这份预览是旧的',
+  'preview.pdf.idle': '在上方选好设置，然后生成预览',
   'preview.pdf.engineLoading': '正在加载排版引擎…',
   'preview.pdf.assetLoading': '正在下载排版资源…',
   'preview.pdf.assetCached': '排版资源已就绪',

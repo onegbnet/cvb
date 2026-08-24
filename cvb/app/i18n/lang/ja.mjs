@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': '年の経験',
 
   'preview.pdf.compiling': 'PDF をコンパイル中…',
+
+  'preview.pdf.generate': 'プレビューを生成',
+
+  'preview.pdf.regenerate': '再生成',
+
+  'preview.pdf.stale': '設定が変わりました（このプレビューは古い状態です）',
+
+  'preview.pdf.idle': '上で設定を選んでから、プレビューを生成してください',
   'preview.pdf.engineLoading': '組版エンジンを読み込み中…',
   'preview.pdf.assetLoading': '組版アセットをダウンロード中…',
   'preview.pdf.assetCached': '組版アセット準備完了',

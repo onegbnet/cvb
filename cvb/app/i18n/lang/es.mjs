@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' años de experiencia',
 
   'preview.pdf.compiling': 'Compilando el PDF…',
+
+  'preview.pdf.generate': 'Generar vista previa',
+
+  'preview.pdf.regenerate': 'Generar de nuevo',
+
+  'preview.pdf.stale': 'La configuración cambió después de esta vista previa',
+
+  'preview.pdf.idle': 'Elige la configuración arriba y genera la vista previa',
   'preview.pdf.engineLoading': 'Cargando el motor de composición…',
   'preview.pdf.assetLoading': 'Descargando los recursos de composición…',
   'preview.pdf.assetCached': 'Recursos de composición listos',

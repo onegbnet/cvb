@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': '年經驗',
 
   'preview.pdf.compiling': '正在編譯 PDF…',
+
+  'preview.pdf.generate': '產生預覽',
+
+  'preview.pdf.regenerate': '重新產生',
+
+  'preview.pdf.stale': '設定已改，這份預覽是舊的',
+
+  'preview.pdf.idle': '在上方選好設定，然後產生預覽',
   'preview.pdf.engineLoading': '正在載入排版引擎…',
   'preview.pdf.assetLoading': '正在下載排版資源…',
   'preview.pdf.assetCached': '排版資源已就緒',

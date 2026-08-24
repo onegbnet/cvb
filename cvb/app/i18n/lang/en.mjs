@@ -275,6 +275,14 @@ export default {
   'preview.yearsSuffix': ' yrs experience',
 
   'preview.pdf.compiling': 'Compiling PDF…',
+
+  'preview.pdf.generate': 'Generate preview',
+
+  'preview.pdf.regenerate': 'Generate again',
+
+  'preview.pdf.stale': 'Settings changed since this preview',
+
+  'preview.pdf.idle': 'Choose your settings above, then generate the preview',
   'preview.pdf.engineLoading': 'Loading typesetting engine…',
   'preview.pdf.assetLoading': 'Downloading typesetting assets…',
   'preview.pdf.assetCached': 'Typesetting assets ready',

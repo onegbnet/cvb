@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' års erfaring',
 
   'preview.pdf.compiling': 'Kompilerer PDF…',
+
+  'preview.pdf.generate': 'Generér forhåndsvisning',
+
+  'preview.pdf.regenerate': 'Generér igen',
+
+  'preview.pdf.stale': 'Indstillingerne er ændret siden denne forhåndsvisning',
+
+  'preview.pdf.idle': 'Vælg indstillinger ovenfor, og generér derefter forhåndsvisningen',
   'preview.pdf.engineLoading': 'Indlæser layoutmotoren…',
   'preview.pdf.assetLoading': 'Downloader layoutressourcer…',
   'preview.pdf.assetCached': 'Layoutressourcer klar',

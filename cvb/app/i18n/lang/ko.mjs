@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': '년 경력',
 
   'preview.pdf.compiling': 'PDF 컴파일 중…',
+
+  'preview.pdf.generate': '미리보기 생성',
+
+  'preview.pdf.regenerate': '다시 생성',
+
+  'preview.pdf.stale': '설정이 바뀌었습니다(이 미리보기는 이전 설정)',
+
+  'preview.pdf.idle': '위에서 설정을 고른 뒤 미리보기를 생성하세요',
   'preview.pdf.engineLoading': '조판 엔진 로드 중…',
   'preview.pdf.assetLoading': '조판 리소스 다운로드 중…',
   'preview.pdf.assetCached': '조판 리소스 준비 완료',

@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' jaroj da sperto',
 
   'preview.pdf.compiling': 'Kompilas PDF…',
+
+  'preview.pdf.generate': 'Generi antaŭrigardon',
+
+  'preview.pdf.regenerate': 'Generi denove',
+
+  'preview.pdf.stale': 'La agordoj ŝanĝiĝis post ĉi tiu antaŭrigardo',
+
+  'preview.pdf.idle': 'Elektu la agordojn supre, poste generu la antaŭrigardon',
   'preview.pdf.engineLoading': 'Ŝarĝas la kompostan motoron…',
   'preview.pdf.assetLoading': 'Elŝutas kompostajn rimedojn…',
   'preview.pdf.assetCached': 'Kompostaj rimedoj pretas',

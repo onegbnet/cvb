@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' р. досвіду',
 
   'preview.pdf.compiling': 'Компіляція PDF…',
+
+  'preview.pdf.generate': 'Створити попередній перегляд',
+
+  'preview.pdf.regenerate': 'Створити ще раз',
+
+  'preview.pdf.stale': 'Налаштування змінилися після цього перегляду',
+
+  'preview.pdf.idle': 'Виберіть налаштування вище, потім створіть попередній перегляд',
   'preview.pdf.engineLoading': 'Завантаження рушія верстки…',
   'preview.pdf.assetLoading': 'Завантаження ресурсів верстки…',
   'preview.pdf.assetCached': 'Ресурси верстки готові',

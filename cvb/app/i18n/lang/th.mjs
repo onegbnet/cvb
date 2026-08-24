@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' ปีประสบการณ์',
 
   'preview.pdf.compiling': 'กำลังคอมไพล์ PDF…',
+
+  'preview.pdf.generate': 'สร้างตัวอย่าง',
+
+  'preview.pdf.regenerate': 'สร้างใหม่',
+
+  'preview.pdf.stale': 'การตั้งค่าเปลี่ยนไปหลังจากตัวอย่างนี้',
+
+  'preview.pdf.idle': 'เลือกการตั้งค่าด้านบน แล้วสร้างตัวอย่าง',
   'preview.pdf.engineLoading': 'กำลังโหลดเอนจินเรียงพิมพ์…',
   'preview.pdf.assetLoading': 'กำลังดาวน์โหลดทรัพยากรเรียงพิมพ์…',
   'preview.pdf.assetCached': 'ทรัพยากรเรียงพิมพ์พร้อมแล้ว',

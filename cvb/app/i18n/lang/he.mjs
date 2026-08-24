@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' שנות ניסיון',
 
   'preview.pdf.compiling': 'מהדר PDF…',
+
+  'preview.pdf.generate': 'צור תצוגה מקדימה',
+
+  'preview.pdf.regenerate': 'צור מחדש',
+
+  'preview.pdf.stale': 'ההגדרות השתנו מאז התצוגה הזו',
+
+  'preview.pdf.idle': 'בחרו הגדרות למעלה, ואז צרו תצוגה מקדימה',
   'preview.pdf.engineLoading': 'טוען את מנוע העימוד…',
   'preview.pdf.assetLoading': 'מוריד את משאבי העימוד…',
   'preview.pdf.assetCached': 'משאבי העימוד מוכנים',

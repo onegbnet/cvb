@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' anni di esperienza',
 
   'preview.pdf.compiling': 'Compilazione del PDF…',
+
+  'preview.pdf.generate': 'Genera anteprima',
+
+  'preview.pdf.regenerate': 'Rigenera',
+
+  'preview.pdf.stale': 'Le impostazioni sono cambiate dopo questa anteprima',
+
+  'preview.pdf.idle': 'Scegli le impostazioni qui sopra, poi genera l’anteprima',
   'preview.pdf.engineLoading': 'Caricamento del motore di impaginazione…',
   'preview.pdf.assetLoading': 'Download delle risorse di impaginazione…',
   'preview.pdf.assetCached': 'Risorse di impaginazione pronte',

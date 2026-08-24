@@ -125,6 +125,17 @@ function mountPdfShell() {
   shellEl.append(pdfStageEl, pdfBusyEl);
 }
 
+/**
+ * 还没编译时的空态。**进页面不自动编译**(2026-08-24 用户裁定:
+ * 「提供了足够信息、用户主动触发才做」)—— 编一次要先下几十兆引擎再算几秒,
+ * 那是用户说要看才该付的代价,不是打开页面就先付。
+ */
+function mountPdfPlaceholder() {
+  clear(shellEl);
+  shellEl.classList.add('is-pdf');
+  shellEl.append(h('div', { class: 'pdf-placeholder' }, h('p', {}, tr('preview.pdf.idle'))));
+}
+
 function setPdfBusy(on, { text, detail } = {}) {
   pdfBusyEl.hidden = !on;
   if (text !== undefined) pdfBusyTextEl.textContent = text;
@@ -401,6 +412,7 @@ function scheduleTexRender() {
     runTexRender(token);
   }, TEX_RENDER_DEBOUNCE_MS);
   syncToolbarMode();
+  syncGenerate();
 }
 
 function cancelTexRender() {
@@ -554,6 +566,8 @@ function syncPdfViewControls() {
 }
 
 function syncToolbarMode() {
+  // 生成按钮的字样与禁用态跟着同一处走 —— 编成/编砸/取消都有出口经过这里
+  syncGenerate();
   const tex = usesTexPath();
   if (printItemEl) printItemEl.hidden = tex;
   if (pdfItemEl) pdfItemEl.hidden = !tex;
@@ -619,6 +633,25 @@ function chipRow(labelKey, options, current, onPick) {
   );
 }
 
+// 「已有 PDF,但设置改过了」—— 不自动重编,只把按钮改口成「重新生成」,
+// 旧那份继续摆着(它仍是一份真产物,只是不对应当前设置了)。
+let generateBtnEl = null;
+let staleHintEl = null;
+let stale = false;
+
+const syncGenerate = () => {
+  if (generateBtnEl) {
+    generateBtnEl.textContent = texState.pdfBytes ? tr('preview.pdf.regenerate') : tr('preview.pdf.generate');
+    generateBtnEl.disabled = texState.status === 'pending';
+  }
+  if (staleHintEl) staleHintEl.hidden = !(stale && texState.pdfBytes);
+};
+
+function markStale() {
+  stale = true;
+  syncGenerate();
+}
+
 /** 把当前选择写回 URL —— 刷新/分享链接回到同一套设置(模板此前就是这么做的)。 */
 function syncUrl() {
   const url = new URL(window.location.href);
@@ -647,8 +680,8 @@ function buildSelectionBar() {
           state.spec = v;
           state.template = templateForSpec(v, state.template); // 版式跟着规格走
           syncUrl();
+          markStale();
           rebuild();
-          renderResume();
         }
       )
     );
@@ -662,8 +695,8 @@ function buildSelectionBar() {
           (v) => {
             state.template = v;
             syncUrl();
+            markStale();
             rebuild();
-            renderResume();
           }
         )
       );
@@ -677,13 +710,30 @@ function buildSelectionBar() {
           async (v) => {
             state.factsLang = v;
             syncUrl();
+            markStale();
             rebuild();
             await loadFacts();
-            renderResume();
           }
         )
       );
     }
+    // **生成是主动动作**:按钮说点了会发生什么,旁边如实说明设置改过了
+    generateBtnEl = h(
+      'button',
+      {
+        type: 'button',
+        class: 'btn btn-accent apply-generate',
+        onClick: () => {
+          stale = false;
+          renderResume();
+          syncGenerate();
+        },
+      },
+      tr('preview.pdf.generate')
+    );
+    staleHintEl = h('span', { class: 'apply-stale', hidden: true }, tr('preview.pdf.stale'));
+    bar.append(h('div', { class: 'apply-row apply-actions' }, generateBtnEl, staleHintEl));
+    syncGenerate();
   };
   rebuild();
   return bar;
@@ -772,7 +822,8 @@ async function main() {
     pageEl.classList.remove('is-printing');
   });
 
-  renderResume();
+  // **进页面不编译** —— 空态 + 一个「生成预览」按钮(见 mountPdfPlaceholder)
+  mountPdfPlaceholder();
 
   pageEl.append(
     buildToolbar(pageEl),

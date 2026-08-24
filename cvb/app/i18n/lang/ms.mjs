@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' tahun pengalaman',
 
   'preview.pdf.compiling': 'Mengkompil PDF…',
+
+  'preview.pdf.generate': 'Jana pratonton',
+
+  'preview.pdf.regenerate': 'Jana semula',
+
+  'preview.pdf.stale': 'Tetapan berubah selepas pratonton ini',
+
+  'preview.pdf.idle': 'Pilih tetapan di atas, kemudian jana pratonton',
   'preview.pdf.engineLoading': 'Memuatkan enjin atur huruf…',
   'preview.pdf.assetLoading': 'Memuat turun aset atur huruf…',
   'preview.pdf.assetCached': 'Aset atur huruf sedia',

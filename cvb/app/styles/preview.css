@@ -459,3 +459,24 @@
   color: #fff;
   cursor: default;
 }
+
+/* 生成是主动动作:空态说清「按了会发生什么」,别让人对着白板猜 */
+.pdf-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  padding: 32px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.apply-actions {
+  padding-bottom: 4px;
+}
+
+.apply-stale {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}

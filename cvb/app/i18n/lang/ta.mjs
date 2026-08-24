@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' ஆண்டுகள் அனுபவம்',
 
   'preview.pdf.compiling': 'PDF தொகுக்கப்படுகிறது…',
+
+  'preview.pdf.generate': 'முன்னோட்டத்தை உருவாக்கு',
+
+  'preview.pdf.regenerate': 'மீண்டும் உருவாக்கு',
+
+  'preview.pdf.stale': 'இந்த முன்னோட்டத்திற்குப் பிறகு அமைப்புகள் மாறின',
+
+  'preview.pdf.idle': 'மேலே அமைப்புகளைத் தேர்ந்தெடுத்து, பிறகு முன்னோட்டத்தை உருவாக்கவும்',
   'preview.pdf.engineLoading': 'அச்சமைப்பு இயந்திரம் ஏற்றப்படுகிறது…',
   'preview.pdf.assetLoading': 'அச்சமைப்பு வளங்கள் பதிவிறக்கப்படுகின்றன…',
   'preview.pdf.assetCached': 'அச்சமைப்பு வளங்கள் தயார்',

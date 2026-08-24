@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' jaar ervaring',
 
   'preview.pdf.compiling': 'PDF compileren…',
+
+  'preview.pdf.generate': 'Voorbeeld genereren',
+
+  'preview.pdf.regenerate': 'Opnieuw genereren',
+
+  'preview.pdf.stale': 'Instellingen zijn gewijzigd na dit voorbeeld',
+
+  'preview.pdf.idle': 'Kies hierboven je instellingen en genereer het voorbeeld',
   'preview.pdf.engineLoading': 'Opmaakengine laden…',
   'preview.pdf.assetLoading': 'Opmaakbestanden downloaden…',
   'preview.pdf.assetCached': 'Opmaakbestanden gereed',

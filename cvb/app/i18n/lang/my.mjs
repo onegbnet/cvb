@@ -274,6 +274,14 @@ export default {
   'preview.yearsSuffix': ' နှစ် အတွေ့အကြုံ',
 
   'preview.pdf.compiling': 'PDF ထုတ်လုပ်နေသည်…',
+
+  'preview.pdf.generate': 'အစမ်းကြည့် ဖန်တီးရန်',
+
+  'preview.pdf.regenerate': 'ပြန်ဖန်တီးရန်',
+
+  'preview.pdf.stale': 'ဤအစမ်းကြည့်ပြီးနောက် ဆက်တင်များ ပြောင်းသွားသည်',
+
+  'preview.pdf.idle': 'အပေါ်တွင် ဆက်တင်ရွေးပြီး အစမ်းကြည့် ဖန်တီးပါ',
   'preview.pdf.engineLoading': 'စာစီအင်ဂျင် ဖွင့်နေသည်…',
   'preview.pdf.assetLoading': 'စာစီ အရင်းအမြစ်များ ဒေါင်းလုဒ်လုပ်နေသည်…',
   'preview.pdf.assetCached': 'စာစီ အရင်းအမြစ်များ အသင့်ဖြစ်ပြီ',
