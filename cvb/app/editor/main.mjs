@@ -81,10 +81,26 @@ const saveState = { dirty: false, saving: false, error: '' };
 // 失败的 Toast 和 beforeunload 拦截 —— 落盘过程平时是静默的,「存了没有」看不见。
 let saveStatusEl = null;
 
+// 「已保存」只短显不常驻(完成确认是事件不是状态):从忙态(在途/失败)翻回干净的
+// 那一刻开 2.5s 窗口,窗口关了字样隐去。页面刚载入的干净态从未忙过,什么都不显示。
+let saveStatusWasBusy = false;
+let savedFlash = false;
+let savedFlashTimer = null;
+
 const renderSaveStatus = () => {
   if (!saveStatusEl) return;
-  const { key, err } = saveStatusView(saveState);
-  saveStatusEl.textContent = tr(key);
+  const busy = !!(saveState.error || saveState.dirty || saveState.saving);
+  if (!busy && saveStatusWasBusy) {
+    savedFlash = true;
+    clearTimeout(savedFlashTimer);
+    savedFlashTimer = setTimeout(() => {
+      savedFlash = false;
+      renderSaveStatus();
+    }, 2500);
+  }
+  saveStatusWasBusy = busy;
+  const { key, err } = saveStatusView(saveState, { savedFlash });
+  saveStatusEl.textContent = key ? tr(key) : '';
   saveStatusEl.classList.toggle('is-err', err);
   // 失败档把具体原因挂在 title 上(Toast 一闪就过,这里常驻)
   if (err) saveStatusEl.title = saveState.error;
