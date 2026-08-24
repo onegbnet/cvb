@@ -1212,3 +1212,17 @@
   margin-bottom: 0;
 }
 .crumb-trx { margin-left: auto; }
+
+/* 建语种时挑一份遗留快照:名字可长,一行一个,别挤成网格 */
+.fadd-snap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.fadd-snap-item {
+  justify-content: flex-start;
+  text-align: left;
+}

@@ -182,6 +182,8 @@ export default {
   'facts.add.note': 'El borrador se traduce desde una versión existente (fechas, enlaces y datos de contacto se conservan), o empieza con un documento en blanco.',
   'facts.add.translate': 'Traducir desde una versión existente',
   'facts.add.blank': 'Empezar en blanco',
+  'facts.add.restore': 'Restaurar desde una instantánea',
+  'facts.add.noteRestorable': 'Este idioma conserva instantáneas de antes de eliminarlo. Restaura una, traduce desde una versión existente o empieza en blanco.',
   'facts.add.translating': 'Traduciendo…',
   'facts.group': 'Versiones de idioma',
   'facts.makeSource': 'Establecer como predeterminada',

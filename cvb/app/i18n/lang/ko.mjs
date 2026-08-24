@@ -182,6 +182,8 @@ export default {
   'facts.add.note': '기존 언어 버전에서 번역해 초안을 만듭니다(날짜·링크·연락처는 그대로 유지). 빈 문서로 시작할 수도 있습니다.',
   'facts.add.translate': '기존 버전에서 번역',
   'facts.add.blank': '빈 문서로 만들기',
+  'facts.add.restore': '스냅샷에서 복원',
+  'facts.add.noteRestorable': '이 언어에는 삭제 전 스냅샷이 남아 있습니다. 복원하거나, 기존 버전에서 번역하거나, 빈 문서로 시작할 수 있습니다.',
   'facts.add.translating': '번역 중…',
   'facts.group': '언어 버전',
   'facts.makeSource': '기본으로 설정',

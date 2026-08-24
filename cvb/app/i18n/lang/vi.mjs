@@ -182,6 +182,8 @@ export default {
   'facts.add.note': 'Bản nháp được dịch từ một phiên bản ngôn ngữ sẵn có (ngày tháng, liên kết và thông tin liên hệ được giữ nguyên), hoặc bắt đầu với tài liệu trống.',
   'facts.add.translate': 'Dịch từ phiên bản sẵn có',
   'facts.add.blank': 'Bắt đầu trống',
+  'facts.add.restore': 'Khôi phục từ bản chụp nhanh',
+  'facts.add.noteRestorable': 'Ngôn ngữ này vẫn còn bản chụp nhanh từ trước khi xóa. Hãy khôi phục một bản, dịch từ phiên bản sẵn có, hoặc bắt đầu trống.',
   'facts.add.translating': 'Đang dịch…',
   'facts.group': 'Phiên bản ngôn ngữ',
   'facts.makeSource': 'Đặt làm mặc định',

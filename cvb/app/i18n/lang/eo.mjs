@@ -182,6 +182,8 @@ export default {
   'facts.add.note': 'La malneto estas tradukata el ekzistanta lingva versio (datoj, ligiloj kaj kontaktinformoj transiras), aŭ komencu per malplena dokumento.',
   'facts.add.translate': 'Traduki el ekzistanta versio',
   'facts.add.blank': 'Komenci malplene',
+  'facts.add.restore': 'Restaŭri el momentfoto',
+  'facts.add.noteRestorable': 'Ĉi tiu lingvo ankoraŭ havas momentfotojn de antaŭ la forigo. Restaŭru unu, traduku el ekzistanta versio, aŭ komencu malplene.',
   'facts.add.translating': 'Tradukante…',
   'facts.group': 'Lingvaj versioj',
   'facts.makeSource': 'Agordi kiel defaŭltan',

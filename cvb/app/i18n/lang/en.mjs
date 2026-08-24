@@ -183,6 +183,8 @@ export default {
   'facts.add.note': 'The draft is translated from one of your existing language versions (dates, links and contact details carry over), or start with a blank document.',
   'facts.add.translate': 'Translate from an existing version',
   'facts.add.blank': 'Start blank',
+  'facts.add.restore': 'Restore from a snapshot',
+  'facts.add.noteRestorable': 'This language has snapshots left from before it was deleted. Restore one, translate from an existing version, or start blank.',
   'facts.add.translating': 'Translating…',
   'facts.group': 'Language versions',
   'facts.makeSource': 'Make this the default',

@@ -182,6 +182,8 @@ export default {
   'facts.add.note': 'Der Entwurf wird aus einer vorhandenen Sprachversion übersetzt (Daten, Links und Kontaktdaten werden übernommen) – oder Sie beginnen mit einem leeren Dokument.',
   'facts.add.translate': 'Aus vorhandener Version übersetzen',
   'facts.add.blank': 'Leer beginnen',
+  'facts.add.restore': 'Aus Snapshot wiederherstellen',
+  'facts.add.noteRestorable': 'Für diese Sprache sind Snapshots von vor dem Löschen vorhanden. Einen davon wiederherstellen, aus einer vorhandenen Version übersetzen oder leer beginnen.',
   'facts.add.translating': 'Übersetzung läuft…',
   'facts.group': 'Sprachversionen',
   'facts.makeSource': 'Als Standard festlegen',

@@ -182,6 +182,8 @@ export default {
   'facts.add.note': "Le brouillon est traduit depuis une version existante (dates, liens et coordonnées sont repris), ou partez d'un document vierge.",
   'facts.add.translate': 'Traduire depuis une version existante',
   'facts.add.blank': 'Partir de zéro',
+  'facts.add.restore': 'Restaurer depuis un instantané',
+  'facts.add.noteRestorable': 'Cette langue a des instantanés conservés avant sa suppression. Restaurez-en un, traduisez depuis une version existante, ou partez de zéro.',
   'facts.add.translating': 'Traduction en cours…',
   'facts.group': 'Versions linguistiques',
   'facts.makeSource': 'Définir par défaut',

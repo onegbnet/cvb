@@ -182,6 +182,8 @@ export default {
   'facts.add.note': '既存の言語版から翻訳して下書きを作ります（日付・リンク・連絡先はそのまま引き継ぎ）。空白の文書から始めることもできます。',
   'facts.add.translate': '既存の言語版から翻訳',
   'facts.add.blank': '空白で作成',
+  'facts.add.restore': 'スナップショットから復元',
+  'facts.add.noteRestorable': 'この言語には削除前のスナップショットが残っています。復元するか、既存の言語版から翻訳するか、空白で作成できます。',
   'facts.add.translating': '翻訳中…',
   'facts.group': '言語版',
   'facts.makeSource': '既定にする',

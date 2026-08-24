@@ -182,6 +182,8 @@ export default {
   'facts.add.note': 'Udkastet oversættes fra en eksisterende sprogversion (datoer, links og kontaktoplysninger følger med), eller start med et tomt dokument.',
   'facts.add.translate': 'Oversæt fra eksisterende version',
   'facts.add.blank': 'Start tomt',
+  'facts.add.restore': 'Gendan fra et øjebliksbillede',
+  'facts.add.noteRestorable': 'Dette sprog har øjebliksbilleder fra før det blev slettet. Gendan et af dem, oversæt fra en eksisterende version, eller start tomt.',
   'facts.add.translating': 'Oversætter…',
   'facts.group': 'Sprogversioner',
   'facts.makeSource': 'Angiv som standard',

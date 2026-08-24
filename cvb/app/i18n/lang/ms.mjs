@@ -182,6 +182,8 @@ export default {
   'facts.add.note': 'Draf diterjemahkan daripada versi bahasa sedia ada (tarikh, pautan dan maklumat hubungan dikekalkan), atau mulakan dengan dokumen kosong.',
   'facts.add.translate': 'Terjemah daripada versi sedia ada',
   'facts.add.blank': 'Mula dengan dokumen kosong',
+  'facts.add.restore': 'Pulihkan daripada syot kilat',
+  'facts.add.noteRestorable': 'Bahasa ini masih menyimpan syot kilat sebelum dipadam. Pulihkan satu, terjemah daripada versi sedia ada, atau mula dengan dokumen kosong.',
   'facts.add.translating': 'Sedang menterjemah…',
   'facts.group': 'Versi bahasa',
   'facts.makeSource': 'Jadikan lalai',

@@ -182,6 +182,8 @@ export default {
   'facts.add.note': '從一份既有語言版本翻譯出底稿（日期、連結、聯絡方式直接帶過去），或建立空白文件。',
   'facts.add.translate': '從既有語言版本翻譯',
   'facts.add.blank': '建立空白文件',
+  'facts.add.restore': '從刪除前的快照還原',
+  'facts.add.noteRestorable': '這個語言還留著刪除前的快照。可以還原其中一份，也可以從既有語言翻譯或建立空白文件。',
   'facts.add.translating': '正在翻譯…',
   'facts.group': '語言版本',
   'facts.makeSource': '設為預設語言',

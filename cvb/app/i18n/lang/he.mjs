@@ -182,6 +182,8 @@ export default {
   'facts.add.note': 'הטיוטה מתורגמת מגרסת שפה קיימת (תאריכים, קישורים ופרטי קשר עוברים כמו שהם), או התחל ממסמך ריק.',
   'facts.add.translate': 'תרגם מגרסה קיימת',
   'facts.add.blank': 'התחל ממסמך ריק',
+  'facts.add.restore': 'שחזר מתמונת מצב',
+  'facts.add.noteRestorable': 'לשפה הזו נשמרו תמונות מצב מלפני המחיקה. אפשר לשחזר אחת מהן, לתרגם מגרסה קיימת, או להתחיל ממסמך ריק.',
   'facts.add.translating': 'מתרגם…',
   'facts.group': 'גרסאות שפה',
   'facts.makeSource': 'הגדר כברירת מחדל',

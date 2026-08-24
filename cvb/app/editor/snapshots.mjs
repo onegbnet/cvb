@@ -27,6 +27,24 @@ const when = (iso, lang) => {
 };
 
 /**
+ * 一份快照的显示名:用户改过的名字优先,否则「时间戳(+来历)」。
+ * 建语种时的「从删除前的快照恢复」也用它 —— 同一份快照两处叫法必须一样。
+ * @param {{uploaded: string, note?: string, kind?: string}} s
+ * @param {string} lang 界面语言(决定时间格式)
+ */
+export function snapshotLabel(s, lang) {
+  const stamp = when(s.uploaded, lang);
+  // 「覆盖保护」(恢复/导入前自动留)与「删除保护」(删语种前按选项留)分开说
+  const kindLabel =
+    s.kind === 'before-delete' ? tr('snapshot.autoKindDelete') : s.kind ? tr('snapshot.autoKind') : '';
+  // 括号形制随语言(中文全角、拉丁半角),模板住语言表,别写死在这里
+  const defaultLabel = kindLabel
+    ? tr('snapshot.autoName').replace('{name}', stamp).replace('{kind}', kindLabel)
+    : stamp;
+  return { defaultLabel, label: s.note || defaultLabel };
+}
+
+/**
  * @param {object} opts
  * @param {string} opts.lang
  * @param {(key: string) => Promise<boolean>} opts.onRestore 点了"恢复"——**确认与执行都在上层**
@@ -62,19 +80,10 @@ export function createSnapshots({ lang, factsLang, onRestore }) {
       return;
     }
     for (const s of snapshots) {
-      const stamp = when(s.uploaded, lang);
-      // **默认名字就是时间戳**(覆盖前自动留的那几份再缀一句「覆盖保护」)——
+      // **默认名字就是时间戳**(自动留的那几份再缀一句来历)——
       // 此前是「时间」「副标题」两栏并排,而绝大多数快照的副标题是空的:
       // 两栏各占地方,一栏还常年没内容。合成一个可改的名字,行短一半。
-      // 「覆盖保护」(恢复/导入前自动留)与「删除保护」(删语种前按选项留)分开说 ——
-      // 一个词说不清两种来历
-      const kindLabel =
-        s.kind === 'before-delete' ? tr('snapshot.autoKindDelete') : s.kind ? tr('snapshot.autoKind') : '';
-      // 括号形制随语言(中文全角、拉丁半角),模板住语言表,别写死在这里
-      const defaultLabel = kindLabel
-        ? tr('snapshot.autoName').replace('{name}', stamp).replace('{kind}', kindLabel)
-        : stamp;
-      const label = s.note || defaultLabel;
+      const { defaultLabel, label } = snapshotLabel(s, lang);
 
       // 四个动作一律用记号 —— 写成字(改备注 / 查看 / 恢复 / 删除)会把一行挤满,
       // 而内容才是要读的东西。记号一律配 aria-label + title:

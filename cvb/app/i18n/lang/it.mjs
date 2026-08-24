@@ -182,6 +182,8 @@ export default {
   'facts.add.note': 'La bozza viene tradotta da una versione esistente (date, link e contatti restano invariati), oppure parti da un documento vuoto.',
   'facts.add.translate': 'Traduci da una versione esistente',
   'facts.add.blank': 'Parti da zero',
+  'facts.add.restore': "Ripristina da un'istantanea",
+  'facts.add.noteRestorable': 'Questa lingua ha istantanee conservate da prima della cancellazione. Ripristinane una, traduci da una versione esistente o parti da zero.',
   'facts.add.translating': 'Traduzione in corso…',
   'facts.group': 'Versioni linguistiche',
   'facts.makeSource': 'Imposta come predefinita',

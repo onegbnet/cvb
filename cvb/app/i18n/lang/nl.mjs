@@ -182,6 +182,8 @@ export default {
   'facts.add.note': 'Het concept wordt vertaald vanuit een bestaande taalversie (datums, links en contactgegevens gaan mee), of begin met een leeg document.',
   'facts.add.translate': 'Vertalen vanuit bestaande versie',
   'facts.add.blank': 'Leeg beginnen',
+  'facts.add.restore': 'Herstellen vanuit een snapshot',
+  'facts.add.noteRestorable': 'Van deze taal zijn nog snapshots van vóór het verwijderen. Herstel er een, vertaal vanuit een bestaande versie, of begin leeg.',
   'facts.add.translating': 'Bezig met vertalen…',
   'facts.group': 'Taalversies',
   'facts.makeSource': 'Als standaard instellen',

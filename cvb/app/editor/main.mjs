@@ -18,6 +18,7 @@ import {
   createSnapshot,
   fetchSnapshotConfig,
   restoreSnapshot,
+  listSnapshots,
   listFactsLangs,
   createFactsLang,
   deleteFactsLang,
@@ -28,6 +29,7 @@ import {
 import { buildFactsBar, openAddLangDialog, factsLangName } from './facts-bar.mjs';
 import { translateResumeConfig } from '../lib/ai.mjs';
 import { wrapUnit, unwrapUnit } from '../lib/translate-map.mjs';
+import { snapshotLabel } from './snapshots.mjs';
 import { factsLangOfUi, uiLangForFacts as uiForFacts } from '../lib/lang-names.mjs';
 import { SECTIONS, sectionModules, MODULES, getModuleFields, getModuleName, moduleIssues } from './modules.mjs';
 import { confirmAction } from '../lib/confirm.mjs';
@@ -1238,11 +1240,46 @@ const pickSourceLang = (candidates) =>
     });
   });
 
+/** 从遗留快照里挑一份(建语种时的「从删除前的快照恢复」)。 */
+const pickSnapshot = (snapshots) =>
+  new Promise((resolve) => {
+    let chosen = '';
+    const body = h(
+      'div',
+      { class: 'ovw-confirm' },
+      h(
+        'div',
+        { class: 'fadd-snap-list' },
+        snapshots.map((s) =>
+          h(
+            'button',
+            { type: 'button', class: 'btn fadd-snap-item', onClick: () => { chosen = s.key; handle.close(); } },
+            snapshotLabel(s, getLanguage()).label
+          )
+        )
+      ),
+      h(
+        'div',
+        { class: 'fadd-actions' },
+        h('button', { type: 'button', class: 'btn btn-small', onClick: () => handle.close() }, tr('action.cancel'))
+      )
+    );
+    const handle = window.Overlay.show({
+      variant: 'box',
+      title: tr('facts.add.restore'),
+      body,
+      onClose: () => resolve(chosen),
+    });
+  });
+
 /** 新增语种,两步走(2026-08-24 用户裁定「先单选空白还是翻译」——
  *  底稿方式是先决选择,来源语种是次级选择,不该搅在一层):
- *  第一步按钮二选:「从已有语种翻译」(重点色)/「建立空白文档」/取消;
- *  选了翻译,第二步在**所有已有语种**里挑来源(语种平权;只有一门时跳过这步)。
- *  翻译失败不建档(Toast 报错,可重试或改走空白)。
+ *  第一步按钮选底稿方式:「从删除前的快照恢复」(重点色,**仅当该语种还留着快照**)/
+ *  「从已有语种翻译」/「建立空白文档」/取消;
+ *  第二步按选择挑来源语种或挑哪一份快照(候选只有一个时跳过)。
+ *  **恢复档是这条路的第一顺位** —— 删语种时留下的快照(尤其「删除保护」那份)
+ *  正是为「以后再把这个语种立回来」留的;不在建档时提一句,那套安全网就白留了
+ *  (2026-08-24 用户点出)。翻译失败不建档(Toast 报错,可重试或改走空白)。
  *  空库一份都没有,没什么可翻 —— 两步都跳过,直接建档并确立默认语种(探针钉着这条)。 */
 async function addFactsLang(code) {
   if (!langsInfo || !langsInfo.langs.length) {
@@ -1257,12 +1294,19 @@ async function addFactsLang(code) {
     return;
   }
 
+  // 这个语种此前删过、快照还留着吗?(取不到就当没有 —— 建语种不该被列快照挡住)
+  let leftover = [];
+  try {
+    const payload = await listSnapshots(code);
+    leftover = (payload && payload.snapshots) || [];
+  } catch { /* 忽略 */ }
+
   const mode = await new Promise((resolve) => {
     let chosen = '';
     const body = h(
       'div',
       { class: 'ovw-confirm' },
-      h('p', { class: 'ovw-note' }, tr('facts.add.note'))
+      h('p', { class: 'ovw-note' }, leftover.length ? tr('facts.add.noteRestorable') : tr('facts.add.note'))
     );
     const handle = window.Overlay.show({
       variant: 'box',
@@ -1271,21 +1315,49 @@ async function addFactsLang(code) {
       onClose: () => resolve(chosen || 'cancel'),
     });
     const pick = (v) => { chosen = v; handle.close(); };
+    const accent = (v) => `btn btn-small${v ? ' btn-accent' : ''}`;
     body.append(
       h(
         'div',
         { class: 'fadd-actions' },
         h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('cancel') }, tr('action.cancel')),
         h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('blank') }, tr('facts.add.blank')),
+        // 有遗留快照时重点色让给「恢复」:那是原样找回,比重译更保真
         h(
           'button',
-          { type: 'button', class: 'btn btn-small btn-accent', onClick: () => pick('translate') },
+          { type: 'button', class: accent(!leftover.length), onClick: () => pick('translate') },
           tr('facts.add.translate')
-        )
+        ),
+        leftover.length
+          ? h(
+              'button',
+              { type: 'button', class: accent(true), onClick: () => pick('restore') },
+              tr('facts.add.restore')
+            )
+          : null
       )
     );
   });
   if (mode === 'cancel') return;
+
+  if (mode === 'restore') {
+    const key = leftover.length === 1 ? leftover[0].key : await pickSnapshot(leftover);
+    if (!key) return;
+    const progress = openTranslateProgress();
+    try {
+      // 目标语种此刻还不存在 —— 服务端按快照键推导语种建行,没有旧内容可覆盖,
+      // 因此也不会(也不需要)留覆盖保护;空库时它顺带确立默认语种
+      await restoreSnapshot(key);
+    } catch (err) {
+      progress.close();
+      if (isUnauthorized(err)) return redirectToUnlock();
+      window.Toast && window.Toast.err(String(err.message || err));
+      return;
+    }
+    progress.close();
+    await switchFactsLang(code);
+    return;
+  }
 
   let seedOpts = { seed: 'empty' };
   let progress = null;
