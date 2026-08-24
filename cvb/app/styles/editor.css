@@ -135,12 +135,8 @@
   min-width: 0;
 }
 
+/* 卡片本体在 base.css(.blk,两页共用);这里只留 /edit 自己的锚点偏移 */
 .blk {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-  padding: 14px 16px;
   scroll-margin-top: 72px;
 }
 

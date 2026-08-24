@@ -623,3 +623,14 @@ header.app-header .back-link .icon svg {
   background: #fff;
 }
 
+/* ---- 卡片(.blk)—— 内容分块的唯一画法 ----
+   /edit 的 15 个分节与 /apply 的选择区共用。同芯片那条:住 base.css 是因为
+   两页加载的 CSS 不同,放任何一边都只有一边吃得到(2026-08-24 真机量出
+   /apply 的卡片是透明无边框,就是因为 .blk 当时只在 editor.css 里)。 */
+.blk {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 14px 16px;
+}
