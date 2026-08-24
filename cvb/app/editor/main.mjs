@@ -1493,7 +1493,7 @@ async function deleteCurrentFactsLang() {
     const body = h(
       'div',
       { class: 'ovw-confirm' },
-      h('p', { class: 'ovw-note' }, tr('facts.delete.confirm').replace('{name}', name))
+      h('p', { class: 'ovw-note' }, tr('facts.delete.confirm'))
     );
 
     // 默认语种的去向:三档里只有一档需要人做决定,另两档如实陈述
@@ -1545,7 +1545,8 @@ async function deleteCurrentFactsLang() {
     // 后者的 doAction 契约踩过(§9);按钮行用自己的类,别蹭 .ovw-actions(§3 导入框的教训)
     const handle = window.Overlay.show({
       variant: 'box',
-      title: `${tr('facts.delete')}${tr('punct.labelSep')}${name}`,
+      // 标题带语种名,正文因此不再复述一遍「删除「X」版本?」
+      title: tr('facts.delete.title').replace('{name}', name),
       body,
       onClose: () => resolve(chosen || 'cancel'),
     });
