@@ -30,6 +30,7 @@ import { buildFactsBar, openAddLangDialog, factsLangName } from './facts-bar.mjs
 import { translateResumeConfig } from '../lib/ai.mjs';
 import { wrapUnit, unwrapUnit } from '../lib/translate-map.mjs';
 import { snapshotLabel } from './snapshots.mjs';
+import { planDeleteQuestions, snapChoiceToFlags } from './delete-plan.mjs';
 import { factsLangOfUi, uiLangForFacts as uiForFacts } from '../lib/lang-names.mjs';
 import { SECTIONS, sectionModules, MODULES, getModuleFields, getModuleName, moduleIssues } from './modules.mjs';
 import { confirmAction } from '../lib/confirm.mjs';
@@ -1483,103 +1484,140 @@ async function deleteCurrentFactsLang() {
   const name = factsLangName(factsLang);
   const isDefault = !!(langsInfo && factsLang === langsInfo.source);
   const rest = langsInfo ? langsInfo.langs.filter(({ lang }) => lang !== factsLang) : [];
-  // 删一次语种要交代的事不止一件(2026-08-24 用户点出「合并并重新设计」):
-  // **一个框、一次提交** —— 里面只问真正要你决定的(新默认、快照怎么处置),
-  // 能推导的后果直接陈述(剩一个自动成为默认 / 这是最后一个)。
-  // 需要指定新默认时,提交按钮先禁着 —— 决定没做完就不该能按下去。
+  // 这份文档有没有事实内容 —— 按模块注册表算,别自己数字段
+  const hasContent = MODULES.some((m) => {
+    const v = m.get(state.config);
+    if (Array.isArray(v)) return v.length > 0;
+    return v && Object.values(v).some((x) => (Array.isArray(x) ? x.length : String(x || '').trim()));
+  });
+  // 这个语种现存多少份快照(取不到就当有 —— 宁可多问一句,别默默清掉东西)
+  let snapshotCount = 1;
+  try {
+    const payload = await listSnapshots(factsLang);
+    snapshotCount = ((payload && payload.snapshots) || []).length;
+  } catch { /* 保守 */ }
+
+  // **有问题才问,没问题不问**(2026-08-24 用户成文):判断是纯函数,见 delete-plan.mjs
+  const planned = planDeleteQuestions({
+    isDefault,
+    remainingCount: rest.length,
+    hasContent,
+    snapshotCount,
+  });
+
   let newDefault = '';
-  const choice = await new Promise((resolve) => {
-    let chosen = '';
-    const body = h(
-      'div',
-      { class: 'ovw-confirm' },
-      h('p', { class: 'ovw-note' }, tr('facts.delete.confirm'))
-    );
+  let snapChoice = planned.snapOptions.length ? '' : 'keepNone';
 
-    // 默认语种的去向:三档里只有一档需要人做决定,另两档如实陈述
-    const mustPick = isDefault && rest.length >= 2;
-    if (isDefault && rest.length === 1) {
-      body.append(
-        h('p', { class: 'fdel-fact' }, tr('facts.delete.nextAuto').replace('{name}', factsLangName(rest[0].lang)))
+  if (planned.ask) {
+    const decided = await new Promise((resolve) => {
+      let chosen = '';
+      const body = h(
+        'div',
+        { class: 'ovw-confirm' },
+        h('p', { class: 'ovw-note' }, hasContent || snapshotCount ? tr('facts.delete.confirm') : tr('facts.delete.confirmEmpty'))
       );
-    } else if (!rest.length) {
-      body.append(h('p', { class: 'fdel-fact' }, tr('facts.delete.lastOne')));
-    }
 
-    let commitBtns = [];
-    const syncCommit = () => {
-      for (const b of commitBtns) b.disabled = mustPick && !newDefault;
-    };
-    if (mustPick) {
-      const chips = rest.map(({ lang }) =>
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'btn btn-small fdel-def',
-            'aria-pressed': 'false',
-            onClick: (e) => {
-              newDefault = lang;
-              for (const c of chips) {
-                const on = c === e.currentTarget;
-                c.classList.toggle('is-on', on);
-                c.setAttribute('aria-pressed', on ? 'true' : 'false');
-              }
-              syncCommit();
+      // 默认语种去向:要人挑的只有一档,另两档如实陈述
+      if (isDefault && rest.length === 1) {
+        body.append(
+          h('p', { class: 'fdel-fact' }, tr('facts.delete.nextAuto').replace('{name}', factsLangName(rest[0].lang)))
+        );
+      } else if (!rest.length) {
+        body.append(h('p', { class: 'fdel-fact' }, tr('facts.delete.lastOne')));
+      }
+
+      let commitBtn = null;
+      const syncCommit = () => {
+        if (commitBtn) {
+          commitBtn.disabled = (planned.snapOptions.length > 0 && !snapChoice) || (planned.askDefault && !newDefault);
+        }
+      };
+      /** 一组单选式选项:标签 + 芯片行(选中态与文档栏同一套语汇,都不预选)。 */
+      const optionRow = (label, options, onPick) => {
+        const chips = options.map(({ value, text }) =>
+          h(
+            'button',
+            {
+              type: 'button',
+              class: 'btn btn-small fdel-def',
+              'aria-pressed': 'false',
+              onClick: (e) => {
+                onPick(value);
+                for (const c of chips) {
+                  const on = c === e.currentTarget;
+                  c.classList.toggle('is-on', on);
+                  c.setAttribute('aria-pressed', on ? 'true' : 'false');
+                }
+                syncCommit();
+              },
             },
-          },
-          factsLangName(lang)
-        )
+            text
+          )
+        );
+        return h(
+          'div',
+          { class: 'fdel-def-row' },
+          h('span', { class: 'fdel-def-label' }, label),
+          h('div', { class: 'fdel-def-chips' }, chips)
+        );
+      };
+
+      if (planned.askDefault) {
+        body.append(
+          optionRow(
+            tr('facts.delete.pickDefault'),
+            rest.map(({ lang }) => ({ value: lang, text: factsLangName(lang) })),
+            (v) => { newDefault = v; }
+          )
+        );
+      }
+      if (planned.snapOptions.length) {
+        const TEXT = {
+          keepAll: 'facts.delete.keepAll',
+          keepFinal: 'facts.delete.keepFinal',
+          wipe: 'facts.delete.wipe',
+          keepOne: 'facts.delete.keepOne',
+          keepNone: 'facts.delete.keepNone',
+        };
+        body.append(
+          optionRow(
+            tr('facts.delete.snapLabel'),
+            planned.snapOptions.map((value) => ({ value, text: tr(TEXT[value]) })),
+            (v) => { snapChoice = v; }
+          )
+        );
+      }
+
+      // 走 Overlay.show + 自建按钮行(同 confirmOverwrite),不走 Overlay.confirm ——
+      // 后者的 doAction 契约踩过(§9);按钮行用自己的类,别蹭 .ovw-actions
+      const handle = window.Overlay.show({
+        variant: 'box',
+        title: tr('facts.delete.title').replace('{name}', name),
+        body,
+        onClose: () => resolve(chosen || 'cancel'),
+      });
+      const pick = (v) => { chosen = v; handle.close(); };
+      commitBtn = h(
+        'button',
+        { type: 'button', class: 'btn btn-small btn-accent', onClick: () => pick('go') },
+        tr('facts.delete.commit')
       );
+      syncCommit();
       body.append(
         h(
           'div',
-          { class: 'fdel-def-row' },
-          h('span', { class: 'fdel-def-label' }, tr('facts.delete.pickDefault')),
-          h('div', { class: 'fdel-def-chips' }, chips)
+          { class: 'fdel-actions' },
+          h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('cancel') }, tr('action.cancel')),
+          commitBtn
         )
       );
-    }
-
-    // 走 Overlay.show + 自建按钮行(同 confirmOverwrite),不走 Overlay.confirm ——
-    // 后者的 doAction 契约踩过(§9);按钮行用自己的类,别蹭 .ovw-actions(§3 导入框的教训)
-    const handle = window.Overlay.show({
-      variant: 'box',
-      // 标题带语种名,正文因此不再复述一遍「删除「X」版本?」
-      title: tr('facts.delete.title').replace('{name}', name),
-      body,
-      onClose: () => resolve(chosen || 'cancel'),
     });
-    const pick = (v) => { chosen = v; handle.close(); };
-    const commit = (v, label, accent) =>
-      h('button', { type: 'button', class: `btn btn-small${accent ? ' btn-accent' : ''}`, onClick: () => pick(v) }, label);
-    // 提交档按「留得多→留得少」排,重点色给最安全那档;危险档能选但不抢视线
-    const keepAll = commit('keepAll', tr('facts.delete.keepAll'), true);
-    const keepFinal = commit('keepFinal', tr('facts.delete.keepFinal'), false);
-    const wipe = commit('wipe', tr('facts.delete.wipe'), false);
-    commitBtns = [keepAll, keepFinal, wipe];
-    syncCommit();
-    // 引子句紧贴按钮 —— 它以冒号收尾,中间隔着别的话与别的选项就成了空头承诺
-    //(2026-08-24 用户报出)。顺序:后果陈述 → 默认语种(前置决定)→ 快照引子 → 快照三档。
-    body.append(
-      h('p', { class: 'ovw-note fdel-snap-note' }, tr('facts.delete.snapNote')),
-      h(
-        'div',
-        { class: 'fdel-actions' },
-        h('button', { type: 'button', class: 'btn btn-small', onClick: () => pick('cancel') }, tr('action.cancel')),
-        wipe,
-        keepFinal,
-        keepAll
-      )
-    );
-  });
+    if (decided === 'cancel') return false;
+  }
+  const choice = 'go';
   if (choice === 'cancel') return false;
   try {
-    await deleteFactsLang(factsLang, {
-      snapshot: choice !== 'wipe',
-      purge: choice !== 'keepAll',
-      newDefault,
-    });
+    await deleteFactsLang(factsLang, { ...snapChoiceToFlags(snapChoice), newDefault });
   } catch (err) {
     window.Toast && window.Toast.err(String(err.message || err));
     return false;

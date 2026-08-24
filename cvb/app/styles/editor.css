@@ -1190,6 +1190,7 @@
 }
 
 /* 删语种/加语种的选项行:形态同 .ovw-actions,类分开 —— 共用类会让探针一次选中两个框的按钮 */
+/* 拉平后的提交行:两组选项都选完才亮「确认删除」 */
 .fdel-actions,
 .fadd-actions {
   display: flex;
@@ -1258,9 +1259,4 @@
 .fadd-snap-item {
   justify-content: flex-start;
   text-align: left;
-}
-
-/* 快照三档的引子句:与按钮行贴紧(它以冒号收尾,离得远就成了空头承诺) */
-.fdel-snap-note {
-  margin: 14px 0 0;
 }
