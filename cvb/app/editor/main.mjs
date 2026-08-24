@@ -27,7 +27,7 @@ import {
   redirectToUnlock,
 } from '../lib/api.mjs';
 import { buildFactsBar, openAddLangDialog, factsLangName } from './facts-bar.mjs';
-import { translateResumeConfig } from '../lib/ai.mjs';
+import { translateResumeConfig, extractResumeFromText } from '../lib/ai.mjs';
 import { wrapUnit, unwrapUnit } from '../lib/translate-map.mjs';
 import { snapshotLabel } from './snapshots.mjs';
 import { planDeleteQuestions, snapChoiceToFlags } from './delete-plan.mjs';
@@ -513,6 +513,131 @@ function buildImportButton() {
   );
 }
 
+/**
+ * **AI 导入**(2026-08-24 用户点的):把一份非结构化的简历(PDF / Word / 一段文本)
+ * 交给 AI 抽成纯标准 JSON Resume。
+ *
+ * 三条纪律,与既有机器接得严丝合缝:
+ * - **落库不新开口**:抽出来的东西照样过 `normalizeResume` + 走 `confirmImport`
+ *   (差异表 +「这些留不住」+ 覆盖前快照三选项)—— 与手工导入同一道闸门;
+ * - **结构不靠模型自觉**:非标准字段由 `collectDroppedPaths` 如实报出、由归一化剔掉
+ *   (§3 零扩展红线在落库前那道校验上成立,不在提示词上);
+ * - **抽不出就如实说**:扫描件(图片型 PDF)没有文字层,报「这份文件里没有可读的文字」,
+ *   不谎称解析失败,也不拿空文档去覆盖。
+ */
+function buildAiImportButton() {
+  const fileInput = h('input', {
+    type: 'file',
+    accept: '.pdf,.docx,.txt,.md,application/pdf,text/plain',
+    style: { display: 'none' },
+    onChange: async (e) => {
+      const file = e.target.files && e.target.files[0];
+      e.target.value = '';
+      if (!file) return;
+      let text = '';
+      const progress = openTranslateProgress();
+      try {
+        const name = (file.name || '').toLowerCase();
+        // **老 .doc(Word 97-2003)不解析**:它是 OLE2 复合二进制,正文散在
+        // WordDocument 流的 piece table 里(fast-save 的文档还是乱序的),
+        // 跟 .docx(zip + XML)是两码事。粗解析出来的是夹着控制符的半篇文字 ——
+        // 而这些字是要喂给 AI 去抽事实的,**输入脏,抽出来的事实就脏**,
+        // 比读不出来更糟。所以如实拒绝,并给两条一步之遥的出路(另存 / 直接粘贴)。
+        if (name.endsWith('.doc')) {
+          progress.close();
+          window.Toast && window.Toast.err(tr('editor.aiImportDocLegacy'));
+          return;
+        }
+        if (name.endsWith('.pdf')) {
+          const { extractPdfText } = await import('../lib/pdf-view.mjs');
+          text = await extractPdfText(new Uint8Array(await file.arrayBuffer()));
+        } else if (name.endsWith('.docx')) {
+          const { extractDocxText } = await import('../lib/docx-text.mjs');
+          text = await extractDocxText(await file.arrayBuffer());
+        } else {
+          text = await file.text();
+        }
+      } catch (err) {
+        progress.close();
+        window.Toast && window.Toast.err(`${tr('editor.aiImportUnreadable')}${tr('punct.labelSep')}${String(err.message || err)}`);
+        return;
+      }
+      if (!text.trim()) {
+        progress.close();
+        // 扫描件就是这一档:文件读到了,里面没有文字层
+        window.Toast && window.Toast.err(tr('editor.aiImportNoText'));
+        return;
+      }
+      await runAiImport(text, progress);
+    },
+  });
+
+  const openTextBox = () => {
+    const paste = h('textarea', {
+      class: 'fc-textarea imp-paste',
+      rows: 12,
+      placeholder: tr('editor.aiImportPastePlaceholder'),
+      'aria-label': tr('editor.aiImportPastePlaceholder'),
+    });
+    const body = h('div', { class: 'imp-paste-box' }, paste);
+    const handle = window.Overlay.show({ variant: 'box', title: tr('editor.aiImport'), body, width: 'wide' });
+    body.append(
+      h(
+        'div',
+        { class: 'imp-paste-actions' },
+        h('button', { type: 'button', class: 'btn btn-small', onClick: () => handle.close() }, tr('action.cancel')),
+        h(
+          'button',
+          {
+            type: 'button',
+            class: 'btn btn-small btn-accent',
+            onClick: async () => {
+              const v = paste.value.trim();
+              if (!v) return;
+              handle.close();
+              await runAiImport(v, openTranslateProgress());
+            },
+          },
+          tr('editor.aiImportRun')
+        )
+      )
+    );
+    paste.focus();
+  };
+
+  return h(
+    'span',
+    { class: 'imp' },
+    h(
+      'span',
+      { class: 'mng-row' },
+      h('button', { type: 'button', class: 'btn btn-small', onClick: () => fileInput.click() }, tr('action.importFile')),
+      h('button', { type: 'button', class: 'btn btn-small', onClick: openTextBox }, tr('action.paste'))
+    ),
+    fileInput
+  );
+}
+
+/** 文本 → AI 抽取 → 归一 → 既有的整份覆盖闸门。progress 由调用方开好(它可能早就开着)。 */
+async function runAiImport(text, progress) {
+  let incoming;
+  let raw;
+  try {
+    const payload = await extractResumeFromText(text);
+    raw = payload.resume;
+    incoming = normalizeResume(raw);
+    if (!incoming.basics) throw new Error('missing basics');
+  } catch (err) {
+    progress.close();
+    if (isUnauthorized(err)) return redirectToUnlock();
+    window.Toast && window.Toast.err(String(err.message || err));
+    return;
+  }
+  progress.close();
+  // 与手工导入同一道闸门:差异表 +「这些留不住」+ 覆盖前快照三选项
+  confirmImport(incoming, raw);
+}
+
 function buildExportButton() {
   const formatEl = h(
     'select',
@@ -606,6 +731,7 @@ function buildHeader() {
               // 空库的虚拟文档没有行,删不得 —— 语言组只在真实语种上出现
               factsExists: langsInfo.langs.some((l) => l.lang === factsLang),
               importControl: buildImportButton,
+              aiImportControl: buildAiImportButton,
               exportControl: buildExportButton,
               // 恢复的确认与执行都在这一层(它握着 state / 未保存闸门),
               // 抽屉与快照列表只负责"点了哪一条"

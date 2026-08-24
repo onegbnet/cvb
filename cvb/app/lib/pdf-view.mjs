@@ -102,6 +102,46 @@ function setupWorker(lib) {
   }
 }
 
+/**
+ * 抽出 PDF 里的文字(AI 导入用)。与预览共用同一份 pdfjs(同一个钉版、同一套
+ * CDN 覆盖、同一个 worker 降级链)—— 别为抽文本再装第二份。
+ *
+ * **抽不出字是正常结果,不是故障**:扫描件是图片,PDF 里根本没有文字层;
+ * 调用方据此如实告诉用户「这份 PDF 里没有可读的文字」,不要谎称解析失败。
+ *
+ * @param {Uint8Array|ArrayBuffer} bytes
+ * @returns {Promise<string>} 页与页之间以空行分隔;抽不到文字时返回空串
+ */
+export async function extractPdfText(bytes) {
+  const lib = await loadPdfjs();
+  const doc = await lib.getDocument({ data: cloneBytes(bytes), ...resourceUrls() }).promise;
+  try {
+    const pages = [];
+    for (let i = 1; i <= doc.numPages; i++) {
+      const page = await doc.getPage(i);
+      const content = await page.getTextContent();
+      // items 是排版碎片:同一行会被切成多段,行末由 hasEOL 标出 —— 按它拼行,
+      // 否则整页会连成一条长串,模型读不出「一条一行」的要点结构
+      let line = '';
+      const lines = [];
+      for (const item of content.items || []) {
+        if (typeof item.str !== 'string') continue;
+        line += item.str;
+        if (item.hasEOL) {
+          lines.push(line.trim());
+          line = '';
+        }
+      }
+      if (line.trim()) lines.push(line.trim());
+      pages.push(lines.filter(Boolean).join('\n'));
+      page.cleanup();
+    }
+    return pages.filter(Boolean).join('\n\n').trim();
+  } finally {
+    try { await doc.destroy(); } catch { /* 清理失败不影响已抽到的文本 */ }
+  }
+}
+
 /* ------------------------------------------------------------------ 常量 */
 
 const ZOOM_MIN = 0.5;

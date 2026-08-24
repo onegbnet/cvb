@@ -109,6 +109,20 @@ export async function translateResumeConfig({ config, sourceLang, targetLang, so
 }
 
 /**
+ * AI 导入:一段非结构化简历文本 → JSON Resume(服务端按访问地点名模型)。
+ * 结构不在这里保证 —— 调用方仍要 normalizeResume + 走整份覆盖闸门。
+ */
+export async function extractResumeFromText(text) {
+  const payload = await post('api/ai/extract', { text, langLabel: getLanguage() });
+  if (!payload || !payload.resume || typeof payload.resume !== 'object') {
+    const err = new Error(tr('ai.parseFailed'));
+    err.code = 'AI_INVALID_RESPONSE';
+    throw err;
+  }
+  return payload;
+}
+
+/**
  * 打开候选弹窗:调 /api/ai/improve,展示候选,应用则回调 onApply(text)。
  */
 export async function openImproveDialog({ label, sourceText, config, onApply }) {
