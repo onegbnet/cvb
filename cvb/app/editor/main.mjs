@@ -1559,7 +1559,10 @@ async function deleteCurrentFactsLang() {
     const wipe = commit('wipe', tr('facts.delete.wipe'), false);
     commitBtns = [keepAll, keepFinal, wipe];
     syncCommit();
+    // 引子句紧贴按钮 —— 它以冒号收尾,中间隔着别的话与别的选项就成了空头承诺
+    //(2026-08-24 用户报出)。顺序:后果陈述 → 默认语种(前置决定)→ 快照引子 → 快照三档。
     body.append(
+      h('p', { class: 'ovw-note fdel-snap-note' }, tr('facts.delete.snapNote')),
       h(
         'div',
         { class: 'fdel-actions' },

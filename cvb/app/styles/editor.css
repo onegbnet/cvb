@@ -1259,3 +1259,8 @@
   justify-content: flex-start;
   text-align: left;
 }
+
+/* 快照三档的引子句:与按钮行贴紧(它以冒号收尾,离得远就成了空头承诺) */
+.fdel-snap-note {
+  margin: 14px 0 0;
+}
