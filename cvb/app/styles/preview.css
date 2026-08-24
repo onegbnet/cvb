@@ -398,6 +398,34 @@
 }
 
 
+/* ---- 职位信息(2026-08-25)----
+   一个框:贴职位描述正文,或贴一条招聘页链接 —— 给的是什么由机器认。
+   输入框吃 .fc-input 的样式(与 /edit 的表单同一套),这里只给它高度与整宽。 */
+.apply-job-input {
+  width: 100%;
+  min-height: 92px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* 读出来之后:摆事实,不加标签词 —— 职位名 + 一行「机构 · 职阶 · 地点」 */
+.apply-job-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.apply-job-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.apply-job-meta {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
 /* 生成是主动动作:空态说清「按了会发生什么」,别让人对着白板猜 */
 .pdf-placeholder {
   display: flex;

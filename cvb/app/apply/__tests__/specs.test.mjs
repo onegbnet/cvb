@@ -28,6 +28,19 @@ test('规格里的版式都在模板注册表里;每套模板都归得进某个�
   expect([...registered].sort()).toEqual([...covered].sort());
 });
 
+test('每个规格都有显式的 country —— **不许从 id 切**', () => {
+  for (const spec of APPLY_SPECS) {
+    expect(spec.country).toMatch(/^[A-Z]{2}$/);
+  }
+  // 现在 id 恰好等于国别码的小写,切一下也对 —— 但 id 的形状留了余地(cn-tech / au-nsw),
+  // 那时"按 id 前缀切"就成了一条会在将来某天静默出错的规则。所以字段是显式的。
+  expect(APPLY_SPECS.map((s) => [s.id, s.country])).toEqual([
+    ['au', 'AU'],
+    ['nz', 'NZ'],
+    ['cn', 'CN'],
+  ]);
+});
+
 test('照片政策只认三态,**待查一律 null**(不许替语料补)', () => {
   for (const spec of APPLY_SPECS) {
     expect([null, 'no', 'required']).toContain(spec.photo);

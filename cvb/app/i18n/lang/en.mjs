@@ -265,6 +265,40 @@ export default {
 
   'apply.facts': 'Facts',
 
+
+  'apply.job': 'Job details',
+
+  'apply.jobPlaceholder': 'Paste the job description, or a link to the advert',
+
+  'apply.jobRead': 'Read the advert',
+
+  'apply.jobReading': 'Reading…',
+
+  'apply.jobRedo': 'Read another',
+
+  'apply.jobClear': 'Clear',
+
+  'apply.jobEmpty': 'Paste a job description or a link first',
+
+  'apply.jobDerived': 'Where you are applying was set from the advert',
+
+  'apply.jobAmbiguous': 'That location has more than one set of conventions — choose one below',
+
+  'apply.jobNoPlace': 'The advert does not say which country — choose where you are applying below',
+
+  'apply.jobRemote': 'Remote',
+
+  'apply.jobDuties': '{n} duties read',
+
+  'apply.jobErrBadUrl': 'That link cannot be read — only public http/https web pages',
+
+  'apply.jobErrFetch': 'That link could not be opened',
+
+  'apply.jobErrNotText': 'That link does not point to a web page',
+
+  'apply.jobErrTooLarge': 'That page is too large to read',
+
+  'apply.jobErrEmpty': 'No readable text on that page — paste the job description instead',
   'spec.au': 'Australia',
 
   'spec.nz': 'New Zealand',

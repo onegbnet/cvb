@@ -264,6 +264,40 @@ export default {
 
   'apply.facts': 'שפת העובדות',
 
+
+  'apply.job': 'פרטי המשרה',
+
+  'apply.jobPlaceholder': 'הדביקו את תיאור המשרה, או קישור למודעה',
+
+  'apply.jobRead': 'קראו את המודעה',
+
+  'apply.jobReading': 'קורא…',
+
+  'apply.jobRedo': 'קראו מודעה אחרת',
+
+  'apply.jobClear': 'ניקוי',
+
+  'apply.jobEmpty': 'הדביקו תחילה תיאור משרה או קישור',
+
+  'apply.jobDerived': 'ארץ ההגשה נקבעה לפי המודעה',
+
+  'apply.jobAmbiguous': 'למקום הזה יש יותר ממערכת מוסכמות אחת — בחרו אחת למטה',
+
+  'apply.jobNoPlace': 'המודעה לא מציינת מדינה — בחרו למטה לאן אתם מגישים',
+
+  'apply.jobRemote': 'מרחוק',
+
+  'apply.jobDuties': 'נקראו {n} תחומי אחריות',
+
+  'apply.jobErrBadUrl': 'לא ניתן לקרוא את הקישור הזה — רק דפי http/https ציבוריים',
+
+  'apply.jobErrFetch': 'לא ניתן היה לפתוח את הקישור',
+
+  'apply.jobErrNotText': 'הקישור הזה אינו מפנה לדף אינטרנט',
+
+  'apply.jobErrTooLarge': 'הדף הזה גדול מדי לקריאה',
+
+  'apply.jobErrEmpty': 'אין טקסט קריא בדף הזה — הדביקו במקום זאת את תיאור המשרה',
   'spec.au': 'אוסטרליה',
 
   'spec.nz': 'ניו זילנד',

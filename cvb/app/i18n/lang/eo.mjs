@@ -264,6 +264,40 @@ export default {
 
   'apply.facts': 'Lingvo de faktoj',
 
+
+  'apply.job': 'Detaloj de la posteno',
+
+  'apply.jobPlaceholder': 'Algluu la priskribon de la posteno, aŭ ligilon al la anonco',
+
+  'apply.jobRead': 'Legi la anoncon',
+
+  'apply.jobReading': 'Legante…',
+
+  'apply.jobRedo': 'Legi alian',
+
+  'apply.jobClear': 'Vakigi',
+
+  'apply.jobEmpty': 'Unue algluu priskribon aŭ ligilon',
+
+  'apply.jobDerived': 'La kandidatiga lando estis prenita el la anonco',
+
+  'apply.jobAmbiguous': 'Tiu loko havas plurajn konvenciarojn — elektu unu sube',
+
+  'apply.jobNoPlace': 'La anonco ne diras la landon — elektu sube, kien vi kandidatiĝas',
+
+  'apply.jobRemote': 'Fora',
+
+  'apply.jobDuties': '{n} taskoj legitaj',
+
+  'apply.jobErrBadUrl': 'Tiu ligilo ne legeblas — nur publikaj http/https-paĝoj',
+
+  'apply.jobErrFetch': 'Tiu ligilo ne malfermeblis',
+
+  'apply.jobErrNotText': 'Tiu ligilo ne montras al retpaĝo',
+
+  'apply.jobErrTooLarge': 'Tiu paĝo estas tro granda por legi',
+
+  'apply.jobErrEmpty': 'Neniu legebla teksto en tiu paĝo — anstataŭe algluu la priskribon',
   'spec.au': 'Aŭstralio',
 
   'spec.nz': 'Nov-Zelando',

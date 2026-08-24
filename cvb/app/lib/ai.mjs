@@ -123,6 +123,20 @@ export async function extractResumeFromText(text) {
 }
 
 /**
+ * 职位读取:一则招聘广告的正文 → 结构化职位(服务端按访问地选模型,同 AI 导入)。
+ * 收成什么形状由 app/apply/job.mjs 的 normalizeJob 说了算 —— 这里只管把回包取出来。
+ */
+export async function extractJobFromText(text) {
+  const payload = await post('api/ai/job', { text });
+  if (!payload || !payload.job || typeof payload.job !== 'object') {
+    const err = new Error(tr('ai.parseFailed'));
+    err.code = 'AI_INVALID_RESPONSE';
+    throw err;
+  }
+  return payload.job;
+}
+
+/**
  * 打开候选弹窗:调 /api/ai/improve,展示候选,应用则回调 onApply(text)。
  */
 export async function openImproveDialog({ label, sourceText, config, onApply }) {

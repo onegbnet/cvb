@@ -13,8 +13,14 @@
 //
 // id 的形状留了余地:现在是国别(au / nz / cn),将来 `cn-tech`、`au-nsw`
 // 这类「国别-职种」「国别-地域」照样是一个 id 一份 md,不必改结构。
+//
+// **`country` 是显式字段,不许从 id 切**(2026-08-25 接职位信息推导时定):
+// 现在 id 恰好等于国别码的小写,切一下也对 —— 但 id 的形状本来就留了余地,
+// `cn-tech` 一出现,"按 id 前缀切"就成了一条会在将来某天静默出错的规则。
+// 职位信息推导规格靠的就是这个字段(app/apply/job.mjs 的 deriveSpec):
+// 招聘机构在哪个国家 → 哪几套规格,**恰好一套才自动选,多套或没有就让人自己选**。
 
-/** @typedef {{id:string, labelKey:string, culture:string, templates:string[],
+/** @typedef {{id:string, labelKey:string, country:string, culture:string, templates:string[],
  *   paper:string, maxPages:number|null, photo:'no'|'required'|null,
  *   fileName:'given-family-CV'|null}} ApplySpec */
 
@@ -23,6 +29,7 @@ export const APPLY_SPECS = [
   {
     id: 'au',
     labelKey: 'spec.au',
+    country: 'AU',
     culture: 'culture/au.md',
     templates: ['anz-tech'],
     paper: 'A4',
@@ -33,6 +40,7 @@ export const APPLY_SPECS = [
   {
     id: 'nz',
     labelKey: 'spec.nz',
+    country: 'NZ',
     culture: 'culture/nz.md',
     templates: ['anz-tech'],
     paper: 'A4',
@@ -43,6 +51,7 @@ export const APPLY_SPECS = [
   {
     id: 'cn',
     labelKey: 'spec.cn',
+    country: 'CN',
     culture: 'culture/cn.md',
     templates: ['cn-classic', 'cn-modern'],
     paper: 'A4',

@@ -264,6 +264,40 @@ export default {
 
   'apply.facts': '事実の言語',
 
+
+  'apply.job': '求人情報',
+
+  'apply.jobPlaceholder': '募集要項を貼り付けるか、求人ページのリンクを貼ってください',
+
+  'apply.jobRead': '求人を読み取る',
+
+  'apply.jobReading': '読み取り中…',
+
+  'apply.jobRedo': '別の求人を読む',
+
+  'apply.jobClear': 'クリア',
+
+  'apply.jobEmpty': 'まず募集要項かリンクを貼り付けてください',
+
+  'apply.jobDerived': '応募先は求人の勤務地から設定しました',
+
+  'apply.jobAmbiguous': 'この勤務地には作法が複数あります。下から選んでください',
+
+  'apply.jobNoPlace': '求人に国の記載がありません。応募先を下から選んでください',
+
+  'apply.jobRemote': 'リモート',
+
+  'apply.jobDuties': '業務内容を {n} 件読み取りました',
+
+  'apply.jobErrBadUrl': 'このリンクは読み取れません。公開されている http/https のページのみです',
+
+  'apply.jobErrFetch': 'このリンクを開けませんでした',
+
+  'apply.jobErrNotText': 'このリンクはウェブページではありません',
+
+  'apply.jobErrTooLarge': 'このページは大きすぎて読み取れません',
+
+  'apply.jobErrEmpty': 'このページに読み取れる本文がありません。募集要項を直接貼り付けてください',
   'spec.au': 'オーストラリア',
 
   'spec.nz': 'ニュージーランド',

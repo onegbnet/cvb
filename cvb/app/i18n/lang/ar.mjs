@@ -264,6 +264,40 @@ export default {
 
   'apply.facts': 'لغة الحقائق',
 
+
+  'apply.job': 'تفاصيل الوظيفة',
+
+  'apply.jobPlaceholder': 'الصق وصف الوظيفة، أو رابط الإعلان',
+
+  'apply.jobRead': 'اقرأ الإعلان',
+
+  'apply.jobReading': 'جارٍ القراءة…',
+
+  'apply.jobRedo': 'اقرأ إعلانًا آخر',
+
+  'apply.jobClear': 'مسح',
+
+  'apply.jobEmpty': 'الصق وصف الوظيفة أو رابطًا أولًا',
+
+  'apply.jobDerived': 'تم ضبط بلد التقديم من الإعلان',
+
+  'apply.jobAmbiguous': 'لهذا الموقع أكثر من مجموعة أعراف — اختر واحدة أدناه',
+
+  'apply.jobNoPlace': 'الإعلان لا يذكر البلد — اختر بلد التقديم أدناه',
+
+  'apply.jobRemote': 'عن بُعد',
+
+  'apply.jobDuties': 'قُرئت {n} من المهام',
+
+  'apply.jobErrBadUrl': 'تعذّرت قراءة هذا الرابط — تُقرأ صفحات http/https العامة فقط',
+
+  'apply.jobErrFetch': 'تعذّر فتح هذا الرابط',
+
+  'apply.jobErrNotText': 'هذا الرابط لا يشير إلى صفحة ويب',
+
+  'apply.jobErrTooLarge': 'هذه الصفحة أكبر من أن تُقرأ',
+
+  'apply.jobErrEmpty': 'لا يوجد نص قابل للقراءة في هذه الصفحة — الصق وصف الوظيفة بدلًا من ذلك',
   'spec.au': 'أستراليا',
 
   'spec.nz': 'نيوزيلندا',

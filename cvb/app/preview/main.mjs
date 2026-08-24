@@ -31,6 +31,7 @@ import {
   fetchResume,
   saveResume,
   listFactsLangs,
+  fetchJobPage,
   isUnauthorized,
   redirectToUnlock,
 } from '../lib/api.mjs';
@@ -42,6 +43,15 @@ import {
   texTemplateFonts,
 } from '../tex/templates/index.mjs';
 import { APPLY_SPECS, DEFAULT_SPEC, resolveSpec, specById, templateForSpec, pdfFileNameFor } from '../apply/specs.mjs';
+import {
+  looksLikeUrl,
+  normalizeJob,
+  hasJobContent,
+  jobPlaceText,
+  deriveSpec,
+  JOB_ERROR_KEYS,
+} from '../apply/job.mjs';
+import { extractJobFromText } from '../lib/ai.mjs';
 import { splitName } from '../lib/name-parts.mjs';
 import { factsLangName } from '../editor/facts-bar.mjs';
 import { texEngineAssets } from '../tex/writer.mjs';
@@ -58,6 +68,10 @@ const state = {
   template: DEFAULT_TEMPLATE,
   factsLang: '', // 用哪份语种事实(空 = 默认语种)
   langs: [], // 已有事实的语种清单
+  jobText: '', // 贴进来的原始输入(职位描述正文 或 一条招聘页链接)
+  job: null, // 读出来的结构化职位(normalizeJob 的形状),没读过是 null
+  jobBusy: false,
+  jobHint: '', // 读完之后如实说一句(推出来了 / 多解 / 没写清国家 / 出错了)
 };
 
 // ---- 简历渲染(PDF 单一路) ----
@@ -635,6 +649,9 @@ function chipRow(labelKey, options, current, onPick) {
   );
 }
 
+// 职位块推导出投递目标后要刷新芯片行 —— 由 buildSelectionBar 装上自己的重绘。
+let rebuildSelection = () => {};
+
 // 「已有 PDF,但设置改过了」—— 不自动重编,只把按钮改口成「重新生成」,
 // 旧那份继续摆着(它仍是一份真产物,只是不对应当前设置了)。
 let generateBtnEl = null;
@@ -739,8 +756,178 @@ function buildSelectionBar() {
     bar.append(h('div', { class: 'apply-row apply-actions' }, generateBtnEl, staleHintEl));
     syncGenerate();
   };
+  rebuildSelection = rebuild;
   rebuild();
-  return h('div', { class: 'apply-shell' }, h('section', { class: 'blk' }, bar));
+  return h('section', { class: 'blk' }, bar);
+}
+
+// ---- 职位信息 ----
+//
+// 生成侧四步流程的第一步输入(用户 2026-08-24 成文:「事实 + **职位信息**
+// (推导文化模板,多解时让用户手动选)+ TeX 模板 → 生成初版简历」)。
+//
+// **一个框,给的是什么由机器认**(2026-08-25 用户裁定「粘贴文本或输入 URL」;
+// 口径同 AI 导入的「不要做两个导入功能组」):看着是链接就让 worker 代拉,
+// 否则当职位描述正文。让人先选"我这是链接还是正文"是把实现分类摆到了用户面前。
+// 判定与推导都是纯函数,住 app/apply/job.mjs(进 jest);这里只摆控件。
+//
+// **读取是主动动作**,同「生成预览」那条:贴进来不自动打 AI ——
+// 那要花时间也花钱,该由人说一声「读」才发生。
+//
+// 读出来之后它在这一页做的**唯一一件事是推导投递目标**(→ 决定可选版式与文件名惯例)。
+// 恰好一套规格才自动选中;多解或广告里没写清国家就**什么都不动**,如实说一句让人自己选。
+// 拿职位去定向裁剪简历是下一段的事(§8 队列 2 的 B 段),这一页还不做,
+// 所以界面上也不暗示它做了。
+function jobErrorText(err) {
+  const key = JOB_ERROR_KEYS[err && err.code];
+  return key ? tr(key) : (err && err.message) || tr('ai.failed');
+}
+
+/** 读一次职位:链接先代拉成正文 → AI 抽结构 → 归一 → 推导投递目标。 */
+async function readJob(rebuild) {
+  const raw = String(state.jobText || '').trim();
+  if (!raw) {
+    state.jobHint = tr('apply.jobEmpty');
+    rebuild();
+    return;
+  }
+  state.jobBusy = true;
+  state.jobHint = '';
+  rebuild();
+  try {
+    let text = raw;
+    if (looksLikeUrl(raw)) {
+      const page = await fetchJobPage(raw);
+      text = String((page && page.text) || '');
+    }
+    const job = normalizeJob(await extractJobFromText(text));
+    if (!hasJobContent(job)) {
+      state.jobHint = tr('apply.jobErrEmpty');
+      return;
+    }
+    state.job = job;
+    // 推导投递目标 —— 三种结局各说各的,**只有唯一一套时才替他选**
+    const derived = deriveSpec(job);
+    if (derived.status === 'one' && derived.spec !== state.spec) {
+      state.spec = derived.spec;
+      state.template = templateForSpec(state.spec, state.template); // 版式跟着规格走
+      syncUrl();
+      markStale();
+      rebuildSelection();
+    }
+    state.jobHint =
+      derived.status === 'one'
+        ? tr('apply.jobDerived')
+        : derived.status === 'many'
+          ? tr('apply.jobAmbiguous')
+          : tr('apply.jobNoPlace');
+  } catch (err) {
+    if (isUnauthorized(err)) return redirectToUnlock();
+    state.jobHint = jobErrorText(err);
+  } finally {
+    state.jobBusy = false;
+    rebuild();
+  }
+}
+
+function buildJobBlock() {
+  const box = h('div', { class: 'apply-bar' });
+  const rebuild = () => {
+    clear(box);
+    box.append(h('h2', { class: 'blk-title' }, tr('apply.job')));
+
+    if (state.job) {
+      // 读出来了:摆事实(职位 · 机构 · 职阶 · 地点),不加标签词 ——
+      // 一行里每一样都自说明,再各配一个标签只会把行撑满(同快照那一行的判断)
+      const loc = jobPlaceText(state.job);
+      const meta = [state.job.org, state.job.level, loc, state.job.remote && tr('apply.jobRemote')]
+        .filter(Boolean)
+        .join(' · ');
+      box.append(
+        h(
+          'div',
+          { class: 'apply-job-card' },
+          h('div', { class: 'apply-job-title' }, state.job.title || tr('apply.job')),
+          meta && h('div', { class: 'apply-job-meta' }, meta),
+          state.job.responsibilities.length
+            ? h(
+                'div',
+                { class: 'apply-job-meta' },
+                tr('apply.jobDuties').replace('{n}', String(state.job.responsibilities.length))
+              )
+            : null
+        )
+      );
+    } else {
+      const input = h('textarea', {
+        class: 'fc-input apply-job-input',
+        rows: 4,
+        placeholder: tr('apply.jobPlaceholder'),
+        'aria-label': tr('apply.job'),
+        disabled: state.jobBusy || undefined,
+        onInput: (e) => {
+          state.jobText = e.target.value;
+        },
+      });
+      input.value = state.jobText;
+      box.append(input);
+    }
+
+    const actions = h('div', { class: 'apply-row apply-actions' });
+    if (state.job) {
+      actions.append(
+        h(
+          'button',
+          {
+            type: 'button',
+            class: 'btn btn-small',
+            onClick: () => {
+              state.job = null;
+              state.jobHint = '';
+              rebuild();
+            },
+          },
+          tr('apply.jobRedo')
+        ),
+        h(
+          'button',
+          {
+            type: 'button',
+            class: 'btn btn-small',
+            onClick: () => {
+              state.job = null;
+              state.jobText = '';
+              state.jobHint = '';
+              rebuild();
+            },
+          },
+          tr('apply.jobClear')
+        )
+      );
+    } else {
+      actions.append(
+        h(
+          'button',
+          {
+            type: 'button',
+            class: 'btn btn-primary',
+            disabled: state.jobBusy || undefined,
+            onClick: () => readJob(rebuild),
+          },
+          state.jobBusy ? tr('apply.jobReading') : tr('apply.jobRead')
+        )
+      );
+    }
+    if (state.jobHint) actions.append(h('span', { class: 'apply-stale' }, state.jobHint));
+    box.append(actions);
+  };
+  rebuild();
+  return h('section', { class: 'blk' }, box);
+}
+
+/** 两张卡:先「职位信息」(它推导下面的目标),再「投到哪里 → 版式 → 语种 → 生成」。 */
+function buildApplyShell() {
+  return h('div', { class: 'apply-shell' }, buildJobBlock(), buildSelectionBar());
 }
 
 /** 取当前选中语种的那份事实。 */
@@ -835,7 +1022,7 @@ async function main() {
 
   pageEl.append(
     buildToolbar(pageEl),
-    buildSelectionBar(),
+    buildApplyShell(),
     h('div', { class: 'preview-content' }, shellEl)
   );
   app.append(pageEl);

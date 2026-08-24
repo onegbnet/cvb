@@ -264,6 +264,40 @@ export default {
 
   'apply.facts': '事實語言',
 
+
+  'apply.job': '職缺資訊',
+
+  'apply.jobPlaceholder': '貼上職缺說明,或一條徵才頁連結',
+
+  'apply.jobRead': '讀取徵才廣告',
+
+  'apply.jobReading': '讀取中…',
+
+  'apply.jobRedo': '換一則',
+
+  'apply.jobClear': '清除',
+
+  'apply.jobEmpty': '請先貼上職缺說明或連結',
+
+  'apply.jobDerived': '投遞目標已依徵才地點選好',
+
+  'apply.jobAmbiguous': '這個地點對應多套規範,請在下面自己選一套',
+
+  'apply.jobNoPlace': '廣告裡沒寫清是哪個國家,投遞目標請在下面自己選',
+
+  'apply.jobRemote': '遠端',
+
+  'apply.jobDuties': '讀到 {n} 條工作內容',
+
+  'apply.jobErrBadUrl': '這條連結不能讀 —— 只讀公開網路上的 http/https 網頁',
+
+  'apply.jobErrFetch': '打不開這條連結',
+
+  'apply.jobErrNotText': '這條連結指向的不是網頁',
+
+  'apply.jobErrTooLarge': '這個頁面太大,讀不了',
+
+  'apply.jobErrEmpty': '這個頁面上沒有可讀的內文,直接貼上職缺說明吧',
   'spec.au': '澳洲',
 
   'spec.nz': '紐西蘭',

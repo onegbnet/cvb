@@ -140,15 +140,6 @@
   scroll-margin-top: 72px;
 }
 
-.blk-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
 .blk-icon {
   display: inline-flex;
   color: var(--text-secondary);

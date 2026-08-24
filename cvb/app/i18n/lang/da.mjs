@@ -264,6 +264,40 @@ export default {
 
   'apply.facts': 'Faktasprog',
 
+
+  'apply.job': 'Jobdetaljer',
+
+  'apply.jobPlaceholder': 'Indsæt jobopslaget, eller et link til annoncen',
+
+  'apply.jobRead': 'Læs annoncen',
+
+  'apply.jobReading': 'Læser…',
+
+  'apply.jobRedo': 'Læs en anden',
+
+  'apply.jobClear': 'Ryd',
+
+  'apply.jobEmpty': 'Indsæt først et jobopslag eller et link',
+
+  'apply.jobDerived': 'Ansøgningslandet blev sat ud fra annoncen',
+
+  'apply.jobAmbiguous': 'Det sted har mere end ét sæt konventioner — vælg et nedenfor',
+
+  'apply.jobNoPlace': 'Annoncen siger ikke hvilket land — vælg nedenfor, hvor du søger',
+
+  'apply.jobRemote': 'Fjernarbejde',
+
+  'apply.jobDuties': '{n} opgaver læst',
+
+  'apply.jobErrBadUrl': 'Det link kan ikke læses — kun offentlige http/https-sider',
+
+  'apply.jobErrFetch': 'Det link kunne ikke åbnes',
+
+  'apply.jobErrNotText': 'Det link peger ikke på en webside',
+
+  'apply.jobErrTooLarge': 'Den side er for stor til at læse',
+
+  'apply.jobErrEmpty': 'Ingen læsbar tekst på den side — indsæt jobopslaget i stedet',
   'spec.au': 'Australien',
 
   'spec.nz': 'New Zealand',

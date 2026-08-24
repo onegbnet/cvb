@@ -264,6 +264,40 @@ export default {
 
   'apply.facts': '사실 언어',
 
+
+  'apply.job': '채용 정보',
+
+  'apply.jobPlaceholder': '채용 공고 내용을 붙여넣거나, 공고 페이지 링크를 넣으세요',
+
+  'apply.jobRead': '공고 읽기',
+
+  'apply.jobReading': '읽는 중…',
+
+  'apply.jobRedo': '다른 공고 읽기',
+
+  'apply.jobClear': '지우기',
+
+  'apply.jobEmpty': '먼저 공고 내용이나 링크를 붙여넣으세요',
+
+  'apply.jobDerived': '지원 국가를 공고의 근무지에 맞춰 정했습니다',
+
+  'apply.jobAmbiguous': '이 지역에는 관행이 여러 가지입니다. 아래에서 직접 고르세요',
+
+  'apply.jobNoPlace': '공고에 국가가 없습니다. 지원 국가를 아래에서 고르세요',
+
+  'apply.jobRemote': '원격',
+
+  'apply.jobDuties': '업무 내용 {n}건을 읽었습니다',
+
+  'apply.jobErrBadUrl': '이 링크는 읽을 수 없습니다. 공개된 http/https 페이지만 읽습니다',
+
+  'apply.jobErrFetch': '이 링크를 열 수 없습니다',
+
+  'apply.jobErrNotText': '이 링크는 웹 페이지가 아닙니다',
+
+  'apply.jobErrTooLarge': '이 페이지는 너무 커서 읽을 수 없습니다',
+
+  'apply.jobErrEmpty': '이 페이지에는 읽을 수 있는 본문이 없습니다. 공고 내용을 직접 붙여넣으세요',
   'spec.au': '호주',
 
   'spec.nz': '뉴질랜드',

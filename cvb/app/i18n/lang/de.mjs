@@ -264,6 +264,40 @@ export default {
 
   'apply.facts': 'Faktensprache',
 
+
+  'apply.job': 'Stellendetails',
+
+  'apply.jobPlaceholder': 'Stellenbeschreibung einfügen oder einen Link zur Anzeige',
+
+  'apply.jobRead': 'Anzeige lesen',
+
+  'apply.jobReading': 'Wird gelesen…',
+
+  'apply.jobRedo': 'Andere lesen',
+
+  'apply.jobClear': 'Leeren',
+
+  'apply.jobEmpty': 'Zuerst eine Stellenbeschreibung oder einen Link einfügen',
+
+  'apply.jobDerived': 'Das Bewerbungsland wurde aus der Anzeige übernommen',
+
+  'apply.jobAmbiguous': 'Für diesen Ort gibt es mehrere Konventionen — unten eine auswählen',
+
+  'apply.jobNoPlace': 'Die Anzeige nennt kein Land — unten auswählen, wo Sie sich bewerben',
+
+  'apply.jobRemote': 'Remote',
+
+  'apply.jobDuties': '{n} Aufgaben gelesen',
+
+  'apply.jobErrBadUrl': 'Dieser Link kann nicht gelesen werden — nur öffentliche http/https-Seiten',
+
+  'apply.jobErrFetch': 'Dieser Link ließ sich nicht öffnen',
+
+  'apply.jobErrNotText': 'Dieser Link führt nicht zu einer Webseite',
+
+  'apply.jobErrTooLarge': 'Diese Seite ist zu groß zum Lesen',
+
+  'apply.jobErrEmpty': 'Auf dieser Seite steht kein lesbarer Text — fügen Sie die Stellenbeschreibung ein',
   'spec.au': 'Australien',
 
   'spec.nz': 'Neuseeland',

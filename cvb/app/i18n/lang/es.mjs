@@ -264,6 +264,40 @@ export default {
 
   'apply.facts': 'Idioma de los hechos',
 
+
+  'apply.job': 'Datos del puesto',
+
+  'apply.jobPlaceholder': 'Pega la descripción del puesto o un enlace al anuncio',
+
+  'apply.jobRead': 'Leer el anuncio',
+
+  'apply.jobReading': 'Leyendo…',
+
+  'apply.jobRedo': 'Leer otro',
+
+  'apply.jobClear': 'Borrar',
+
+  'apply.jobEmpty': 'Pega antes una descripción del puesto o un enlace',
+
+  'apply.jobDerived': 'El país de la candidatura se tomó del anuncio',
+
+  'apply.jobAmbiguous': 'Ese lugar tiene más de un conjunto de convenciones: elige uno abajo',
+
+  'apply.jobNoPlace': 'El anuncio no dice el país: elige abajo dónde te presentas',
+
+  'apply.jobRemote': 'En remoto',
+
+  'apply.jobDuties': '{n} funciones leídas',
+
+  'apply.jobErrBadUrl': 'Ese enlace no se puede leer: solo páginas http/https públicas',
+
+  'apply.jobErrFetch': 'No se pudo abrir ese enlace',
+
+  'apply.jobErrNotText': 'Ese enlace no apunta a una página web',
+
+  'apply.jobErrTooLarge': 'Esa página es demasiado grande para leerla',
+
+  'apply.jobErrEmpty': 'No hay texto legible en esa página: pega la descripción del puesto',
   'spec.au': 'Australia',
 
   'spec.nz': 'Nueva Zelanda',

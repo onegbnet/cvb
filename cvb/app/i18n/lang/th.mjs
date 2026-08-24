@@ -264,6 +264,40 @@ export default {
 
   'apply.facts': 'ภาษาของข้อเท็จจริง',
 
+
+  'apply.job': 'รายละเอียดงาน',
+
+  'apply.jobPlaceholder': 'วางรายละเอียดงาน หรือวางลิงก์ประกาศรับสมัคร',
+
+  'apply.jobRead': 'อ่านประกาศ',
+
+  'apply.jobReading': 'กำลังอ่าน…',
+
+  'apply.jobRedo': 'อ่านประกาศอื่น',
+
+  'apply.jobClear': 'ล้าง',
+
+  'apply.jobEmpty': 'วางรายละเอียดงานหรือลิงก์ก่อน',
+
+  'apply.jobDerived': 'ตั้งประเทศที่จะสมัครตามประกาศแล้ว',
+
+  'apply.jobAmbiguous': 'สถานที่นี้มีธรรมเนียมมากกว่าหนึ่งแบบ เลือกด้านล่าง',
+
+  'apply.jobNoPlace': 'ประกาศไม่ได้ระบุประเทศ เลือกประเทศที่จะสมัครด้านล่าง',
+
+  'apply.jobRemote': 'ทำงานทางไกล',
+
+  'apply.jobDuties': 'อ่านหน้าที่งานได้ {n} ข้อ',
+
+  'apply.jobErrBadUrl': 'อ่านลิงก์นี้ไม่ได้ อ่านได้เฉพาะหน้าเว็บ http/https ที่เปิดสาธารณะ',
+
+  'apply.jobErrFetch': 'เปิดลิงก์นี้ไม่ได้',
+
+  'apply.jobErrNotText': 'ลิงก์นี้ไม่ใช่หน้าเว็บ',
+
+  'apply.jobErrTooLarge': 'หน้านี้ใหญ่เกินกว่าจะอ่าน',
+
+  'apply.jobErrEmpty': 'หน้านี้ไม่มีข้อความที่อ่านได้ ให้วางรายละเอียดงานแทน',
   'spec.au': 'ออสเตรเลีย',
 
   'spec.nz': 'นิวซีแลนด์',

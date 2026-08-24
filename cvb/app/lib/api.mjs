@@ -187,6 +187,21 @@ export async function deleteSnapshot(key) {
   );
 }
 
+/**
+ * 招聘页代拉(职位信息的链接入口)。**浏览器自己取不了** —— 跨域招聘页一律被 CORS
+ * 挡下,所以由 worker 代拉;那条路由是个 SSRF 面,护栏在 server/utils/job-fetch.js。
+ * 回 `{text, title, url}`。
+ */
+export async function fetchJobPage(url) {
+  return jsonOrThrow(
+    await fetch('/api/job/fetch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url }),
+    })
+  );
+}
+
 export const isUnauthorized = (err) => err && (err.code === 'UNAUTHORIZED' || err.status === 401);
 
 export function redirectToUnlock() {

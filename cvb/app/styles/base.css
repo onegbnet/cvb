@@ -635,6 +635,17 @@ header.app-header .back-link .icon svg {
   padding: 14px 16px;
 }
 
+/* 卡片标题 —— 同上,两页共用(/edit 的 15 个分节标题、/apply 的「职位信息」)。
+   /edit 自己的记号与计数(.blk-icon / .blk-count)仍留在 editor.css:那是那一页的事。 */
+.blk-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
 /* 卡片的窄屏内边距 —— 与卡片本体同住共用处,否则只有 /edit 吃得到
    (2026-08-24 真机量出 375px 下两页卡片内边距不同,就是这个原因) */
 @media (max-width: 768px) {

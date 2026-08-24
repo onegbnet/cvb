@@ -264,6 +264,40 @@ export default {
 
   'apply.facts': 'Ngôn ngữ dữ kiện',
 
+
+  'apply.job': 'Thông tin vị trí',
+
+  'apply.jobPlaceholder': 'Dán mô tả công việc, hoặc một liên kết tới tin tuyển dụng',
+
+  'apply.jobRead': 'Đọc tin tuyển dụng',
+
+  'apply.jobReading': 'Đang đọc…',
+
+  'apply.jobRedo': 'Đọc tin khác',
+
+  'apply.jobClear': 'Xóa',
+
+  'apply.jobEmpty': 'Hãy dán mô tả công việc hoặc liên kết trước',
+
+  'apply.jobDerived': 'Nơi ứng tuyển đã được đặt theo tin tuyển dụng',
+
+  'apply.jobAmbiguous': 'Nơi đó có nhiều bộ quy ước — hãy chọn một ở dưới',
+
+  'apply.jobNoPlace': 'Tin tuyển dụng không nói rõ quốc gia — hãy chọn nơi ứng tuyển ở dưới',
+
+  'apply.jobRemote': 'Từ xa',
+
+  'apply.jobDuties': 'Đã đọc {n} đầu việc',
+
+  'apply.jobErrBadUrl': 'Không đọc được liên kết đó — chỉ đọc trang http/https công khai',
+
+  'apply.jobErrFetch': 'Không mở được liên kết đó',
+
+  'apply.jobErrNotText': 'Liên kết đó không trỏ tới một trang web',
+
+  'apply.jobErrTooLarge': 'Trang đó quá lớn để đọc',
+
+  'apply.jobErrEmpty': 'Trang đó không có văn bản đọc được — hãy dán mô tả công việc',
   'spec.au': 'Úc',
 
   'spec.nz': 'New Zealand',

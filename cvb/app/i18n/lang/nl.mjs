@@ -264,6 +264,40 @@ export default {
 
   'apply.facts': 'Feitentaal',
 
+
+  'apply.job': 'Vacaturegegevens',
+
+  'apply.jobPlaceholder': 'Plak de vacaturetekst, of een link naar de advertentie',
+
+  'apply.jobRead': 'Advertentie lezen',
+
+  'apply.jobReading': 'Bezig met lezen…',
+
+  'apply.jobRedo': 'Andere lezen',
+
+  'apply.jobClear': 'Wissen',
+
+  'apply.jobEmpty': 'Plak eerst een vacaturetekst of een link',
+
+  'apply.jobDerived': 'Het land van sollicitatie is uit de advertentie overgenomen',
+
+  'apply.jobAmbiguous': 'Die plaats heeft meer dan één set conventies — kies er hieronder een',
+
+  'apply.jobNoPlace': 'De advertentie noemt geen land — kies hieronder waar je solliciteert',
+
+  'apply.jobRemote': 'Op afstand',
+
+  'apply.jobDuties': '{n} taken gelezen',
+
+  'apply.jobErrBadUrl': 'Die link kan niet gelezen worden — alleen openbare http/https-pagina’s',
+
+  'apply.jobErrFetch': 'Die link kon niet geopend worden',
+
+  'apply.jobErrNotText': 'Die link wijst niet naar een webpagina',
+
+  'apply.jobErrTooLarge': 'Die pagina is te groot om te lezen',
+
+  'apply.jobErrEmpty': 'Geen leesbare tekst op die pagina — plak de vacaturetekst zelf',
   'spec.au': 'Australië',
 
   'spec.nz': 'Nieuw-Zeeland',

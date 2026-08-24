@@ -264,6 +264,40 @@ export default {
 
   'apply.facts': 'Bahasa fakta',
 
+
+  'apply.job': 'Butiran kerja',
+
+  'apply.jobPlaceholder': 'Tampal keterangan kerja, atau pautan ke iklan',
+
+  'apply.jobRead': 'Baca iklan',
+
+  'apply.jobReading': 'Sedang membaca…',
+
+  'apply.jobRedo': 'Baca yang lain',
+
+  'apply.jobClear': 'Kosongkan',
+
+  'apply.jobEmpty': 'Tampal keterangan kerja atau pautan dahulu',
+
+  'apply.jobDerived': 'Negara permohonan ditetapkan daripada iklan',
+
+  'apply.jobAmbiguous': 'Lokasi itu mempunyai lebih daripada satu set kelaziman — pilih satu di bawah',
+
+  'apply.jobNoPlace': 'Iklan tidak menyebut negara — pilih di bawah tempat anda memohon',
+
+  'apply.jobRemote': 'Jarak jauh',
+
+  'apply.jobDuties': '{n} tugas dibaca',
+
+  'apply.jobErrBadUrl': 'Pautan itu tidak boleh dibaca — hanya halaman http/https awam',
+
+  'apply.jobErrFetch': 'Pautan itu tidak dapat dibuka',
+
+  'apply.jobErrNotText': 'Pautan itu bukan halaman web',
+
+  'apply.jobErrTooLarge': 'Halaman itu terlalu besar untuk dibaca',
+
+  'apply.jobErrEmpty': 'Tiada teks yang boleh dibaca pada halaman itu — tampal keterangan kerja',
   'spec.au': 'Australia',
 
   'spec.nz': 'New Zealand',
