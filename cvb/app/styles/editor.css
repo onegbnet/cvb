@@ -483,6 +483,16 @@
   border-style: dashed;
 }
 
+/* 长词组不许撑破容器:ccs 的 .chip 是 nowrap 且不封顶,一条长关键词在 375px 上
+   把整页顶出横向滚动(2026-08-24 真机拍到,与逐条翻译按钮那次改动无关)。
+   **折行不截断** —— 关键词要能读全,省略号等于把内容藏起来。
+   在消费方覆盖,不动共用件。 */
+.chips .chip {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 
 /* ---- 「管理」抽屉:对整份事实库的操作 ----
    外壳(.drawer-overlay > .drawer)归 ccs overlay 管,这里只管里面的分组。 */
