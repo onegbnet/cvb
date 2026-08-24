@@ -64,9 +64,12 @@
   color: var(--accent);
 }
 
+/* 选中态 = 反色色块(2026-08-24 用户裁定;值照 base.css 的 .btn-accent 抄,不发明)。
+   描边高亮与 hover 态太接近,实心块才把「正打开哪份」说笃定。 */
 .facts-lang.is-current {
+  background: var(--accent);
   border-color: var(--accent);
-  color: var(--accent);
+  color: #fff;
   cursor: default;
 }
 
@@ -81,6 +84,11 @@
   background: var(--accent);
   margin-right: 6px;
   vertical-align: middle;
+}
+
+/* 默认点落在反色块上时翻白 —— accent 点在 accent 底上等于隐形 */
+.facts-lang.is-default.is-current::before {
+  background: #fff;
 }
 
 .facts-lang-add {
