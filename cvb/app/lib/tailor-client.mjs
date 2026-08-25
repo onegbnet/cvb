@@ -14,7 +14,8 @@ const ERROR_KEYS = {
   AI_INVALID_RESPONSE: 'ai.parseFailed',
   AI_UPSTREAM_REQUEST_FAILED: 'ai.failed',
   AI_BAD_REQUEST: 'ai.failed',
-  AI_TEXT_TOO_LARGE: 'apply.tailorTooLarge',
+  // AI_TEXT_TOO_LARGE 不在这里翻:那句话带 {what},而**只有调用方知道是哪一样大**
+  //(服务端的 413 是第二道网,它不知道)。留着 code 让调用方自己组装。
 };
 
 const fail = (code, message) => {

@@ -1127,9 +1127,12 @@ async function runTailorRound({ revise = false, feedback = '' } = {}) {
   const budget = estimateTailorPayload({
     facts, refs, jobText: state.jobText, job: state.job, instructions: state.instructions,
   });
+  // 素材太多时说清是**哪一样**大。客户端先拦一道(不让请求白打到服务端),
+  // 服务端的 413 是第二道 —— 但服务端不知道是哪一样,所以两条路都在这里组装。
+  const tooLargeText = () =>
+    tr('apply.tailorTooLarge').replace('{what}', tr(`apply.part.${budget.biggest}`, budget.biggest));
   if (budget.overBudget) {
-    // 客户端先拦下,并说清是哪一样太大 —— 不让请求打到服务端才 413
-    state.tailorHint = tr('apply.tailorTooLarge').replace('{what}', tr(`apply.part.${budget.biggest}`, budget.biggest));
+    state.tailorHint = tooLargeText();
     rebuildTailor();
     return;
   }
@@ -1138,6 +1141,10 @@ async function runTailorRound({ revise = false, feedback = '' } = {}) {
   state.tailorChars = 0;
   state.tailorHint = '';
   rebuildTailor();
+  // **进行中要把生成按钮锁上**:syncGenerate 认得 tailorBusy,但此前只在 finally 里
+  // 被调到 —— 于是裁剪那几十秒里按钮照样可点,双击就是两轮并发
+  //(2026-08-26 打生产时顺出来的)。
+  syncGenerate();
   setPdfBusy(true, { text: tr(revise ? 'apply.revising' : 'apply.tailoring') });
 
   try {
@@ -1180,7 +1187,7 @@ async function runTailorRound({ revise = false, feedback = '' } = {}) {
     stale = true; // 改版只出计划,PDF 由「重新生成」再点(用户裁定)
   } catch (err) {
     if (isUnauthorized(err)) return redirectToUnlock();
-    state.tailorHint = String(err.message || err);
+    state.tailorHint = err.code === 'AI_TEXT_TOO_LARGE' ? tooLargeText() : String(err.message || err);
   } finally {
     state.tailorBusy = '';
     setPdfBusy(false);
