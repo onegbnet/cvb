@@ -1212,7 +1212,11 @@ function buildTailorBlock() {
     // 一轮都没成过时,这一块就只是那句话 —— 输入框留着没有意义(没有"这一版"可评),
     // 所以下面的输入与按钮只在有过成功一轮之后才摆。
     if (!state.chat.length) {
-      box.append(h('div', { class: 'apply-stale' }, state.tailorHint || ''));
+      // 还没成过一轮:这一块只说一句话 —— 要么正在跑,要么是上一次为什么没成。
+      // **进行中也要说** :此前这里只印标题、底下空着,人看到的是一个光秃秃的框
+      // (2026-08-26 打生产时撞到)。输入框仍不摆:没有"这一版"可评。
+      box.append(h('div', { class: 'apply-stale' },
+        state.tailorBusy ? tr(state.tailorBusy === 'revise' ? 'apply.revising' : 'apply.tailoring') : state.tailorHint || ''));
       return;
     }
 
