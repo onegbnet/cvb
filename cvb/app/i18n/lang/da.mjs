@@ -298,6 +298,56 @@ export default {
   'apply.jobErrTooLarge': 'Den side er for stor til at læse',
 
   'apply.jobErrEmpty': 'Ingen læsbar tekst på den side — indsæt jobopslaget i stedet',
+
+  'apply.generateTailored': 'Lav et målrettet CV',
+
+  'apply.tailoring': 'Målretter…',
+
+  'apply.tailorTitle': 'Justeringer',
+
+  'apply.revise': 'Justér',
+
+  'apply.revising': 'Justerer…',
+
+  'apply.revisePlaceholder': 'Sig, hvad der skal ændres — kortere profiltekst, drop den tidsbegrænsede stilling, start med platformsarbejdet',
+
+  'apply.reviseLabel': 'Din kommentar til denne version',
+
+  'apply.reviseEmpty': 'Sig først, hvad der skal ændres',
+
+  'apply.instr': 'Ekstra instruktioner til dette job',
+
+  'apply.instrPlaceholder': 'For eksempel: start med teamledelsen; udelad den tidsbegrænsede stilling',
+
+  'apply.refs': 'Hent formuleringer fra',
+
+  'apply.draftStale': 'Dine indstillinger er ændret, så den forrige målretning gælder ikke længere',
+
+  'apply.tailorNoop': 'Der blev ikke ændret noget i den runde',
+
+  'apply.tailorTooLarge': 'For meget materiale at sende ({what} fylder mest). Skær ned, og prøv igen',
+
+  'apply.part.facts': 'fakta',
+
+  'apply.part.refs': 'referenceversionerne',
+
+  'apply.part.jobText': 'annonceteksten',
+
+  'apply.part.job': 'jobdetaljerne',
+
+  'apply.part.instructions': 'dine instruktioner',
+
+  'apply.diffKept': '{n} ud af {m} poster beholdt',
+
+  'apply.diffRewritten': '{n} omskrevet',
+
+  'apply.diffBullets': '{n} punkter fjernet',
+
+  'apply.diffIgnored': '{n} kunne ikke anvendes',
+
+  'apply.diffShow': 'Vis de {n} omskrivninger',
+
+  'apply.diffNew': 'ny',
   'spec.au': 'Australien',
 
   'spec.nz': 'New Zealand',
@@ -325,6 +375,7 @@ export default {
   'preview.pdf.notReady': 'PDF-filen kompileres stadig – vent et øjeblik',
   'preview.pdf.engineOff': 'Layoutmotoren er slået fra, så der kan ikke genereres en forhåndsvisning.',
   'preview.pdf.failed': 'PDF-kompilering mislykkedes',
+  'preview.pdf.noTemplate': 'Det layout er ikke registreret, så der kan ikke sættes noget',
   'preview.pdf.engineFailed': 'Layoutmotoren er ikke tilgængelig',
   'preview.pdf.viewLog': 'Vis log',
   'preview.pdf.hideLog': 'Skjul log',

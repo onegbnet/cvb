@@ -298,6 +298,56 @@ export default {
   'apply.jobErrTooLarge': 'Ця сторінка завелика для читання',
 
   'apply.jobErrEmpty': 'На цій сторінці немає читабельного тексту — вставте опис вакансії',
+
+  'apply.generateTailored': 'Скласти адаптоване резюме',
+
+  'apply.tailoring': 'Адаптація…',
+
+  'apply.tailorTitle': 'Правки',
+
+  'apply.revise': 'Внести правку',
+
+  'apply.revising': 'Внесення правки…',
+
+  'apply.revisePlaceholder': 'Напишіть, що змінити — коротший розділ про себе, прибрати ту контрактну посаду, почати з роботи над платформою',
+
+  'apply.reviseLabel': 'Ваш коментар до цієї версії',
+
+  'apply.reviseEmpty': 'Спершу напишіть, що змінити',
+
+  'apply.instr': 'Додаткові вказівки для цієї вакансії',
+
+  'apply.instrPlaceholder': 'Наприклад: почати з керівництва командою; не згадувати контрактну посаду',
+
+  'apply.refs': 'Брати формулювання з',
+
+  'apply.draftStale': 'Налаштування змінилися, тож попередня адаптація вже не діє',
+
+  'apply.tailorNoop': 'Цього разу нічого не змінилося',
+
+  'apply.tailorTooLarge': 'Забагато матеріалу для надсилання (найбільше — {what}). Скоротіть і спробуйте ще раз',
+
+  'apply.part.facts': 'факти',
+
+  'apply.part.refs': 'довідкові версії',
+
+  'apply.part.jobText': 'текст оголошення',
+
+  'apply.part.job': 'деталі вакансії',
+
+  'apply.part.instructions': 'ваші вказівки',
+
+  'apply.diffKept': 'Збережено записів: {n} з {m}',
+
+  'apply.diffRewritten': 'Переписано: {n}',
+
+  'apply.diffBullets': 'Скорочено пунктів: {n}',
+
+  'apply.diffIgnored': 'Не вдалося застосувати: {n}',
+
+  'apply.diffShow': 'Показати переписані фрагменти: {n}',
+
+  'apply.diffNew': 'нове',
   'spec.au': 'Австралія',
 
   'spec.nz': 'Нова Зеландія',
@@ -325,6 +375,7 @@ export default {
   'preview.pdf.notReady': 'PDF ще компілюється, зачекайте',
   'preview.pdf.engineOff': 'Рушій верстки вимкнено, тому попередній перегляд недоступний.',
   'preview.pdf.failed': 'Компіляція PDF не вдалася',
+  'preview.pdf.noTemplate': 'Цей макет не зареєстровано, тож нічого не можна зверстати',
   'preview.pdf.engineFailed': 'Рушій верстки недоступний',
   'preview.pdf.viewLog': 'Показати лог',
   'preview.pdf.hideLog': 'Сховати лог',

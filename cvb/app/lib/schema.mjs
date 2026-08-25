@@ -253,6 +253,19 @@ const isValidUrl = (value) => {
   }
 };
 
+/**
+ * `basics.image` 另判 —— **它存的是站内绝对路径**(`/files/avatars/<ts>.<ext>`,
+ * 由 POST /api/avatar 返回)。拿 isValidUrl 判它,`new URL('/files/…')` 无 base 会抛,
+ * 于是每次 normalizeResume 都把刚上传的头像静默抹成空串:传完看得见,下次开页就没了。
+ * (2026-08-26 查出来;头像功能 2026-08-19 上线起就是坏的,因为抹的是"看起来本来就可能空"的字段。)
+ * 放行 `/` 开头的同源路径,但**不放行 `//`** —— 那是协议相对 URL,指向的是别人的主机。
+ */
+const isValidImageRef = (value) => {
+  const s = String(value == null ? '' : value);
+  if (s.startsWith('/')) return !s.startsWith('//');
+  return isValidUrl(s);
+};
+
 const DATE_FIELDS = new Set(['startDate', 'endDate', 'date', 'releaseDate']);
 /**
  * 导入时被归一化丢掉了哪些**用户真的填了**的值。
@@ -293,7 +306,7 @@ const FORMAT_VALIDATORS = {
   email: isValidEmail,
   phone: isValidPhone,
   url: isValidUrl,
-  image: isValidUrl,
+  image: isValidImageRef,
 };
 
 const sanitizeFormattedFields = (value, fields) => {

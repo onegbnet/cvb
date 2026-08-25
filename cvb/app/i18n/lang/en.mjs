@@ -299,6 +299,56 @@ export default {
   'apply.jobErrTooLarge': 'That page is too large to read',
 
   'apply.jobErrEmpty': 'No readable text on that page — paste the job description instead',
+
+  'apply.generateTailored': 'Draft the tailored resume',
+
+  'apply.tailoring': 'Tailoring…',
+
+  'apply.tailorTitle': 'Revisions',
+
+  'apply.revise': 'Revise',
+
+  'apply.revising': 'Revising…',
+
+  'apply.revisePlaceholder': 'Say what to change — shorter summary, drop that contract role, lead with the platform work',
+
+  'apply.reviseLabel': 'Your comment on this version',
+
+  'apply.reviseEmpty': 'Say what to change first',
+
+  'apply.instr': 'Extra instructions for this job',
+
+  'apply.instrPlaceholder': 'For example: lead with the team-leading work; leave the contract role out',
+
+  'apply.refs': 'Draw wording from',
+
+  'apply.draftStale': 'Your settings changed, so the previous tailoring no longer applies',
+
+  'apply.tailorNoop': 'Nothing changed in that round',
+
+  'apply.tailorTooLarge': 'Too much material to send ({what} is the largest). Trim it and try again',
+
+  'apply.part.facts': 'the facts',
+
+  'apply.part.refs': 'the reference versions',
+
+  'apply.part.jobText': 'the advert text',
+
+  'apply.part.job': 'the job details',
+
+  'apply.part.instructions': 'your instructions',
+
+  'apply.diffKept': '{n} of {m} records kept',
+
+  'apply.diffRewritten': '{n} rewritten',
+
+  'apply.diffBullets': '{n} bullets trimmed',
+
+  'apply.diffIgnored': '{n} could not be applied',
+
+  'apply.diffShow': 'Show the {n} rewrites',
+
+  'apply.diffNew': 'new',
   'spec.au': 'Australia',
 
   'spec.nz': 'New Zealand',
@@ -326,6 +376,7 @@ export default {
   'preview.pdf.notReady': 'The PDF is still compiling, please wait',
   'preview.pdf.engineOff': 'The typesetting engine is disabled, so no preview can be generated.',
   'preview.pdf.failed': 'PDF compilation failed',
+  'preview.pdf.noTemplate': 'That layout is not registered, so nothing can be typeset',
   'preview.pdf.engineFailed': 'Typesetting engine unavailable',
   'preview.pdf.viewLog': 'View log',
   'preview.pdf.hideLog': 'Hide log',

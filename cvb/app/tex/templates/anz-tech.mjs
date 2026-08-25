@@ -39,7 +39,7 @@ import {
 const PRESENT = 'Present';
 
 /** vm 的 dateLabel 是 dot 风格(2022.05)→ us 风格。 */
-const usLabel = (dotLabel) => texMonth(String(dotLabel || '').replace('.', '-'), 'us');
+const usLabel = (dotLabel) => texMonth(String(dotLabel || '').replaceAll('.', '-'), 'us');
 const range = (a, b) => texDateRange(a, b, { present: PRESENT });
 
 /** 上游的四参条目头:左上/右上/左下/右下。参数须已转义。 */

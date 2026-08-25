@@ -26,7 +26,7 @@ import { escapeTex, texMonth, texDateRange, splitLines, joinNonEmpty } from '../
 const PRESENT = '至今';
 
 const range = (a, b) => texDateRange(a, b, { style: 'dot', present: PRESENT, sep: ' -- ' });
-const dot = (label) => texMonth(String(label || '').replace('.', '-'), 'dot');
+const dot = (label) => texMonth(String(label || '').replaceAll('.', '-'), 'dot');
 
 /** tabularx 单元格里的 & 必须已转义;这里统一走 escapeTex。 */
 const cell = (s) => escapeTex(s || '');

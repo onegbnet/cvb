@@ -298,6 +298,56 @@ export default {
   'apply.jobErrTooLarge': 'Tiu paĝo estas tro granda por legi',
 
   'apply.jobErrEmpty': 'Neniu legebla teksto en tiu paĝo — anstataŭe algluu la priskribon',
+
+  'apply.generateTailored': 'Krei adaptitan vivresumon',
+
+  'apply.tailoring': 'Adaptante…',
+
+  'apply.tailorTitle': 'Revizioj',
+
+  'apply.revise': 'Revizii',
+
+  'apply.revising': 'Reviziante…',
+
+  'apply.revisePlaceholder': 'Diru, kion ŝanĝi — pli mallonga resumo, forigi tiun kontraktan postenon, komenci per la platforma laboro',
+
+  'apply.reviseLabel': 'Via komento pri ĉi tiu versio',
+
+  'apply.reviseEmpty': 'Unue diru, kion ŝanĝi',
+
+  'apply.instr': 'Kromaj instrukcioj por ĉi tiu posteno',
+
+  'apply.instrPlaceholder': 'Ekzemple: komenci per la teamgvida laboro; ellasi la kontraktan postenon',
+
+  'apply.refs': 'Preni vortumon el',
+
+  'apply.draftStale': 'Viaj agordoj ŝanĝiĝis, do la antaŭa adapto ne plu validas',
+
+  'apply.tailorNoop': 'Nenio ŝanĝiĝis ĉi-foje',
+
+  'apply.tailorTooLarge': 'Tro da materialo por sendi — la plej granda parto estas {what}. Malgrandigu ĝin kaj reprovu',
+
+  'apply.part.facts': 'la faktoj',
+
+  'apply.part.refs': 'la referencaj versioj',
+
+  'apply.part.jobText': 'la teksto de la anonco',
+
+  'apply.part.job': 'la detaloj de la posteno',
+
+  'apply.part.instructions': 'viaj instrukcioj',
+
+  'apply.diffKept': '{n} el {m} eroj konservitaj',
+
+  'apply.diffRewritten': '{n} reverkitaj',
+
+  'apply.diffBullets': '{n} punktoj forigitaj',
+
+  'apply.diffIgnored': '{n} ne aplikeblis',
+
+  'apply.diffShow': 'Montri la {n} reverkojn',
+
+  'apply.diffNew': 'nova',
   'spec.au': 'Aŭstralio',
 
   'spec.nz': 'Nov-Zelando',
@@ -325,6 +375,7 @@ export default {
   'preview.pdf.notReady': 'La PDF ankoraŭ estas kompilata — bonvolu atendi',
   'preview.pdf.engineOff': 'La komposta motoro estas malŝaltita, do neniu antaŭrigardo povas esti generata.',
   'preview.pdf.failed': 'PDF-kompilado malsukcesis',
+  'preview.pdf.noTemplate': 'Tiu aranĝo ne estas registrita, do nenio komposteblas',
   'preview.pdf.engineFailed': 'Komposta motoro nedisponebla',
   'preview.pdf.viewLog': 'Vidi protokolon',
   'preview.pdf.hideLog': 'Kaŝi protokolon',

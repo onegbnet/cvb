@@ -267,7 +267,7 @@ export default {
 
   'apply.job': '職缺資訊',
 
-  'apply.jobPlaceholder': '貼上職缺說明,或一條徵才頁連結',
+  'apply.jobPlaceholder': '貼上職缺說明，或一條徵才頁連結',
 
   'apply.jobRead': '讀取徵才廣告',
 
@@ -281,9 +281,9 @@ export default {
 
   'apply.jobDerived': '投遞目標已依徵才地點選好',
 
-  'apply.jobAmbiguous': '這個地點對應多套規範,請在下面自己選一套',
+  'apply.jobAmbiguous': '這個地點對應多套規範，請在下面自己選一套',
 
-  'apply.jobNoPlace': '廣告裡沒寫清是哪個國家,投遞目標請在下面自己選',
+  'apply.jobNoPlace': '廣告裡沒寫清是哪個國家，投遞目標請在下面自己選',
 
   'apply.jobRemote': '遠端',
 
@@ -295,9 +295,59 @@ export default {
 
   'apply.jobErrNotText': '這條連結指向的不是網頁',
 
-  'apply.jobErrTooLarge': '這個頁面太大,讀不了',
+  'apply.jobErrTooLarge': '這個頁面太大，讀不了',
 
-  'apply.jobErrEmpty': '這個頁面上沒有可讀的內文,直接貼上職缺說明吧',
+  'apply.jobErrEmpty': '這個頁面上沒有可讀的內文，直接貼上職缺說明吧',
+
+  'apply.generateTailored': '產生初版履歷',
+
+  'apply.tailoring': '正在裁剪…',
+
+  'apply.tailorTitle': '改版',
+
+  'apply.revise': '改一版',
+
+  'apply.revising': '正在改…',
+
+  'apply.revisePlaceholder': '說說這一版哪裡要改 —— 自我評價壓短些、那段外包別提、把平台經歷放前面',
+
+  'apply.reviseLabel': '你對這一版的意見',
+
+  'apply.reviseEmpty': '先說說哪裡要改',
+
+  'apply.instr': '對這個職缺的額外指示',
+
+  'apply.instrPlaceholder': '例如:把帶團隊的經歷放前面；那段外包別提',
+
+  'apply.refs': '措辭參照',
+
+  'apply.draftStale': '設定變了，上一版裁剪結果已作廢',
+
+  'apply.tailorNoop': '這一輪什麼都沒改',
+
+  'apply.tailorTooLarge': '要送的素材太多了({what} 最大),減一點再試',
+
+  'apply.part.facts': '事實',
+
+  'apply.part.refs': '參照語種',
+
+  'apply.part.jobText': '徵才正文',
+
+  'apply.part.job': '職缺資訊',
+
+  'apply.part.instructions': '你的指示',
+
+  'apply.diffKept': '保留 {n}/{m} 筆',
+
+  'apply.diffRewritten': '改寫 {n} 處',
+
+  'apply.diffBullets': '精簡 {n} 條要點',
+
+  'apply.diffIgnored': '{n} 處落不進去',
+
+  'apply.diffShow': '看這 {n} 處改寫',
+
+  'apply.diffNew': '新增',
   'spec.au': '澳洲',
 
   'spec.nz': '紐西蘭',
@@ -325,6 +375,7 @@ export default {
   'preview.pdf.notReady': 'PDF 還沒編譯好，請稍候',
   'preview.pdf.engineOff': '履歷排版引擎未啟用，目前無法產生預覽。',
   'preview.pdf.failed': 'PDF 編譯失敗',
+  'preview.pdf.noTemplate': '這套版式沒有登記，排不出東西',
   'preview.pdf.engineFailed': '排版引擎無法使用',
   'preview.pdf.viewLog': '檢視日誌',
   'preview.pdf.hideLog': '收合日誌',

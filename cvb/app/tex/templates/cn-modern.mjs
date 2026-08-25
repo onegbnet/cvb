@@ -28,7 +28,7 @@ import { escapeTex, texMonth, texDateRange, splitLines, joinNonEmpty } from '../
 
 const PRESENT = '至今';
 const range = (a, b) => texDateRange(a, b, { style: 'dot', present: PRESENT, sep: ' -- ' });
-const dot = (label) => texMonth(String(label || '').replace('.', '-'), 'dot');
+const dot = (label) => texMonth(String(label || '').replaceAll('.', '-'), 'dot');
 
 const bullets = (lines) => {
   const items = lines.filter(Boolean);

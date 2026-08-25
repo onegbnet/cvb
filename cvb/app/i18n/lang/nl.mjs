@@ -298,6 +298,56 @@ export default {
   'apply.jobErrTooLarge': 'Die pagina is te groot om te lezen',
 
   'apply.jobErrEmpty': 'Geen leesbare tekst op die pagina — plak de vacaturetekst zelf',
+
+  'apply.generateTailored': 'Cv op de vacature afstemmen',
+
+  'apply.tailoring': 'Bezig met afstemmen…',
+
+  'apply.tailorTitle': 'Herzieningen',
+
+  'apply.revise': 'Herzien',
+
+  'apply.revising': 'Bezig met herzien…',
+
+  'apply.revisePlaceholder': 'Zeg wat er anders moet — korter profiel, die tijdelijke functie eruit, begin met het platformwerk',
+
+  'apply.reviseLabel': 'Je opmerking bij deze versie',
+
+  'apply.reviseEmpty': 'Zeg eerst wat er anders moet',
+
+  'apply.instr': 'Extra instructies voor deze vacature',
+
+  'apply.instrPlaceholder': 'Bijvoorbeeld: begin met het leidinggevende werk; laat de tijdelijke functie weg',
+
+  'apply.refs': 'Formuleringen overnemen uit',
+
+  'apply.draftStale': 'Je instellingen zijn veranderd, dus de vorige afstemming geldt niet meer',
+
+  'apply.tailorNoop': 'In deze ronde is er niets veranderd',
+
+  'apply.tailorTooLarge': 'Te veel materiaal om te versturen — het meeste zit in {what}. Kort het in en probeer het opnieuw',
+
+  'apply.part.facts': 'de feiten',
+
+  'apply.part.refs': 'de referentieversies',
+
+  'apply.part.jobText': 'de vacaturetekst',
+
+  'apply.part.job': 'de vacaturegegevens',
+
+  'apply.part.instructions': 'je instructies',
+
+  'apply.diffKept': '{n} van de {m} items behouden',
+
+  'apply.diffRewritten': '{n} herschreven',
+
+  'apply.diffBullets': '{n} punten geschrapt',
+
+  'apply.diffIgnored': '{n} niet doorgevoerd',
+
+  'apply.diffShow': 'Toon de {n} herschrijvingen',
+
+  'apply.diffNew': 'nieuw',
   'spec.au': 'Australië',
 
   'spec.nz': 'Nieuw-Zeeland',
@@ -325,6 +375,7 @@ export default {
   'preview.pdf.notReady': 'De PDF wordt nog gecompileerd, even geduld',
   'preview.pdf.engineOff': 'De opmaakengine is uitgeschakeld; er kan geen voorbeeld worden gegenereerd.',
   'preview.pdf.failed': 'PDF-compilatie mislukt',
+  'preview.pdf.noTemplate': 'Die lay-out is niet geregistreerd, er kan niets gezet worden',
   'preview.pdf.engineFailed': 'Opmaakengine niet beschikbaar',
   'preview.pdf.viewLog': 'Log bekijken',
   'preview.pdf.hideLog': 'Log verbergen',

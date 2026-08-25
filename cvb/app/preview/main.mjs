@@ -41,6 +41,7 @@ import {
   resolveTemplate,
   texTemplateMacros,
   texTemplateFonts,
+  templateSections,
 } from '../tex/templates/index.mjs';
 import { APPLY_SPECS, DEFAULT_SPEC, resolveSpec, specById, templateForSpec, pdfFileNameFor } from '../apply/specs.mjs';
 import {
@@ -51,6 +52,15 @@ import {
   deriveSpec,
   JOB_ERROR_KEYS,
 } from '../apply/job.mjs';
+import {
+  collectTailorFacts,
+  normalizeTailorPlan,
+  applyTailorPlan,
+  tailorDiff,
+  estimateTailorPayload,
+  isNewText,
+} from '../apply/tailor.mjs';
+import { runTailor } from '../lib/tailor-client.mjs';
 import { extractJobFromText } from '../lib/ai.mjs';
 import { splitName } from '../lib/name-parts.mjs';
 import { factsLangName } from '../editor/facts-bar.mjs';
@@ -72,7 +82,36 @@ const state = {
   job: null, // 读出来的结构化职位(normalizeJob 的形状),没读过是 null
   jobBusy: false,
   jobHint: '', // 读完之后如实说一句(推出来了 / 多解 / 没写清国家 / 出错了)
+
+  // ---- 定向裁剪(B 段)----
+  // 这几样与职位信息同生命周期:换一则职位、清除职位、换语种都清掉。
+  // **一样都不落库**:裁剪结果是一次生成的产物,持久化归 C 段的「简历快照」。
+  instructions: '', // 求职者对这个职位的额外指令(第三方输入)
+  refs: [], // 参照的其他语种(只作措辞对照,不作事实来源)
+  draft: null, // 裁剪后的简历(顶掉 renderTex 的入参;null = 还没裁过,编译原事实)
+  plan: null, // 最近一轮的裁剪计划(归一后的)
+  chat: [], // [{feedback, note, diff, dropped}] —— 每一轮的交代
+  sessionId: '', // mma 会话;轮转时跟随 new_session_id
+  tailorBusy: '', // '' | 'tailor' | 'revise'
+  tailorChars: 0, // 已收到的字符数(进度)
+  tailorHint: '',
 };
+
+/**
+ * 编译哪一份。**裁剪产物顶掉入参,事实原样留着** —— 换一则职位、改一次设置都要能
+ * 退回未裁剪的那份,而且 C 段打包时要的是"事实 + 计划",不是一份揉在一起的东西。
+ */
+const compileSource = () => state.draft || state.config;
+
+/** 裁剪结果作废:换语种 / 换规格版式 / 换职位之后,计划里的下标就不指着同一份东西了。 */
+function clearDraft(reason) {
+  if (!state.draft && !state.plan && !state.chat.length) return;
+  state.draft = null;
+  state.plan = null;
+  state.chat = [];
+  state.sessionId = '';
+  state.tailorHint = reason || '';
+}
 
 // ---- 简历渲染(PDF 单一路) ----
 
@@ -315,12 +354,21 @@ function reportTexProgress(e) {
 
 async function compileCurrentTemplate(token) {
   const entry = TEX_TEMPLATES[state.template];
-  if (!entry || typeof entry.renderTex !== 'function') return;
+  // 模板没登记进注册表就**如实报错**。此前是静默 return:busy 条一直转、
+  // 「生成预览」永久禁用、控制台一个字都没有 —— §9 早就写着「模板写完必须登记进
+  // TEX_TEMPLATES,否则 PDF 路静默不生效」,那条静默正是从这里来的。
+  if (!entry || typeof entry.renderTex !== 'function') {
+    setPdfBusy(false);
+    texState.status = 'error';
+    showPdfError(tr('preview.pdf.failed'), tr('preview.pdf.noTemplate'), state.template);
+    syncToolbarMode();
+    return;
+  }
 
   let texSource = '';
   let assets = [];
   try {
-    const out = entry.renderTex(state.config);
+    const out = entry.renderTex(compileSource());
     // 兼容两种返回:纯 .tex 字符串,或 { tex, assets }(CJK 字体/头像等随模板带出)。
     if (out && typeof out === 'object' && typeof out.tex === 'string') {
       texSource = out.tex;
@@ -660,8 +708,15 @@ let stale = false;
 
 const syncGenerate = () => {
   if (generateBtnEl) {
-    generateBtnEl.textContent = texState.pdfBytes ? tr('preview.pdf.regenerate') : tr('preview.pdf.generate');
-    generateBtnEl.disabled = texState.status === 'pending';
+    // 三档:还没裁过且读了职位 →「生成初版简历」;裁过 / 没职位 → 生成或重新生成
+    generateBtnEl.textContent = state.tailorBusy
+      ? tr('apply.tailoring')
+      : state.job && !state.draft
+        ? tr('apply.generateTailored')
+        : texState.pdfBytes
+          ? tr('preview.pdf.regenerate')
+          : tr('preview.pdf.generate');
+    generateBtnEl.disabled = texState.status === 'pending' || Boolean(state.tailorBusy);
   }
   if (staleHintEl) staleHintEl.hidden = !(stale && texState.pdfBytes);
 };
@@ -700,9 +755,12 @@ function buildSelectionBar() {
         (v) => {
           state.spec = v;
           state.template = templateForSpec(v, state.template); // 版式跟着规格走
+          // 换了投递地就换了一整套当地规范,上一版是按别处的规矩裁的
+          clearDraft(tr('apply.draftStale'));
           syncUrl();
           markStale();
           rebuild();
+          rebuildTailor();
         }
       )
     );
@@ -715,9 +773,12 @@ function buildSelectionBar() {
           state.template,
           (v) => {
             state.template = v;
+            // 版式换了,模板消费的分节也可能换 —— 上一版裁的是另一套分节
+            clearDraft(tr('apply.draftStale'));
             syncUrl();
             markStale();
             rebuild();
+            rebuildTailor();
           }
         )
       );
@@ -730,21 +791,70 @@ function buildSelectionBar() {
           state.factsLang,
           async (v) => {
             state.factsLang = v;
+            state.refs = state.refs.filter((code) => code !== v); // 参照不能是它自己
+            // 换了语种,计划里的下标就不指着同一份文档了 —— 作废,如实说一句
+            clearDraft(tr('apply.draftStale'));
             syncUrl();
             markStale();
             rebuild();
+            rebuildTailor();
             await loadFacts();
           }
         )
       );
+
+      // **参照语种**(用户成文的「默认参照同语种,可指定参照多语种」)。
+      // 只在**读过职位**之后出现 —— 它的唯一消费方是裁剪;没有裁剪就是个空控件。
+      // 只作**措辞对照**,不作事实来源:那是另一份文档,内容未必对得上。
+      if (state.job) {
+        const others = state.langs.filter(({ lang: code }) => code !== state.factsLang);
+        if (others.length) {
+          bar.append(
+            h(
+              'div',
+              { class: 'apply-row' },
+              h('span', { class: 'apply-row-label' }, tr('apply.refs')),
+              h(
+                'div',
+                { class: 'apply-chips' },
+                ...others.map(({ lang: code }) =>
+                  h(
+                    'button',
+                    {
+                      type: 'button',
+                      class: ['facts-lang', state.refs.includes(code) && 'is-current'],
+                      'aria-pressed': state.refs.includes(code) ? 'true' : 'false',
+                      onClick: async () => {
+                        if (state.refs.includes(code)) state.refs = state.refs.filter((x) => x !== code);
+                        else {
+                          state.refs = [...state.refs, code];
+                          await loadRefDoc(code);
+                        }
+                        rebuild();
+                      },
+                    },
+                    factsLangName(code)
+                  )
+                )
+              )
+            )
+          );
+        }
+      }
     }
-    // **生成是主动动作**:按钮说点了会发生什么,旁边如实说明设置改过了
+    // **生成是主动动作**:按钮说点了会发生什么,旁边如实说明设置改过了。
+    // 读过职位之后它变成「生成初版简历」——**一趟走完裁剪 + 编译**(用户 2026-08-26 裁定:
+    // 主动触发讲的是"不点不发生",不是"每件事各点一次")。没读职位就还是纯编译。
     generateBtnEl = h(
       'button',
       {
         type: 'button',
         class: 'btn btn-accent apply-generate',
         onClick: () => {
+          if (state.job && !state.draft) {
+            runTailorRound({ revise: false });
+            return;
+          }
           stale = false;
           renderResume();
           syncGenerate();
@@ -843,6 +953,14 @@ function buildJobBlock() {
       const meta = [state.job.org, state.job.level, loc, state.job.remote && tr('apply.jobRemote')]
         .filter(Boolean)
         .join(' · ');
+      const instr = h('textarea', {
+        class: 'fc-input apply-job-input apply-instr',
+        rows: 2,
+        placeholder: tr('apply.instrPlaceholder'),
+        'aria-label': tr('apply.instr'),
+        onInput: (e) => { state.instructions = e.target.value; },
+      });
+      instr.value = state.instructions;
       box.append(
         h(
           'div',
@@ -858,6 +976,9 @@ function buildJobBlock() {
             : null
         )
       );
+      // 第三方输入:求职者对这个职位的额外指令。**到这一段才摆出来** ——
+      // 在裁剪落地之前它没有消费方,那时摆出来就是个不起作用的控件。
+      box.append(h('div', { class: 'apply-instr-label' }, tr('apply.instr')), instr);
     } else {
       const input = h('textarea', {
         class: 'fc-input apply-job-input',
@@ -884,7 +1005,10 @@ function buildJobBlock() {
             onClick: () => {
               state.job = null;
               state.jobHint = '';
+              clearDraft(tr('apply.draftStale'));
               rebuild();
+              rebuildSelection();
+              rebuildTailor();
             },
           },
           tr('apply.jobRedo')
@@ -898,7 +1022,11 @@ function buildJobBlock() {
               state.job = null;
               state.jobText = '';
               state.jobHint = '';
+              state.instructions = '';
+              clearDraft(tr('apply.draftStale'));
               rebuild();
+              rebuildSelection();
+              rebuildTailor();
             },
           },
           tr('apply.jobClear')
@@ -925,9 +1053,210 @@ function buildJobBlock() {
   return h('section', { class: 'blk' }, box);
 }
 
+// ---- 定向裁剪与对话式改版(B 段)----
+//
+// **只有读过职位才有裁剪**:没有职位就没有裁剪的目标,那时这一页仍是
+// 「选设置 → 生成预览」。控件要有消费方 —— 额外指令框、参照语种行、对话区
+// 都跟着"上一步产生了消费方"渐进出现,而不是一进页面就全摆出来。
+//
+// **初版一趟走完**(用户 2026-08-26 裁定):点一次 = AI 裁剪 + 重新编译。
+// 「PDF 主动触发」讲的是"不点不发生",不是"每件事各点一次";
+// 而**改版只出计划**,PDF 由「重新生成」再点 —— 对话里连改三轮再看一次 PDF 是常态。
+
+let rebuildTailor = () => {};
+
+/** 差异摘要一行:保留 N/M · 改写 K 处 · 落不进去 J 处。数字都是算出来的,不是估的。 */
+function diffSummaryText(diff, dropped) {
+  const parts = [];
+  const recs = diff.filter((r) => r.section !== 'basics');
+  const total = recs.reduce((n, r) => n + r.total, 0);
+  const kept = recs.reduce((n, r) => n + r.kept, 0);
+  if (total) parts.push(tr('apply.diffKept').replace('{n}', String(kept)).replace('{m}', String(total)));
+  const rewritten = diff.reduce((n, r) => n + r.rewritten.length, 0);
+  if (rewritten) parts.push(tr('apply.diffRewritten').replace('{n}', String(rewritten)));
+  const innerDropped = diff.reduce((n, r) => n + r.innerDropped, 0);
+  if (innerDropped) parts.push(tr('apply.diffBullets').replace('{n}', String(innerDropped)));
+  // **落不进去的要如实说**:模型说改了 N 处、其中 J 处落不进任何地方,
+  // 不说就成了"它说改了但没变"——而那正是最难查的一类。
+  if (dropped && dropped.length) parts.push(tr('apply.diffIgnored').replace('{n}', String(dropped.length)));
+  return parts.join(tr('punct.dot', ' · '));
+}
+
+/** 一轮的交代:模型的话 + 差异摘要 + 改写逐条(新增的标出来)。 */
+function turnBlock(turn) {
+  const rows = [];
+  if (turn.feedback) rows.push(h('div', { class: 'tlr-said' }, turn.feedback));
+  if (turn.note) rows.push(h('div', { class: 'tlr-note' }, turn.note));
+  const summary = diffSummaryText(turn.diff, turn.dropped);
+  if (summary) rows.push(h('div', { class: 'tlr-summary' }, summary));
+  const rewrites = turn.diff.flatMap((r) => r.rewritten.map((w) => ({ ...w, isNew: turn.newPaths.includes(w.path) })));
+  if (rewrites.length) {
+    rows.push(
+      h(
+        'details',
+        { class: 'tlr-details' },
+        h('summary', {}, tr('apply.diffShow').replace('{n}', String(rewrites.length))),
+        ...rewrites.map((w) =>
+          h(
+            'div',
+            { class: 'tlr-rewrite' },
+            // 空槽现写出来的那一段**标成「新增」**(用户 2026-08-26 裁定):
+            // 那不是改写谁的话,是替他写了一段没有过的自陈,得让他看见。
+            h('div', { class: 'tlr-rw-path' }, w.path, w.isNew ? h('span', { class: 'tlr-new' }, tr('apply.diffNew')) : null),
+            w.before ? h('div', { class: 'tlr-rw-before' }, w.before) : null,
+            h('div', { class: 'tlr-rw-after' }, w.after)
+          )
+        )
+      )
+    );
+  }
+  return h('div', { class: 'tlr-turn' }, ...rows);
+}
+
+/** 跑一轮裁剪 / 改版:AI → 归一 → 套用。初版跑完顺手编译一次。 */
+async function runTailorRound({ revise = false, feedback = '' } = {}) {
+  const source = revise ? compileSource() : state.config;
+  const facts = collectTailorFacts(source, { sections: templateSections(state.template) });
+  const refs = state.refs
+    .map((lang) => state.refDocs && state.refDocs[lang])
+    .filter(Boolean)
+    .map((doc, i) => {
+      const f = collectTailorFacts(doc, { sections: templateSections(state.template) });
+      return { lang: state.refs[i], slots: f.slots, chars: f.chars };
+    });
+  const budget = estimateTailorPayload({
+    facts, refs, jobText: state.jobText, job: state.job, instructions: state.instructions,
+  });
+  if (budget.overBudget) {
+    // 客户端先拦下,并说清是哪一样太大 —— 不让请求打到服务端才 413
+    state.tailorHint = tr('apply.tailorTooLarge').replace('{what}', tr(`apply.part.${budget.biggest}`, budget.biggest));
+    rebuildTailor();
+    return;
+  }
+
+  state.tailorBusy = revise ? 'revise' : 'tailor';
+  state.tailorChars = 0;
+  state.tailorHint = '';
+  rebuildTailor();
+  setPdfBusy(true, { text: tr(revise ? 'apply.revising' : 'apply.tailoring') });
+
+  try {
+    const out = await runTailor(revise ? '/api/ai/revise' : '/api/ai/tailor', {
+      facts,
+      refs,
+      job: state.job,
+      jobText: state.jobText,
+      instructions: state.instructions,
+      feedback,
+      spec: state.spec,
+      maxPages: (specById(state.spec) || {}).maxPages || 0,
+      sessionId: state.sessionId,
+    }, {
+      onProgress: (chars) => {
+        state.tailorChars = chars;
+        setPdfBusy(true, { text: tr(revise ? 'apply.revising' : 'apply.tailoring'), detail: `${chars}` });
+      },
+    });
+
+    const { plan, dropped, empty } = normalizeTailorPlan(out.plan, source);
+    if (empty) {
+      state.tailorHint = tr('apply.tailorNoop');
+      return;
+    }
+    const before = source;
+    const after = applyTailorPlan(before, plan);
+    state.plan = plan;
+    state.draft = after;
+    // **轮转要跟随**:不跟的话后面每轮都在开新会话、历史恒为空,而界面上看不出来
+    state.sessionId = out.sessionId || state.sessionId;
+    const diff = tailorDiff(before, after, plan);
+    state.chat.push({
+      feedback,
+      note: plan.note,
+      diff,
+      dropped,
+      newPaths: Object.keys(plan.text).filter((path) => isNewText(before, path)),
+    });
+    stale = true; // 改版只出计划,PDF 由「重新生成」再点(用户裁定)
+  } catch (err) {
+    if (isUnauthorized(err)) return redirectToUnlock();
+    state.tailorHint = String(err.message || err);
+  } finally {
+    state.tailorBusy = '';
+    setPdfBusy(false);
+    rebuildTailor();
+    rebuildSelection();
+  }
+
+  // 初版一趟走完:裁剪完接着编译(用户 2026-08-26 裁定)
+  if (!revise && state.draft) {
+    stale = false;
+    renderResume();
+    syncGenerate();
+  }
+}
+
+/** 对话区:出了初版才出现 —— 没有初版就没有"针对当前版的意见"。 */
+function buildTailorBlock() {
+  const box = h('div', { class: 'apply-bar' });
+  let draft = '';
+  const rebuild = () => {
+    clear(box);
+    if (!state.chat.length && !state.tailorBusy) return; // 还没裁过:整块不出现
+    box.append(h('h2', { class: 'blk-title' }, tr('apply.tailorTitle')));
+    state.chat.forEach((turn) => box.append(turnBlock(turn)));
+
+    const input = h('textarea', {
+      class: 'fc-input apply-job-input',
+      rows: 2,
+      placeholder: tr('apply.revisePlaceholder'),
+      'aria-label': tr('apply.reviseLabel'),
+      disabled: Boolean(state.tailorBusy) || undefined,
+      onInput: (e) => { draft = e.target.value; },
+    });
+    input.value = draft;
+    const btn = h(
+      'button',
+      {
+        type: 'button',
+        class: 'btn btn-primary',
+        disabled: Boolean(state.tailorBusy) || undefined,
+        onClick: () => {
+          const said = String(draft || '').trim();
+          if (!said) { state.tailorHint = tr('apply.reviseEmpty'); rebuild(); return; }
+          draft = '';
+          runTailorRound({ revise: true, feedback: said });
+        },
+      },
+      state.tailorBusy === 'revise' ? tr('apply.revising') : tr('apply.revise')
+    );
+    box.append(input, h('div', { class: 'apply-row apply-actions' }, btn,
+      state.tailorHint ? h('span', { class: 'apply-stale' }, state.tailorHint) : null));
+  };
+  rebuildTailor = rebuild;
+  rebuild();
+  return h('section', { class: 'blk apply-tailor' }, box);
+}
+
 /** 两张卡:先「职位信息」(它推导下面的目标),再「投到哪里 → 版式 → 语种 → 生成」。 */
 function buildApplyShell() {
-  return h('div', { class: 'apply-shell' }, buildJobBlock(), buildSelectionBar());
+  return h('div', { class: 'apply-shell' }, buildJobBlock(), buildSelectionBar(), buildTailorBlock());
+}
+
+/**
+ * 取一份**参照语种**的文档并缓存。参照只作措辞对照(见提示词里那句),
+ * 取不到就把这个语种从参照里摘掉 —— 静默留着会让人以为它参照了。
+ */
+async function loadRefDoc(lang) {
+  state.refDocs = state.refDocs || {};
+  if (state.refDocs[lang]) return;
+  try {
+    state.refDocs[lang] = normalizeResume(await fetchResume(lang));
+  } catch (err) {
+    if (isUnauthorized(err)) return redirectToUnlock();
+    state.refs = state.refs.filter((x) => x !== lang);
+    window.Toast && window.Toast.err(String(err.message || err));
+  }
 }
 
 /** 取当前选中语种的那份事实。 */

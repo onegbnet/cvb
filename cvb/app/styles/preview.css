@@ -426,6 +426,98 @@
   color: var(--text-secondary);
 }
 
+/* ---- 额外指令(第三方输入)---- */
+.apply-instr-label {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.apply-instr {
+  min-height: 56px;
+}
+
+/* ---- 改版对话(2026-08-26)----
+   出了初版才出现。**保持单列**:1280px 视口下 PDF 舞台实宽约 880px,
+   与对话并排会把 A4 挤到读不清、或让 .pdf-stage 横向滚 —— 而 layout-guard
+   的硬断言里正有「横向溢出」与「元素右缘越界」两条,那个容器不在白名单里。
+   而 1024px 笔记本正是改简历最常用的屏幕。 */
+.apply-tailor:empty,
+.apply-tailor .apply-bar:empty {
+  display: none;
+}
+
+.tlr-turn {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+  min-width: 0;
+}
+
+.tlr-turn:first-of-type {
+  border-top: 0;
+}
+
+/* 求职者说的话:引用体,与 AI 的交代分得开 */
+.tlr-said {
+  padding-left: 10px;
+  border-left: 2px solid var(--accent);
+  font-size: 0.9rem;
+}
+
+.tlr-note {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.tlr-summary {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.tlr-details > summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.tlr-rewrite {
+  margin: 6px 0;
+  font-size: 0.85rem;
+  min-width: 0;
+}
+
+.tlr-rw-path {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+/* 空槽里现写出来的那一段标成「新增」—— 不是改写谁的话,是替他写了一段没有过的自陈 */
+.tlr-new {
+  padding: 0 5px;
+  border-radius: var(--radius-sm, 4px);
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 0.7rem;
+}
+
+.tlr-rw-before {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+}
+
+.tlr-rw-after {
+  color: var(--text);
+}
+
 /* 生成是主动动作:空态说清「按了会发生什么」,别让人对着白板猜 */
 .pdf-placeholder {
   display: flex;

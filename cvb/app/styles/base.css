@@ -454,8 +454,15 @@ header.app-header .back-link .icon svg {
 
   header.app-header .header-title {
     grid-area: title;
-    justify-self: start;
-    padding-right: 96px;
+    /* **justify-self: start 会让它按内容宽撑出去** —— 长译名(德语
+       「Lebenslauf erstellen」)在 375px 下实测溢出 121px,而省略号根本不生效:
+       overflow:hidden 要能收窄才有用。stretch + min-width:0 才让它退回网格轨道里。
+       (2026-08-26 真机量出来的;中文短所以一直没露。) */
+    justify-self: stretch;
+    min-width: 0;
+    max-width: 100%;
+    /* 逻辑属性:写死 padding-right 在 RTL 下加在错误的一侧,阿语实测溢出到 left:-7 */
+    padding-inline-end: 96px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
