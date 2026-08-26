@@ -1231,9 +1231,13 @@ async function runTailorRound({ revise = false, feedback = '' } = {}) {
 /** 对话区:出了初版才出现 —— 没有初版就没有"针对当前版的意见"。 */
 function buildTailorBlock() {
   const box = h('div', { class: 'apply-bar' });
+  const section = h('section', { class: 'blk apply-tailor', hidden: true });
   let draft = '';
   const rebuild = () => {
     clear(box);
+    // **整块的显隐由这里切**:CSS 的 `:empty` 匹配不到(section 里还有 .apply-bar),
+    // 不切的话页面上会留一张 30px 高的空白卡(2026-08-26 真机看到)。
+    section.hidden = !state.chat.length && !state.tailorBusy && !state.tailorHint;
     // 还没裁过就整块不出现 —— **但有话要说时必须出现**:此前这里只看 chat 与 busy,
     // 于是裁剪失败/素材超预算/这一轮没改动的提示 state.tailorHint 无处可显,
     // 人点了按钮看到的是"什么都没发生"(2026-08-26 打生产时撞到,正是这条设计
@@ -1280,7 +1284,8 @@ function buildTailorBlock() {
   };
   rebuildTailor = rebuild;
   rebuild();
-  return h('section', { class: 'blk apply-tailor' }, box);
+  section.append(box);
+  return section;
 }
 
 /** 两张卡:先「职位信息」(它推导下面的目标),再「投到哪里 → 版式 → 语种 → 生成」。 */

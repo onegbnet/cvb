@@ -366,6 +366,12 @@
    顺序即决定顺序;规格换了版式跟着换。芯片的选中态与 /edit 文档栏同一套语汇
    (accent 反色块),不发明第二种"被选中"的画法。 */
 .apply-shell {
+  /* **`width: 100%` 少不了**:.preview-page 是 flex column,而 flex 项上的
+     `margin: … auto` 会**覆盖 stretch**,让它缩到内容宽。此前选择区里三行芯片
+     撑得开所以看不出来;2026-08-26 加了职位信息之后,那一栏只剩一个 textarea
+     (内在宽度约 400px),整条柱子在 1280px 视口里塌成 399px —— 而下面的 PDF
+     舞台还是 794px,两截宽度对不上,一眼就是坏的。 */
+  width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 16px 20px 0;
@@ -442,10 +448,9 @@
    与对话并排会把 A4 挤到读不清、或让 .pdf-stage 横向滚 —— 而 layout-guard
    的硬断言里正有「横向溢出」与「元素右缘越界」两条,那个容器不在白名单里。
    而 1024px 笔记本正是改简历最常用的屏幕。 */
-.apply-tailor:empty,
-.apply-tailor .apply-bar:empty {
-  display: none;
-}
+/* 没有内容时整块摘掉。**别指望 `:empty`** —— section 里还有个 .apply-bar 容器,
+   它永远不是 :empty,于是在页面上留下一张 30px 高的空白卡(2026-08-26 真机看到)。
+   由 buildTailorBlock 直接切 hidden。 */
 
 .tlr-turn {
   display: flex;
