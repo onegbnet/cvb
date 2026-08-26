@@ -1188,7 +1188,10 @@ async function runTailorRound({ revise = false, feedback = '' } = {}) {
 
     const { plan, dropped, empty } = normalizeTailorPlan(out.plan, source);
     if (empty) {
-      state.tailorHint = tr('apply.tailorNoop');
+      // 一轮什么都没改**未必是出错** —— 模型可能就是认为不用改(「已经是两句了」)。
+      // 那就把**它自己的解释**摆出来,而不是只印一句干巴巴的「什么都没改」:
+      // 那句话回答不了"那我这条意见到底怎么样了"(2026-08-26 打生产时撞到)。
+      state.tailorHint = plan.note || tr('apply.tailorNoop');
       return;
     }
     const before = source;
