@@ -300,6 +300,7 @@ export default {
   'apply.jobErrEmpty': 'หน้านี้ไม่มีข้อความที่อ่านได้ ให้วางรายละเอียดงานแทน',
   'apply.generateTailored': 'สร้างเรซูเม่ที่ปรับตามประกาศ',
   'apply.tailoring': 'กำลังปรับ…',
+  'apply.thinking': 'โมเดลกำลังคิด…',
   'apply.tailorTitle': 'การแก้ไข',
   'apply.revise': 'แก้ไข',
   'apply.revising': 'กำลังแก้ไข…',

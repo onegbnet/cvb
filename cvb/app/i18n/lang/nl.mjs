@@ -303,6 +303,8 @@ export default {
 
   'apply.tailoring': 'Bezig met afstemmen…',
 
+
+  'apply.thinking': 'Het model denkt na…',
   'apply.tailorTitle': 'Herzieningen',
 
   'apply.revise': 'Herzien',

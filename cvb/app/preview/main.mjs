@@ -1065,6 +1065,14 @@ function buildJobBlock() {
 
 let rebuildTailor = () => {};
 
+/** 进行中那句话:分「在想」与「在写」—— 大陆那条路的静默有 130 多秒,得说清是哪一段。 */
+const busyText = () =>
+  !state.tailorBusy
+    ? ''
+    : state.tailorPhase === 'thinking'
+      ? tr('apply.thinking')
+      : tr(state.tailorBusy === 'revise' ? 'apply.revising' : 'apply.tailoring');
+
 /** 差异摘要一行:保留 N/M · 改写 K 处 · 落不进去 J 处。数字都是算出来的,不是估的。 */
 function diffSummaryText(diff, dropped) {
   const parts = [];
@@ -1138,6 +1146,7 @@ async function runTailorRound({ revise = false, feedback = '' } = {}) {
   }
 
   state.tailorBusy = revise ? 'revise' : 'tailor';
+  state.tailorPhase = '';
   state.tailorChars = 0;
   state.tailorHint = '';
   rebuildTailor();
@@ -1159,8 +1168,20 @@ async function runTailorRound({ revise = false, feedback = '' } = {}) {
       maxPages: (specById(state.spec) || {}).maxPages || 0,
       sessionId: state.sessionId,
     }, {
+      // 模型还在想的时候如实说「正在思考」—— 大陆那条路首个正文 token 之前
+      // 实测有 130 多秒静默,不说的话界面与"卡死"分不开(2026-08-26 实测)
+      onThinking: () => {
+        if (state.tailorPhase === 'thinking') return;
+        state.tailorPhase = 'thinking';
+        setPdfBusy(true, { text: tr('apply.thinking') });
+        rebuildTailor();
+      },
       onProgress: (chars) => {
         state.tailorChars = chars;
+        if (state.tailorPhase !== 'writing') {
+          state.tailorPhase = 'writing';
+          rebuildTailor();
+        }
         setPdfBusy(true, { text: tr(revise ? 'apply.revising' : 'apply.tailoring'), detail: `${chars}` });
       },
     });
@@ -1190,6 +1211,7 @@ async function runTailorRound({ revise = false, feedback = '' } = {}) {
     state.tailorHint = err.code === 'AI_TEXT_TOO_LARGE' ? tooLargeText() : String(err.message || err);
   } finally {
     state.tailorBusy = '';
+    state.tailorPhase = '';
     setPdfBusy(false);
     rebuildTailor();
     rebuildSelection();
@@ -1222,8 +1244,7 @@ function buildTailorBlock() {
       // 还没成过一轮:这一块只说一句话 —— 要么正在跑,要么是上一次为什么没成。
       // **进行中也要说** :此前这里只印标题、底下空着,人看到的是一个光秃秃的框
       // (2026-08-26 打生产时撞到)。输入框仍不摆:没有"这一版"可评。
-      box.append(h('div', { class: 'apply-stale' },
-        state.tailorBusy ? tr(state.tailorBusy === 'revise' ? 'apply.revising' : 'apply.tailoring') : state.tailorHint || ''));
+      box.append(h('div', { class: 'apply-stale' }, busyText() || state.tailorHint || ''));
       return;
     }
 
@@ -1249,7 +1270,7 @@ function buildTailorBlock() {
           runTailorRound({ revise: true, feedback: said });
         },
       },
-      state.tailorBusy === 'revise' ? tr('apply.revising') : tr('apply.revise')
+      state.tailorBusy === 'revise' ? busyText() : tr('apply.revise')
     );
     box.append(input, h('div', { class: 'apply-row apply-actions' }, btn,
       state.tailorHint ? h('span', { class: 'apply-stale' }, state.tailorHint) : null));

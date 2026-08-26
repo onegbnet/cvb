@@ -300,6 +300,7 @@ export default {
   'apply.jobErrEmpty': 'Tiada teks yang boleh dibaca pada halaman itu — tampal keterangan kerja',
   'apply.generateTailored': 'Sesuaikan resume dengan jawatan',
   'apply.tailoring': 'Sedang menyesuaikan…',
+  'apply.thinking': 'Model sedang berfikir…',
   'apply.tailorTitle': 'Pindaan',
   'apply.revise': 'Pinda',
   'apply.revising': 'Sedang meminda…',

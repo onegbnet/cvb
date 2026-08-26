@@ -300,6 +300,7 @@ export default {
   'apply.jobErrEmpty': 'لا يوجد نص قابل للقراءة في هذه الصفحة — الصق وصف الوظيفة بدلًا من ذلك',
   'apply.generateTailored': 'خصّص السيرة الذاتية للوظيفة',
   'apply.tailoring': 'جارٍ التخصيص…',
+  'apply.thinking': 'النموذج يفكّر…',
   'apply.tailorTitle': 'المراجعات',
   'apply.revise': 'راجع',
   'apply.revising': 'جارٍ المراجعة…',

@@ -300,6 +300,7 @@ export default {
   'apply.jobErrEmpty': 'Nessun testo leggibile in quella pagina: incolla invece la descrizione',
   'apply.generateTailored': 'Scrivi il curriculum adattato',
   'apply.tailoring': 'Adattamento…',
+  'apply.thinking': 'Il modello sta ragionando…',
   'apply.tailorTitle': 'Revisioni',
   'apply.revise': 'Revisiona',
   'apply.revising': 'Revisione…',

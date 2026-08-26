@@ -25,11 +25,14 @@ const fail = (code, message) => {
 };
 
 /**
- * 跑一轮。`onProgress(chars)` 在每个 delta 上回调(字符数,给进度用 ——
- * 上游首个内容 delta 实测要到几秒甚至几十秒才出现,那之前只有 meta)。
- * 回 `{ plan, sessionId, rotated, compacted, usage, model }`。
+ * 跑一轮。两个回调:
+ *   `onProgress(chars)` —— 正文字符数;
+ *   `onThinking(chars)` —— **模型还在想**。这一档不是锦上添花:大陆那条路实测
+ *     首个正文 token 之前有 130 多秒静默(见 server/routes/tailor.js 的实测),
+ *     不把它报出来,界面就与"卡死"分不开。
+ * 回 `{ plan, sessionId, rotated, compacted, usage, model, thinking }`。
  */
-export async function runTailor(path, body, { onProgress } = {}) {
+export async function runTailor(path, body, { onProgress, onThinking } = {}) {
   const res = await fetch(path, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -50,6 +53,7 @@ export async function runTailor(path, body, { onProgress } = {}) {
   let buf = '';
   let event = null;
   let chars = 0;
+  let thinkChars = 0;
   let done = null;
   let error = null;
 
@@ -68,6 +72,9 @@ export async function runTailor(path, body, { onProgress } = {}) {
       if (event === 'delta') {
         chars += String(data.text || '').length;
         if (onProgress) onProgress(chars);
+      } else if (event === 'thinking') {
+        thinkChars += Number(data.chars) || 0;
+        if (onThinking) onThinking(thinkChars);
       } else if (event === 'done') done = data;
       else if (event === 'error') error = data;
     }

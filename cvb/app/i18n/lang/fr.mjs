@@ -300,6 +300,7 @@ export default {
   'apply.jobErrEmpty': 'Aucun texte lisible sur cette page : collez plutôt la description du poste',
   'apply.generateTailored': 'Adapter le CV au poste',
   'apply.tailoring': 'Adaptation…',
+  'apply.thinking': 'Le modèle réfléchit…',
   'apply.tailorTitle': 'Révisions',
   'apply.revise': 'Réviser',
   'apply.revising': 'Révision…',

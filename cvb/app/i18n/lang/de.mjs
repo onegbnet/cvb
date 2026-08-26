@@ -300,6 +300,7 @@ export default {
   'apply.jobErrEmpty': 'Auf dieser Seite steht kein lesbarer Text — fügen Sie die Stellenbeschreibung ein',
   'apply.generateTailored': 'Lebenslauf zuschneiden',
   'apply.tailoring': 'Wird zugeschnitten…',
+  'apply.thinking': 'Das Modell denkt nach…',
   'apply.tailorTitle': 'Überarbeitungen',
   'apply.revise': 'Überarbeiten',
   'apply.revising': 'Wird überarbeitet…',

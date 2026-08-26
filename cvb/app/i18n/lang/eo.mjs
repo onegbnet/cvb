@@ -303,6 +303,8 @@ export default {
 
   'apply.tailoring': 'Adaptante…',
 
+
+  'apply.thinking': 'La modelo pripensas…',
   'apply.tailorTitle': 'Revizioj',
 
   'apply.revise': 'Revizii',

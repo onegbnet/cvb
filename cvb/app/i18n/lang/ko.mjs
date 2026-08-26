@@ -300,6 +300,7 @@ export default {
   'apply.jobErrEmpty': '이 페이지에는 읽을 수 있는 본문이 없습니다. 공고 내용을 직접 붙여넣으세요',
   'apply.generateTailored': '공고에 맞춰 이력서 만들기',
   'apply.tailoring': '맞춤 조정 중…',
+  'apply.thinking': '모델이 생각 중입니다…',
   'apply.tailorTitle': '수정',
   'apply.revise': '수정하기',
   'apply.revising': '수정 중…',

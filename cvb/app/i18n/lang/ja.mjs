@@ -300,6 +300,7 @@ export default {
   'apply.jobErrEmpty': 'このページに読み取れる本文がありません。募集要項を直接貼り付けてください',
   'apply.generateTailored': '求人に合わせて履歴書を調整',
   'apply.tailoring': '調整中…',
+  'apply.thinking': 'モデルが考えています…',
   'apply.tailorTitle': '修正',
   'apply.revise': '修正する',
   'apply.revising': '修正中…',

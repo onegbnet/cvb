@@ -303,6 +303,8 @@ export default {
 
   'apply.tailoring': 'Адаптація…',
 
+
+  'apply.thinking': 'Модель обмірковує…',
   'apply.tailorTitle': 'Правки',
 
   'apply.revise': 'Внести правку',

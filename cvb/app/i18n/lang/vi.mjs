@@ -300,6 +300,7 @@ export default {
   'apply.jobErrEmpty': 'Trang đó không có văn bản đọc được — hãy dán mô tả công việc',
   'apply.generateTailored': 'Tạo bản CV tinh chỉnh',
   'apply.tailoring': 'Đang tinh chỉnh…',
+  'apply.thinking': 'Mô hình đang suy nghĩ…',
   'apply.tailorTitle': 'Chỉnh sửa',
   'apply.revise': 'Sửa lại',
   'apply.revising': 'Đang sửa…',

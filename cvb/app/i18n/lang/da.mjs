@@ -303,6 +303,8 @@ export default {
 
   'apply.tailoring': 'Målretter…',
 
+
+  'apply.thinking': 'Modellen tænker…',
   'apply.tailorTitle': 'Justeringer',
 
   'apply.revise': 'Justér',

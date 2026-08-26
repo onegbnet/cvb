@@ -303,6 +303,8 @@ export default {
 
   'apply.tailoring': '正在裁剪…',
 
+
+  'apply.thinking': '模型正在思考…',
   'apply.tailorTitle': '改版',
 
   'apply.revise': '改一版',

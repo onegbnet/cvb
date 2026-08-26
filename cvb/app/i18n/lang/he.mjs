@@ -300,6 +300,7 @@ export default {
   'apply.jobErrEmpty': 'אין טקסט קריא בדף הזה — הדביקו במקום זאת את תיאור המשרה',
   'apply.generateTailored': 'התאימו את קורות החיים למשרה',
   'apply.tailoring': 'מבצע התאמה…',
+  'apply.thinking': 'המודל חושב…',
   'apply.tailorTitle': 'שינויים',
   'apply.revise': 'שנו',
   'apply.revising': 'מבצע שינוי…',

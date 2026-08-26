@@ -300,6 +300,7 @@ export default {
   'apply.jobErrEmpty': 'அந்தப் பக்கத்தில் படிக்கக்கூடிய உரை இல்லை — பணி விவரணையை ஒட்டவும்',
   'apply.generateTailored': 'பணிக்கேற்ப சுயவிவரக் குறிப்பைச் சீரமை',
   'apply.tailoring': 'சீரமைக்கிறது…',
+  'apply.thinking': 'மாதிரி யோசிக்கிறது…',
   'apply.tailorTitle': 'மாற்றியமைப்புகள்',
   'apply.revise': 'மாற்றியமை',
   'apply.revising': 'மாற்றியமைக்கிறது…',

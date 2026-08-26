@@ -304,6 +304,8 @@ export default {
 
   'apply.tailoring': 'Tailoring…',
 
+
+  'apply.thinking': 'The model is thinking…',
   'apply.tailorTitle': 'Revisions',
 
   'apply.revise': 'Revise',

@@ -300,6 +300,7 @@ export default {
   'apply.jobErrEmpty': 'ထိုစာမျက်နှာတွင် ဖတ်၍ရသော စာသား မရှိပါ — ကြော်ငြာစာသားကို ကူးထည့်ပါ',
   'apply.generateTailored': 'အလုပ်နှင့်ကိုက်ညီအောင် CV ချိန်ညှိရန်',
   'apply.tailoring': 'ချိန်ညှိနေသည်…',
+  'apply.thinking': 'မော်ဒယ်က စဉ်းစားနေသည်…',
   'apply.tailorTitle': 'ပြန်လည်ပြင်ဆင်မှုများ',
   'apply.revise': 'ပြန်ပြင်ရန်',
   'apply.revising': 'ပြန်ပြင်နေသည်…',
