@@ -11,8 +11,7 @@ export default {
   "home.apply.state": "Vælg en skabelon, og kompiler en PDF med {latex}",
   "home.edit.title": "Rediger fakta",
   "home.apply.title": "Generer et CV",
-  'home.apply.wip': 'Jobrettet tilpasning og publicering er endnu ikke tilsluttet',
-
+  'home.apply.wip': 'Publicering er endnu ikke tilsluttet',
   'section.personal': 'Personligt',
   'section.education': 'Uddannelse',
   'section.career': 'Fagligt',

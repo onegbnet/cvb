@@ -11,8 +11,7 @@ export default {
   "home.apply.state": "Виберіть шаблон і скомпілюйте PDF за допомогою {latex}",
   "home.edit.title": "Редагувати факти",
   "home.apply.title": "Створити резюме",
-  'home.apply.wip': 'Адаптація під вакансію та публікація ще не підключені',
-
+  'home.apply.wip': 'Публікацію ще не під’єднано',
   'section.personal': 'Особисті дані',
   'section.education': 'Освіта',
   'section.career': 'Кар’єра',

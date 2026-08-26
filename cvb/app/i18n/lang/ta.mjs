@@ -11,8 +11,7 @@ export default {
   "home.apply.state": "வார்ப்புருவைத் தேர்ந்தெடுத்து, {latex} மூலம் PDF தொகுக்கவும்",
   "home.edit.title": "உண்மைகளைத் திருத்து",
   "home.apply.title": "சுயவிவரக் குறிப்பு உருவாக்கு",
-  'home.apply.wip': 'பணியிடத்திற்கேற்ப சீரமைப்பும் வெளியீடும் இன்னும் இணைக்கப்படவில்லை',
-
+  'home.apply.wip': 'வெளியீடு இன்னும் இணைக்கப்படவில்லை',
   'section.personal': 'தனிப்பட்ட தகவல்',
   'section.education': 'கல்வி',
   'section.career': 'தொழில் வாழ்க்கை',

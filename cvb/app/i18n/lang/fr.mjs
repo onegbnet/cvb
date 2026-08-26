@@ -11,8 +11,7 @@ export default {
   "home.apply.state": "Choisissez un modèle, compilez un PDF avec {latex}",
   "home.edit.title": "Modifier les faits",
   "home.apply.title": "Générer un CV",
-  'home.apply.wip': "L'adaptation ciblée au poste et la publication ne sont pas encore disponibles",
-
+  'home.apply.wip': "La publication n’est pas encore branchée",
   'section.personal': 'Informations personnelles',
   'section.education': 'Formation',
   'section.career': 'Parcours professionnel',

@@ -11,8 +11,7 @@ export default {
   "home.apply.state": "ပုံစံခွက် ရွေးပြီး {latex} ဖြင့် PDF ထုတ်လုပ်ပါ",
   "home.edit.title": "အချက်အလက်များ ပြင်ဆင်ရန်",
   "home.apply.title": "CV ထုတ်လုပ်ရန်",
-  'home.apply.wip': 'အလုပ်နှင့်ကိုက်ညီအောင် ချိန်ညှိခြင်းနှင့် ထုတ်ဝေခြင်း မရရှိသေးပါ',
-
+  'home.apply.wip': 'ထုတ်ဝေမှုကို မချိတ်ဆက်ရသေးပါ',
   'section.personal': 'ကိုယ်ရေးအချက်အလက်',
   'section.education': 'ပညာရေး',
   'section.career': 'အသက်မွေးဝမ်းကျောင်း',

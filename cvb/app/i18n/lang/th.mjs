@@ -11,8 +11,7 @@ export default {
   "home.apply.state": "เลือกเทมเพลต แล้วคอมไพล์ PDF ด้วยเอนจิน {latex}",
   "home.edit.title": "แก้ไขข้อเท็จจริง",
   "home.apply.title": "สร้างเรซูเม่",
-  'home.apply.wip': 'การปรับให้ตรงตำแหน่งงานและการเผยแพร่ยังไม่พร้อมใช้งาน',
-
+  'home.apply.wip': 'ยังไม่ได้เชื่อมต่อการเผยแพร่',
   'section.personal': 'ข้อมูลส่วนตัว',
   'section.education': 'การศึกษา',
   'section.career': 'ด้านอาชีพ',

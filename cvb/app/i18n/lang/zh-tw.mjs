@@ -11,8 +11,7 @@ export default {
   "home.apply.state": "選範本，用 {latex} 引擎編譯出 PDF",
   "home.edit.title": "編輯事實",
   "home.apply.title": "產生履歷",
-  'home.apply.wip': '職缺定向裁剪與發布尚未接入',
-
+  'home.apply.wip': '發布尚未接入',
   'section.personal': '個人資料',
   'section.education': '教育背景',
   'section.career': '職業能力',

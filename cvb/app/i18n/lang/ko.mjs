@@ -11,8 +11,7 @@ export default {
   "home.apply.state": "템플릿을 선택하고 {latex} 엔진으로 PDF를 컴파일합니다",
   "home.edit.title": "사실 편집",
   "home.apply.title": "이력서 생성",
-  'home.apply.wip': '채용 공고 맞춤 조정과 공개는 아직 지원되지 않습니다',
-
+  'home.apply.wip': '게시 기능은 아직 연결되지 않았습니다',
   'section.personal': '개인 정보',
   'section.education': '학력',
   'section.career': '직무 역량',

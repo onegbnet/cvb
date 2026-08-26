@@ -11,8 +11,7 @@ export default {
   "home.apply.state": "テンプレートを選び、{latex} で PDF をコンパイル",
   "home.edit.title": "事実の編集",
   "home.apply.title": "履歴書の生成",
-  'home.apply.wip': '求人に合わせた調整と公開は未対応',
-
+  'home.apply.wip': '公開機能はまだ未接続です',
   'section.personal': '個人情報',
   'section.education': '学歴',
   'section.career': '職歴・スキル',

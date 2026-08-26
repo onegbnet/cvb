@@ -11,8 +11,7 @@ export default {
   "home.apply.state": "اختر قالبًا وأنشئ ملف PDF بمحرك {latex}",
   "home.edit.title": "تحرير الحقائق",
   "home.apply.title": "إنشاء سيرة ذاتية",
-  'home.apply.wip': 'التخصيص حسب الوظيفة والنشر غير متاحين بعد',
-
+  'home.apply.wip': 'النشر لم يُوصَل بعد',
   'section.personal': 'المعلومات الشخصية',
   'section.education': 'التعليم',
   'section.career': 'الخبرة المهنية',
