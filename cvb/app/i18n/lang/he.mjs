@@ -300,6 +300,8 @@ export default {
   'apply.generateTailored': 'התאימו את קורות החיים למשרה',
   'apply.tailoring': 'מבצע התאמה…',
   'apply.thinking': 'המודל חושב…',
+  'apply.settings': 'הגדרות',
+  'apply.settingsHide': 'הסתירו את ההגדרות',
   'apply.tailorTitle': 'שינויים',
   'apply.revise': 'שנו',
   'apply.revising': 'מבצע שינוי…',

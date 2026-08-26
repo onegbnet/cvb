@@ -304,6 +304,12 @@ export default {
 
 
   'apply.thinking': 'La modelo pripensas…',
+
+
+  'apply.settings': 'Agordoj',
+
+
+  'apply.settingsHide': 'Kaŝi la agordojn',
   'apply.tailorTitle': 'Revizioj',
 
   'apply.revise': 'Revizii',

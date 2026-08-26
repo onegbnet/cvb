@@ -300,6 +300,8 @@ export default {
   'apply.generateTailored': '求人に合わせて履歴書を調整',
   'apply.tailoring': '調整中…',
   'apply.thinking': 'モデルが考えています…',
+  'apply.settings': '設定',
+  'apply.settingsHide': '設定を隠す',
   'apply.tailorTitle': '修正',
   'apply.revise': '修正する',
   'apply.revising': '修正中…',

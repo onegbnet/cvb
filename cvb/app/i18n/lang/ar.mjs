@@ -300,6 +300,8 @@ export default {
   'apply.generateTailored': 'خصّص السيرة الذاتية للوظيفة',
   'apply.tailoring': 'جارٍ التخصيص…',
   'apply.thinking': 'النموذج يفكّر…',
+  'apply.settings': 'الإعدادات',
+  'apply.settingsHide': 'إخفاء الإعدادات',
   'apply.tailorTitle': 'المراجعات',
   'apply.revise': 'راجع',
   'apply.revising': 'جارٍ المراجعة…',

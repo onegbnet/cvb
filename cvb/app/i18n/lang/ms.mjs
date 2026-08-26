@@ -300,6 +300,8 @@ export default {
   'apply.generateTailored': 'Sesuaikan resume dengan jawatan',
   'apply.tailoring': 'Sedang menyesuaikan…',
   'apply.thinking': 'Model sedang berfikir…',
+  'apply.settings': 'Tetapan',
+  'apply.settingsHide': 'Sembunyikan tetapan',
   'apply.tailorTitle': 'Pindaan',
   'apply.revise': 'Pinda',
   'apply.revising': 'Sedang meminda…',

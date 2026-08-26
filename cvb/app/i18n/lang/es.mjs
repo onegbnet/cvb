@@ -300,6 +300,8 @@ export default {
   'apply.generateTailored': 'Redactar el currículum adaptado',
   'apply.tailoring': 'Adaptando…',
   'apply.thinking': 'El modelo está pensando…',
+  'apply.settings': 'Ajustes',
+  'apply.settingsHide': 'Ocultar ajustes',
   'apply.tailorTitle': 'Revisiones',
   'apply.revise': 'Revisar',
   'apply.revising': 'Revisando…',

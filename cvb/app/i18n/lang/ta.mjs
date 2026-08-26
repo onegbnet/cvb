@@ -300,6 +300,8 @@ export default {
   'apply.generateTailored': 'பணிக்கேற்ப சுயவிவரக் குறிப்பைச் சீரமை',
   'apply.tailoring': 'சீரமைக்கிறது…',
   'apply.thinking': 'மாதிரி யோசிக்கிறது…',
+  'apply.settings': 'அமைப்புகள்',
+  'apply.settingsHide': 'அமைப்புகளை மறை',
   'apply.tailorTitle': 'மாற்றியமைப்புகள்',
   'apply.revise': 'மாற்றியமை',
   'apply.revising': 'மாற்றியமைக்கிறது…',

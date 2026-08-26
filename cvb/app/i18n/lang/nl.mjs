@@ -304,6 +304,12 @@ export default {
 
 
   'apply.thinking': 'Het model denkt na…',
+
+
+  'apply.settings': 'Instellingen',
+
+
+  'apply.settingsHide': 'Instellingen verbergen',
   'apply.tailorTitle': 'Herzieningen',
 
   'apply.revise': 'Herzien',

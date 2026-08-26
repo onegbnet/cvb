@@ -8,6 +8,34 @@
   background: var(--bg);
 }
 
+/* 宽屏两栏时**整页不滚**(滚的是两栏各自内部)—— 右边那份 PDF 因此永远在视口里。
+   高度**一个数字都不写死**:页脚是 #app 之外的兄弟节点,拿 100vh 去减它的高度
+   只能靠猜,猜出来的差几像素就会多一条滚动条(第一版差了 68px,第二版还差 6px)。
+   改成让 body 自己分配:body 撑满一屏,#app 吃掉页脚之外的全部剩余高度。
+   preview.css 只有 /apply 加载,所以在这里动 body 不会波及别的页面。 */
+@media (min-width: 1024px) {
+  body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  body > #app {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .preview-page {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    overflow: hidden;
+  }
+}
+
 .preview-actions {
   display: flex;
   align-items: center;
@@ -29,9 +57,25 @@
 
 .preview-content {
   flex: 1;
-  padding: 24px;
+  min-height: 0;
+  padding: 24px 0 0;
   display: flex;
   justify-content: center;
+}
+
+/* 窄屏(单列)且已经有初版时,**PDF 排在对话之前**:先看到那份简历,
+   再往下说话 —— 反过来的话你得先滚过一长串对话才看得见自己的简历。
+   还没有初版时顺序不动(那时你正在填上面那些设置)。 */
+@media (max-width: 1023px) {
+  .apply-work.has-draft {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .apply-work.has-draft > .preview-content {
+    order: -1;
+    min-height: 60vh;
+  }
 }
 
 .print-resume-shell {
@@ -365,16 +409,107 @@
 /* ---- 选择区(2026-08-24 重做):投到哪里 → 用哪套版式 → 用哪份语种事实 ----
    顺序即决定顺序;规格换了版式跟着换。芯片的选中态与 /edit 文档栏同一套语汇
    (accent 反色块),不发明第二种"被选中"的画法。 */
-.apply-shell {
-  /* **`width: 100%` 少不了**:.preview-page 是 flex column,而 flex 项上的
-     `margin: … auto` 会**覆盖 stretch**,让它缩到内容宽。此前选择区里三行芯片
-     撑得开所以看不出来;2026-08-26 加了职位信息之后,那一栏只剩一个 textarea
-     (内在宽度约 400px),整条柱子在 1280px 视口里塌成 399px —— 而下面的 PDF
-     舞台还是 794px,两截宽度对不上,一眼就是坏的。 */
+/* ---- 工作区(2026-08-26 用户裁定「对话在哪里呢」之后重做)----
+   **宽屏两栏:左边对话、右边 PDF 常驻可见**。此前是一页到底的单列,三轮改版之后
+   PDF 舞台被推到 1177px 处而视口只有 900px —— 说话的时候看不见你正在改的那份简历,
+   而对话式改版的全部意义就是「说一句、看一眼」。
+
+   **`width: 100%` 少不了**:.preview-page 是 flex column,而 flex 项上的
+   `margin: … auto` 会覆盖 stretch,让它缩到内容宽(2026-08-26 真机量出来过:
+   那一栏只剩一个 textarea 时整条柱子塌成 399px)。 */
+.apply-work {
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 16px 20px 0;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-content: start;
+}
+
+.apply-side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* 折叠后的设置摘要:一行看完,右端一个「设置」把它放回来 */
+.apply-setsum {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.apply-setsum-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.apply-collapse-row {
+  justify-content: flex-end;
+  padding-bottom: 0;
+}
+
+/* **两栏只在放得下 A4 时才开**:A4 是 794px,右栏还要留内边距。
+   1200px 视口下左 360 + 右约 800,刚好;再窄就回落单列,
+   否则 A4 要么缩到读不清、要么在舞台里横向滚(layout-guard 有硬断言盯着)。 */
+@media (min-width: 1024px) {
+  .apply-work {
+    /* **两栏时不能再压在 1100px 里**:那样右栏只剩 644px,A4(794px)放不下,
+       PDF 只能缩着看 —— 而这一页的全部意义就是看清那份 PDF。
+       断点定在 1280:1280 − 40 内边距 − 16 间距 − 380 左栏 = 844px,刚好装得下 A4。
+       再窄就回落单列(A4 挤到读不清比上下排更糟)。 */
+    max-width: 1600px;
+    /* 左栏在 1024 上收到 300px,让 A4 至少能按适应宽度看清:
+       1024 − 40 内边距 − 16 间距 − 300 = 668px(A4 的 84%)。
+       1280 以上再放宽到 380px(那时右栏 844px,A4 原尺寸装得下)。 */
+    grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
+    align-content: stretch;
+    /* 两栏各自内部滚动,**页面本身不滚** —— 这样右边那份 PDF 永远在视口里。
+       高度让 flex 去算,别写死页眉高度:写死就会差几十像素,页面照样能滚一小截
+       (2026-08-26 第一版就是这么差了 68px)。页脚是 #app 之外的兄弟节点,
+       所以这里量的是 body 的可用高度。 */
+    height: auto;
+    min-height: 0;
+    padding-bottom: 16px;
+  }
+
+  .apply-side {
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  /* **输入框吸底**:对话越聊越长,不吸底的话你想说下一句得先滚到底
+     (用户 2026-08-26 要的就是「轮次向上滚、输入框吸底」)。 */
+  .apply-tailor .apply-input-dock {
+    position: sticky;
+    bottom: 0;
+    background: var(--card-bg);
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .apply-work {
+    grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
+  }
+
+  .apply-work > .preview-content {
+    min-height: 0;
+    padding: 0;
+  }
 }
 
 .apply-bar {

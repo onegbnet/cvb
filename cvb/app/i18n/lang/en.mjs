@@ -305,6 +305,12 @@ export default {
 
 
   'apply.thinking': 'The model is thinking…',
+
+
+  'apply.settings': 'Settings',
+
+
+  'apply.settingsHide': 'Hide settings',
   'apply.tailorTitle': 'Revisions',
 
   'apply.revise': 'Revise',

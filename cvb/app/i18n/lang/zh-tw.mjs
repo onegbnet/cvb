@@ -304,6 +304,12 @@ export default {
 
 
   'apply.thinking': '模型正在思考…',
+
+
+  'apply.settings': '設定',
+
+
+  'apply.settingsHide': '收起設定',
   'apply.tailorTitle': '改版',
 
   'apply.revise': '改一版',

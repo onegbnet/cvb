@@ -300,6 +300,8 @@ export default {
   'apply.generateTailored': 'Adapter le CV au poste',
   'apply.tailoring': 'Adaptation…',
   'apply.thinking': 'Le modèle réfléchit…',
+  'apply.settings': 'Réglages',
+  'apply.settingsHide': 'Masquer les réglages',
   'apply.tailorTitle': 'Révisions',
   'apply.revise': 'Réviser',
   'apply.revising': 'Révision…',

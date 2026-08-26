@@ -304,6 +304,12 @@ export default {
 
 
   'apply.thinking': 'Модель обмірковує…',
+
+
+  'apply.settings': 'Налаштування',
+
+
+  'apply.settingsHide': 'Сховати налаштування',
   'apply.tailorTitle': 'Правки',
 
   'apply.revise': 'Внести правку',

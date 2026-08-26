@@ -300,6 +300,8 @@ export default {
   'apply.generateTailored': 'Lebenslauf zuschneiden',
   'apply.tailoring': 'Wird zugeschnitten…',
   'apply.thinking': 'Das Modell denkt nach…',
+  'apply.settings': 'Einstellungen',
+  'apply.settingsHide': 'Einstellungen ausblenden',
   'apply.tailorTitle': 'Überarbeitungen',
   'apply.revise': 'Überarbeiten',
   'apply.revising': 'Wird überarbeitet…',

@@ -300,6 +300,8 @@ export default {
   'apply.generateTailored': '공고에 맞춰 이력서 만들기',
   'apply.tailoring': '맞춤 조정 중…',
   'apply.thinking': '모델이 생각 중입니다…',
+  'apply.settings': '설정',
+  'apply.settingsHide': '설정 접기',
   'apply.tailorTitle': '수정',
   'apply.revise': '수정하기',
   'apply.revising': '수정 중…',

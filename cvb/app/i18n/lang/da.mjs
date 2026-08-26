@@ -304,6 +304,12 @@ export default {
 
 
   'apply.thinking': 'Modellen tænker…',
+
+
+  'apply.settings': 'Indstillinger',
+
+
+  'apply.settingsHide': 'Skjul indstillinger',
   'apply.tailorTitle': 'Justeringer',
 
   'apply.revise': 'Justér',

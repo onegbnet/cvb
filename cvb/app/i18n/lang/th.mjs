@@ -300,6 +300,8 @@ export default {
   'apply.generateTailored': 'สร้างเรซูเม่ที่ปรับตามประกาศ',
   'apply.tailoring': 'กำลังปรับ…',
   'apply.thinking': 'โมเดลกำลังคิด…',
+  'apply.settings': 'การตั้งค่า',
+  'apply.settingsHide': 'ซ่อนการตั้งค่า',
   'apply.tailorTitle': 'การแก้ไข',
   'apply.revise': 'แก้ไข',
   'apply.revising': 'กำลังแก้ไข…',

@@ -95,6 +95,9 @@ const state = {
   tailorBusy: '', // '' | 'tailor' | 'revise'
   tailorChars: 0, // 已收到的字符数(进度)
   tailorHint: '',
+  // 设置区(职位信息 + 投递目标)读完就该让位:它是填一次就不再看的东西,
+  // 而右边那份 PDF 才是你要一直盯着的。出了初版之后默认折叠成一行摘要。
+  settingsOpen: true,
 };
 
 /**
@@ -111,6 +114,7 @@ function clearDraft(reason) {
   state.chat = [];
   state.sessionId = '';
   state.tailorHint = reason || '';
+  state.settingsOpen = true; // 裁剪作废了,你多半要回去改设置
 }
 
 // ---- 简历渲染(PDF 单一路) ----
@@ -1220,6 +1224,12 @@ async function runTailorRound({ revise = false, feedback = '' } = {}) {
     rebuildSelection();
   }
 
+  // 初版出来之后设置区让位 —— 从这一刻起你要盯的是右边那份 PDF
+  if (!revise && state.draft && state.settingsOpen) {
+    state.settingsOpen = false;
+    rebuildWork();
+  }
+
   // 初版一趟走完:裁剪完接着编译(用户 2026-08-26 裁定)
   if (!revise && state.draft) {
     stale = false;
@@ -1279,8 +1289,17 @@ function buildTailorBlock() {
       },
       state.tailorBusy === 'revise' ? busyText() : tr('apply.revise')
     );
-    box.append(input, h('div', { class: 'apply-row apply-actions' }, btn,
-      state.tailorHint ? h('span', { class: 'apply-stale' }, state.tailorHint) : null));
+    // 输入框与按钮包成一个 dock —— 宽屏两栏时它吸在左栏底部,
+    // 对话再长也不用先滚到底才能说下一句
+    box.append(
+      h(
+        'div',
+        { class: 'apply-input-dock' },
+        input,
+        h('div', { class: 'apply-row apply-actions' }, btn,
+          state.tailorHint ? h('span', { class: 'apply-stale' }, state.tailorHint) : null)
+      )
+    );
   };
   rebuildTailor = rebuild;
   rebuild();
@@ -1288,9 +1307,83 @@ function buildTailorBlock() {
   return section;
 }
 
-/** 两张卡:先「职位信息」(它推导下面的目标),再「投到哪里 → 版式 → 语种 → 生成」。 */
-function buildApplyShell() {
-  return h('div', { class: 'apply-shell' }, buildJobBlock(), buildSelectionBar(), buildTailorBlock());
+/** 折叠后那一行:读完的职位 + 选好的目标与版式,一眼看得完。 */
+function settingsSummaryText() {
+  const spec = specById(state.spec);
+  const parts = [
+    state.job && (state.job.title || state.job.org),
+    state.job && jobPlaceText(state.job),
+    spec && tr(spec.labelKey),
+    tr(`template.${state.template}`),
+  ].filter(Boolean);
+  return parts.join(' · ');
+}
+
+let rebuildWork = () => {};
+
+/**
+ * 生成简历这一页的工作区。**宽屏两栏:左边对话、右边 PDF 常驻可见**
+ * (2026-08-26 用户裁定,原话「对话在哪里呢」)。
+ *
+ * 此前是一页到底的单列:三轮改版之后 PDF 舞台被推到 1177px 处而视口只有 900px ——
+ * **说话的时候看不见你正在改的那份简历**,而对话式改版的全部意义就是「说一句、看一眼」。
+ * 越聊推得越远,设置区还永远占着首屏最上方(那是填完就不再看的东西)。
+ *
+ * 窄屏回落单列(PDF 在上、对话在下)—— 两栏在小屏上会把 A4 挤到读不清。
+ */
+function buildApplyShell(contentEl) {
+  const side = h('div', { class: 'apply-side' });
+  const rebuild = () => {
+    clear(side);
+    const collapsed = Boolean(state.draft) && !state.settingsOpen;
+    if (collapsed) {
+      side.append(
+        h(
+          'section',
+          { class: 'blk apply-setsum' },
+          h('span', { class: 'apply-setsum-text' }, settingsSummaryText()),
+          h(
+            'button',
+            {
+              type: 'button',
+              class: 'btn btn-small',
+              onClick: () => { state.settingsOpen = true; rebuild(); },
+            },
+            tr('apply.settings')
+          )
+        )
+      );
+    } else {
+      side.append(buildJobBlock(), buildSelectionBar());
+      // 已经有初版了才给「收起」—— 没有初版时这一块是你正在用的东西
+      if (state.draft) {
+        side.append(
+          h(
+            'div',
+            { class: 'apply-row apply-collapse-row' },
+            h(
+              'button',
+              {
+                type: 'button',
+                class: 'btn btn-small',
+                onClick: () => { state.settingsOpen = false; rebuild(); },
+              },
+              tr('apply.settingsHide')
+            )
+          )
+        );
+      }
+    }
+    side.append(buildTailorBlock());
+  };
+  rebuild();
+  const work = h('div', { class: 'apply-work' }, side, contentEl);
+  // 窄屏靠这个类把 PDF 排到对话之前(见 preview.css 的 max-width: 1023px 那一段)
+  const syncWorkClass = () => work.classList.toggle('has-draft', Boolean(state.draft));
+  const inner = rebuild;
+  rebuildWork = () => { inner(); syncWorkClass(); };
+  syncWorkClass();
+  return work;
 }
 
 /**
@@ -1401,8 +1494,7 @@ async function main() {
 
   pageEl.append(
     buildToolbar(pageEl),
-    buildApplyShell(),
-    h('div', { class: 'preview-content' }, shellEl)
+    buildApplyShell(h('div', { class: 'preview-content' }, shellEl))
   );
   app.append(pageEl);
 }

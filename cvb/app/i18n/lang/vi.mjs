@@ -300,6 +300,8 @@ export default {
   'apply.generateTailored': 'Tạo bản CV tinh chỉnh',
   'apply.tailoring': 'Đang tinh chỉnh…',
   'apply.thinking': 'Mô hình đang suy nghĩ…',
+  'apply.settings': 'Cài đặt',
+  'apply.settingsHide': 'Ẩn cài đặt',
   'apply.tailorTitle': 'Chỉnh sửa',
   'apply.revise': 'Sửa lại',
   'apply.revising': 'Đang sửa…',

@@ -301,6 +301,8 @@ export default {
   'apply.generateTailored': '生成初版简历',
   'apply.tailoring': '正在裁剪…',
   'apply.thinking': '模型正在思考…',
+  'apply.settings': '设置',
+  'apply.settingsHide': '收起设置',
   'apply.tailorTitle': '改版',
   'apply.revise': '改一版',
   'apply.revising': '正在改…',

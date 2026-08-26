@@ -300,6 +300,8 @@ export default {
   'apply.generateTailored': 'အလုပ်နှင့်ကိုက်ညီအောင် CV ချိန်ညှိရန်',
   'apply.tailoring': 'ချိန်ညှိနေသည်…',
   'apply.thinking': 'မော်ဒယ်က စဉ်းစားနေသည်…',
+  'apply.settings': 'ဆက်တင်များ',
+  'apply.settingsHide': 'ဆက်တင်များကို ဖျောက်ရန်',
   'apply.tailorTitle': 'ပြန်လည်ပြင်ဆင်မှုများ',
   'apply.revise': 'ပြန်ပြင်ရန်',
   'apply.revising': 'ပြန်ပြင်နေသည်…',
