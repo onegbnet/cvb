@@ -85,7 +85,12 @@ export function openJobDialog({ job = null, langs = [], defaultLang = '', defaul
     class: 'fc-input apply-job-input',
     rows: 7,
     placeholder: tr('apply.jobPlaceholder'),
-    onInput: (e) => { draft.jd = e.target.value; },
+    onInput: (e) => {
+      draft.jd = e.target.value;
+      // **JD 清空了,上一次读出来的东西也就没了依据** —— 留着的话卡片会继续
+      // 显示一份已经不存在的招聘广告里的工作内容,还会喂给裁剪。
+      if (!draft.jd.trim()) draft.extracted = null;
+    },
   });
   jdInput.value = draft.jd;
 
@@ -217,13 +222,21 @@ export function openJobDialog({ job = null, langs = [], defaultLang = '', defaul
   });
 }
 
-/** 芯片上的字样:职位 · 国家 · 语种。没起名字的用 JD 头一句顶上,别摆一枚空芯片。 */
-export const jobChipText = (rec) => {
+/**
+ * 芯片上的字样:职位 · 国家 · 语种。
+ *
+ * **认不出的东西不写上去**:那门语种可能已经被删掉了(事实库里没有了),
+ * 那时页面实际用的是默认语种 —— 芯片再写着它就是在撒谎。规格同理。
+ * @param {object} rec 职位记录
+ * @param {string[]} knownLangs 事实库现有语种;不传则不校验
+ */
+export const jobChipText = (rec, knownLangs = null) => {
   const spec = specById(rec.spec);
+  const langOk = rec.lang && (!knownLangs || knownLangs.includes(rec.lang));
   const parts = [
     rec.title || tr('apply.jobUntitled'),
     spec && tr(spec.labelKey),
-    rec.lang && factsLangName(rec.lang),
+    langOk && factsLangName(rec.lang),
   ].filter(Boolean);
   return parts.join(' · ');
 };

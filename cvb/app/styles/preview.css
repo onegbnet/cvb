@@ -555,6 +555,23 @@
   min-width: 0;
 }
 
+/* 图标按钮的基本形(方框、无边框、图标居中)。**这条此前只写在
+   `.pdf-view-controls .btn-icon` 底下** —— 于是职位卡上那两个记号
+   (同样写着 btn-icon)什么样式都没吃到,渲染成一个塞了 SVG 的普通按钮。
+   提到顶层,PDF 工具栏那几条更具体的规则照旧覆盖它。 */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: var(--bg);
+}
+
 /* 标题一行:名字占满,记号(编辑/删除)靠右。记号是图标按钮 ——
    `aria-label` + `title` 在 JS 那侧给,这里只管排布。 */
 .apply-job-head {

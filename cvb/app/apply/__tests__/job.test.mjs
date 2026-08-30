@@ -132,3 +132,14 @@ test('用到的界面键在 en 表里真的存在', async () => {
   for (const key of used) expect(typeof en[key]).toBe('string');
   expect(en['apply.jobDuties']).toContain('{n}');
 });
+
+// ---- 2026-08-30 状态穷举时查出来的几条(都是"我自己刚写的代码没走全状态")----
+
+test('hasJobContent 只看 location.country,不看 countryCode —— 这是它的口径,别改', () => {
+  // 它是给**模型抽取结果**把关的:只推出来一个国家码不算"读到了内容"。
+  // 记下来是因为生成侧曾按它给「最小职位结构」把关,而那个结构只有 countryCode,
+  // 于是一条只有 JD、读取又失败的记录被判成"没有职位" —— 指令框摆着、指令被丢掉。
+  expect(hasJobContent(normalizeJob({ location: { countryCode: 'NZ' } }))).toBe(false);
+  expect(hasJobContent(normalizeJob({ location: { country: 'New Zealand' } }))).toBe(true);
+  expect(hasJobContent(normalizeJob({ title: '工程师' }))).toBe(true);
+});

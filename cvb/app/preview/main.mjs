@@ -86,7 +86,6 @@ const state = {
   jobId: '', // 当前选中的职位 id('' = 没选,回落到「纯预览」)
   job: null, // 选中职位里 AI 抽出来的结构(normalizeJob 形状);没读过是 null
   jobBusy: false,
-  jobHint: '', // 如实说一句(存失败 / 这份还没读过 / …)
 
   // ---- 定向裁剪(B 段)----
   // 这几样与职位信息同生命周期:换一则职位、清除职位、换语种都清掉。
@@ -877,16 +876,18 @@ const currentJob = () => state.jobs.find((j) => j.id === state.jobId) || null;
 /**
  * 喂给裁剪的职位结构。**没读过 AI 的记录也能裁** —— 拿手填的职位名与
  * 投递目标的国家现拼一个最小结构(模型知道的就少一些,卡片上如实说了)。
+ *
+ * **选了职位就一定有它(非 null)**:`state.job` 决定按钮说「生成初版简历」
+ * 还是「生成预览」、以及额外指令送不送出去。此前这里用 `hasJobContent` 兜了一道,
+ * 而那个判据看的是 `location.country`(自由文本)、不看 `countryCode` ——
+ * 于是「只有 JD、读取又失败」的记录返回 null:指令框摆着、指令却被静默丢掉。
+ * **控件摆出来了就得有消费方。**
  */
 function jobForTailor(rec) {
   if (!rec) return null;
   if (rec.extracted && hasJobContent(rec.extracted)) return rec.extracted;
   const spec = specById(rec.spec);
-  const minimal = normalizeJob({
-    title: rec.title,
-    location: spec ? { countryCode: spec.country } : {},
-  });
-  return hasJobContent(minimal) ? minimal : null;
+  return normalizeJob({ title: rec.title, location: spec ? { countryCode: spec.country } : {} });
 }
 
 /**
@@ -899,7 +900,6 @@ async function selectJob(id, { rebuild }) {
   const rec = currentJob();
   state.job = jobForTailor(rec);
   state.instructions = '';
-  state.jobHint = '';
   clearDraft(tr('apply.draftStale'));
   if (rec) {
     if (rec.spec && specById(rec.spec)) {
@@ -987,7 +987,7 @@ function buildJobBlock() {
             'aria-pressed': rec.id === state.jobId ? 'true' : 'false',
             onClick: () => selectJob(rec.id, { rebuild }),
           },
-          jobChipText(rec)
+          jobChipText(rec, state.langs.map((l) => l.lang))
         )
       );
     }
@@ -1071,8 +1071,6 @@ function buildJobBlock() {
       instr.value = state.instructions;
       box.append(h('div', { class: 'apply-instr-label' }, tr('apply.instr')), instr);
     }
-
-    if (state.jobHint) box.append(h('div', { class: 'apply-row' }, h('span', { class: 'apply-stale' }, state.jobHint)));
   };
   rebuild();
   return h('section', { class: 'blk' }, box);
@@ -1331,8 +1329,10 @@ function buildTailorBlock() {
 /** 折叠后那一行:读完的职位 + 选好的目标与版式,一眼看得完。 */
 function settingsSummaryText() {
   const spec = specById(state.spec);
+  const rec = currentJob();
   const parts = [
-    state.job && (state.job.title || state.job.org),
+    // **先用记录里的名字**:抽取结果可能没有(读失败),而记录一定有 title 或 JD
+    (rec && rec.title) || (state.job && (state.job.title || state.job.org)),
     state.job && jobPlaceText(state.job),
     spec && tr(spec.labelKey),
     tr(`template.${state.template}`),
