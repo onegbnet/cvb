@@ -1192,6 +1192,10 @@ async function runTailorRound({ revise = false, feedback = '' } = {}) {
         state.tailorBusy = 'tailor';
         state.tailorHint = '';
         setPdfBusy(true, { text: tr('apply.translatingFacts') });
+        // **翻译那几秒也要把生成按钮锁上** —— 漏了这一句,按钮在整个翻译阶段
+        // 都是可点的,双击就是两轮并发(与 2026-08-26 裁剪那次同一族的漏)。
+        // 生产探针正是靠"按钮没被禁用过"抓到的。
+        syncGenerate();
         rebuildTailor();
       }
       base = await factsInOutputLang();
