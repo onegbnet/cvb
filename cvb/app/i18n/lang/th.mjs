@@ -152,6 +152,8 @@ export default {
   'field.publication.url': 'URL',
   'field.publication.summary': 'สรุป',
   'field.reference.name': 'ชื่อบุคคลหรือองค์กรอ้างอิง',
+  'field.reference.contact': 'ข้อมูลติดต่อ',
+  'field.reference.identity': 'ตำแหน่ง / ความสัมพันธ์',
   'field.reference.reference': 'ข้อความรับรอง',
 
 

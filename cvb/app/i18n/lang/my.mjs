@@ -152,6 +152,8 @@ export default {
   'field.publication.url': 'URL',
   'field.publication.summary': 'အကျဉ်းချုပ်',
   'field.reference.name': 'ထောက်ခံသူ သို့မဟုတ် အဖွဲ့အစည်း အမည်',
+  'field.reference.contact': 'ဆက်သွယ်ရန်',
+  'field.reference.identity': 'ရာထူး / ဆက်နွယ်မှု',
   'field.reference.reference': 'ထောက်ခံချက် အသေးစိတ်',
 
 

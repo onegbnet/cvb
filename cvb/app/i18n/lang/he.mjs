@@ -152,6 +152,8 @@ export default {
   'field.publication.url': 'קישור',
   'field.publication.summary': 'תקציר',
   'field.reference.name': 'שם הממליץ או הארגון',
+  'field.reference.contact': 'פרטי קשר',
+  'field.reference.identity': 'תפקיד / קשר',
   'field.reference.reference': 'פרטי ההמלצה',
 
 

@@ -152,6 +152,8 @@ export default {
   'field.publication.url': 'URL',
   'field.publication.summary': 'Ringkasan',
   'field.reference.name': 'Nama perujuk atau organisasi',
+  'field.reference.contact': 'Hubungan',
+  'field.reference.identity': 'Jawatan / hubungan',
   'field.reference.reference': 'Butiran rujukan',
 
 

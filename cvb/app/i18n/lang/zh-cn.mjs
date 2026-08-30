@@ -165,6 +165,8 @@ export default {
   'field.publication.url': '链接',
   'field.publication.summary': '摘要',
   'field.reference.name': '推荐人或机构名字',
+  'field.reference.contact': '联系方式',
+  'field.reference.identity': '身份 / 关系',
   'field.reference.reference': '推荐详情',
 
   // ---- 作品集 ----

@@ -152,6 +152,8 @@ export default {
   'field.publication.url': 'URL',
   'field.publication.summary': '요약',
   'field.reference.name': '추천인 또는 기관명',
+  'field.reference.contact': '연락처',
+  'field.reference.identity': '직함 / 관계',
   'field.reference.reference': '추천 내용',
 
 

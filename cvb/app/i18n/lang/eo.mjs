@@ -152,6 +152,8 @@ export default {
   'field.publication.url': 'URL',
   'field.publication.summary': 'Resumo',
   'field.reference.name': 'Nomo de rekomendanto aŭ organizaĵo',
+  'field.reference.contact': 'Kontakto',
+  'field.reference.identity': 'Rolo / rilato',
   'field.reference.reference': 'Detaloj de la rekomendo',
 
 

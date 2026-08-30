@@ -152,6 +152,8 @@ export default {
   'field.publication.url': 'URL',
   'field.publication.summary': 'Стислий опис',
   'field.reference.name': 'Ім’я рекомендодавця або назва організації',
+  'field.reference.contact': 'Контакти',
+  'field.reference.identity': 'Посада / стосунок',
   'field.reference.reference': 'Текст рекомендації',
 
 

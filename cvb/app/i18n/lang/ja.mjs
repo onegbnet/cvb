@@ -152,6 +152,8 @@ export default {
   'field.publication.url': 'URL',
   'field.publication.summary': '概要',
   'field.reference.name': '推薦者名または団体名',
+  'field.reference.contact': '連絡先',
+  'field.reference.identity': '肩書き / 関係',
   'field.reference.reference': '推薦内容',
 
 

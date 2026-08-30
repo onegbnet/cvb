@@ -152,6 +152,8 @@ export default {
   'field.publication.url': 'الرابط',
   'field.publication.summary': 'الملخص',
   'field.reference.name': 'اسم المعرّف أو الجهة',
+  'field.reference.contact': 'وسيلة التواصل',
+  'field.reference.identity': 'المنصب / العلاقة',
   'field.reference.reference': 'تفاصيل التزكية',
 
 

@@ -152,6 +152,8 @@ export default {
   'field.publication.url': 'URL',
   'field.publication.summary': 'Tóm tắt',
   'field.reference.name': 'Tên người hoặc tổ chức tham chiếu',
+  'field.reference.contact': 'Liên hệ',
+  'field.reference.identity': 'Chức danh / quan hệ',
   'field.reference.reference': 'Chi tiết tham chiếu',
 
 

@@ -152,6 +152,8 @@ export default {
   'field.publication.url': '連結',
   'field.publication.summary': '摘要',
   'field.reference.name': '推薦人或機構名稱',
+  'field.reference.contact': '聯絡方式',
+  'field.reference.identity': '身分 / 關係',
   'field.reference.reference': '推薦內容',
 
 

@@ -26,9 +26,49 @@ export const SECTIONS = {
   skills: { strings: ['name', 'level'], lists: ['keywords'] },
   languages: { strings: ['language', 'fluency'], lists: [] },
   interests: { strings: ['name'], lists: ['keywords'] },
-  references: { strings: ['reference'], lists: [] }, // name 是人名,不翻(见上)
+  references: { strings: ['reference'], lists: [] }, // name 是人名,只译括号里那段(见 PARTIAL_STRINGS)
   // projects.type 是 portfolio 标记(值是约定),不翻
   projects: { strings: ['name', 'description', 'entity'], lists: ['highlights', 'keywords', 'roles'] },
+};
+
+// ---- 只译一部分的字段(2026-08-30)----
+//
+// **`references[].name` 实际存的不只是名字**:标准的 references 只有 name / reference,
+// 「这人是谁」没有别的地方可放,于是人们写成
+// 「张代君(盛大创新院时,意法爱立信中国区总裁,我负责项目的客户)」。
+// 整个字段排除在翻译之外的话,英文简历的 Referees 一节就会留着一段中文
+// —— 2026-08-30 在真机出的 PDF 上看到的。
+//
+// 规矩:**括号外的一个字都不碰(那是名字),只译括号里的**。括号是个人写下的、
+// 看得见的边界,同「姓名留一个空格,这件事就从猜变成读」是同一条思路 ——
+// 不猜哪一段是名字,只认他自己标出来的那段说明。没有括号就什么都不译(不退步)。
+const PARTIAL_STRINGS = { references: ['name'] };
+
+/** 每次现造,别共用带 /g 的正则(lastIndex 是有状态的,共用必出隔次失灵的怪事)。 */
+const bracketRe = () => /（[^（）]*）|\([^()]*\)/g;
+
+/** 串里每一段括号内容:[{ k: 第几个括号(含空的), text }],空括号不算槽位。 */
+const bracketParts = (str) => {
+  const out = [];
+  const re = bracketRe();
+  let m;
+  let i = 0;
+  while ((m = re.exec(str))) {
+    const inner = m[0].slice(1, -1);
+    if (inner.trim()) out.push({ k: i, text: inner });
+    i += 1;
+  }
+  return out;
+};
+
+/** 把第 k 个括号的内容换掉,括号本身与外面的字一个都不动。 */
+const replaceBracket = (str, k, value) => {
+  let i = 0;
+  return str.replace(bracketRe(), (m) => {
+    const cur = i;
+    i += 1;
+    return cur === k ? m[0] + value + m[m.length - 1] : m;
+  });
 };
 
 const isStr = (v) => typeof v === 'string' && v.trim() !== '';
@@ -55,6 +95,16 @@ const walkSlots = (config, cb) => {
       if (!item || typeof item !== 'object') return;
       for (const f of spec.strings) {
         if (isStr(item[f])) cb(`${section}.${i}.${f}`, item[f], (v) => { item[f] = v; });
+      }
+      // 只译括号里那段的字段(references[].name)—— 路径带 `#k` 标是第几个括号
+      for (const f of PARTIAL_STRINGS[section] || []) {
+        if (!isStr(item[f])) continue;
+        for (const { k, text } of bracketParts(item[f])) {
+          cb(`${section}.${i}.${f}#${k}`, text, (v) => {
+            // 按**当前值**重算:同一个字段有多个括号时,抓着旧串会让后一次盖掉前一次
+            item[f] = replaceBracket(item[f], k, v);
+          });
+        }
       }
       for (const f of spec.lists) {
         const arr = item[f];

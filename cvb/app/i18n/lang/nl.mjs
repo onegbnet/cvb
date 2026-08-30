@@ -152,6 +152,8 @@ export default {
   'field.publication.url': 'URL',
   'field.publication.summary': 'Samenvatting',
   'field.reference.name': 'Naam van referent of organisatie',
+  'field.reference.contact': 'Contact',
+  'field.reference.identity': 'Functie / relatie',
   'field.reference.reference': 'Referentiedetails',
 
 

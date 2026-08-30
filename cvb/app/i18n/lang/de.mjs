@@ -152,6 +152,8 @@ export default {
   'field.publication.url': 'URL',
   'field.publication.summary': 'Zusammenfassung',
   'field.reference.name': 'Referenzperson oder Organisation',
+  'field.reference.contact': 'Kontakt',
+  'field.reference.identity': 'Funktion / Beziehung',
   'field.reference.reference': 'Details zur Referenz',
 
 

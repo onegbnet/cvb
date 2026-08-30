@@ -152,6 +152,8 @@ export default {
   'field.publication.url': 'URL',
   'field.publication.summary': 'சுருக்கம்',
   'field.reference.name': 'பரிந்துரையாளர் அல்லது அமைப்பின் பெயர்',
+  'field.reference.contact': 'தொடர்பு',
+  'field.reference.identity': 'பதவி / உறவு',
   'field.reference.reference': 'பரிந்துரை விவரங்கள்',
 
 

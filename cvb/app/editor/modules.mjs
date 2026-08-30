@@ -4,6 +4,7 @@
 //          | tags(词组数组 → 芯片输入,chips.mjs) | lines(句子数组 → 逐条清单,string-list.mjs)
 // 校验(validate):email | phone | url(打字时经 ccs Field,提交时兜底)
 import { tr, getLanguage } from '../lib/i18n.mjs';
+import { splitReferenceName, formatReferenceName } from '../lib/reference-name.mjs';
 
 const ISO_COUNTRY_CODES = `AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW`.split(' ');
 const countryDisplayNames = typeof Intl !== 'undefined' && typeof Intl.DisplayNames === 'function'
@@ -405,10 +406,27 @@ export const MODULES = [
     icon: 'references',
     kind: 'list',
     summaryField: 'name',
-    get: (r) => r.references,
-    set: (r, items) => ({ ...r, references: items }),
+    // **三栏是虚字段**(2026-08-30 用户定):界面上是 姓名 / 联系方式 / 身份,
+    // 存回 JSON 仍是标准的一个 `name` 串,格式 `Name, Contact (Identity)`。
+    //
+    // 为什么这么做:标准的 references 只有 name / reference,「这人是谁」「怎么联系」
+    // 没别处可放,于是全塞进 name —— 而 name 整个不翻译(人名),英文简历的 Referees
+    // 一节就会留着一段中文(2026-08-30 真机 PDF 上看到的)。
+    // 修法不是拿正则去猜哪一段是名字,而是**把边界摆进界面**;
+    // 读别人的 JSON 也按同一条规则解(见 app/lib/reference-name.mjs)。
+    // **零扩展红线不动**:records 里没长出字段,拆与拼关在这两个钩子里。
+    get: (r) => (r.references || []).map((item) => ({ ...item, ...splitReferenceName(item && item.name) })),
+    set: (r, items) => ({
+      ...r,
+      references: (items || []).map(({ name, contact, identity, raw, ...rest }) => ({
+        ...rest,
+        name: formatReferenceName({ name, contact, identity, raw }),
+      })),
+    }),
     fields: [
       input('name', 'field.reference.name'),
+      input('contact', 'field.reference.contact'),
+      input('identity', 'field.reference.identity'),
       { type: 'textArea', attributeId: 'reference', labelKey: 'field.reference.reference', rows: 3 },
     ],
   },
@@ -435,7 +453,9 @@ const FIELD_PATHS = {
   skills: Object.fromEntries(['name', 'level', 'keywords'].map((key) => [key, `skills[].${key}`])),
   languages: Object.fromEntries(['language', 'fluency'].map((key) => [key, `languages[].${key}`])),
   interests: Object.fromEntries(['name', 'keywords'].map((key) => [key, `interests[].${key}`])),
-  references: Object.fromEntries(['name', 'reference'].map((key) => [key, `references[].${key}`])),
+  // 姓名 / 联系方式 / 身份**三栏都落在同一个标准字段** `references[].name` 里
+  //(格式 `Name, Contact (Identity)`)—— JSON 路径提示如实说出这件事
+  references: { name: 'references[].name', contact: 'references[].name', identity: 'references[].name', reference: 'references[].reference' },
   projects: Object.fromEntries(['name', 'description', 'highlights', 'keywords', 'startDate', 'endDate', 'url', 'roles', 'entity', 'type']
     .map((key) => [key, `projects[].${key}`])),
 };
