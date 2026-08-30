@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': 'La AI ankoraŭ ne legis ĝin — la adapto konas nur tion, kion vi tajpis',
 
+  'apply.jobLang': 'Lingvo de la vivresumo',
+
+  'apply.willTranslate': 'Viaj faktoj estas en {from}; ili unue estos tradukitaj al {to}',
+
+  'apply.translatingFacts': 'Tradukante viajn faktojn…',
+
+  'apply.translateFailed': 'Ne eblis traduki viajn faktojn al {lang}',
+
   'apply.jobErrBadUrl': 'Tiu ligilo ne legeblas — nur publikaj http/https-paĝoj',
 
   'apply.jobErrFetch': 'Tiu ligilo ne malfermeblis',

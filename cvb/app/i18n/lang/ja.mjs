@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': 'AI でまだ読み取っていません。調整時は入力した内容しか分かりません',
 
+  'apply.jobLang': '履歴書の言語',
+
+  'apply.willTranslate': '事実は{from}です。先に{to}へ翻訳します',
+
+  'apply.translatingFacts': '事実を翻訳しています…',
+
+  'apply.translateFailed': '事実を{lang}に翻訳できませんでした',
+
   'apply.jobErrBadUrl': 'このリンクは読み取れません。公開されている http/https のページのみです',
 
   'apply.jobErrFetch': 'このリンクを開けませんでした',

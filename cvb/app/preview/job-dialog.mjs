@@ -1,7 +1,13 @@
 // 「新建 / 编辑职位」那个框(2026-08-30 用户裁定职位要能管理:
 // 「可以『新建职位』:选择国家、语种,输入职位和 JD」)。
 //
-// **四样都摆在框里,一次填完**:职位名称 / 投递目标(国家)/ 语种 / JD 正文或链接。
+// **四样都摆在框里,一次填完**:职位名称 / 投递目标(国家)/ 简历语言 / JD 正文或链接。
+//
+// **「简历语言」= 广告语言 = 交出去的那份简历用什么语言**(2026-08-30 用户裁定:
+// 「招聘职位本身的语言,以及简历要用什么语言交 —— 这两者应该是同一的」)。
+// 它**不是**「用哪份事实文档」—— 那是生成侧现算的:有对应语种的事实就用它,
+// 没有就取默认语种那份**译过去**(用户:「事实语种和职位、提交语种完全可以不同
+// —— 要经过翻译」)。所以这里列的是**语言**,不是你手上已有的那几份文档。
 // **这四样只在这里选** —— 页面上没有第二处(2026-08-30 用户:「投递目标 —— 这里
 // 选了,为什么下面还有?」)。同一件事两个地方都能改,就一定会出现「我改了但没生效」。
 //
@@ -15,11 +21,11 @@
 // 是在给一个已经懂了的人讲课。
 import { h, clear } from '../lib/dom.mjs';
 import { tr } from '../lib/i18n.mjs';
-import { looksLikeUrl, normalizeJob, hasJobContent, JOB_ERROR_KEYS } from '../apply/job.mjs';
+import { looksLikeUrl, normalizeJob, hasJobContent, defaultLangForSpec, JOB_ERROR_KEYS } from '../apply/job.mjs';
 import { APPLY_SPECS, specById } from '../apply/specs.mjs';
+import { FACTS_LANGS, factsLangName } from '../editor/facts-bar.mjs';
 import { fetchJobPage, isUnauthorized, redirectToUnlock } from '../lib/api.mjs';
 import { extractJobFromText } from '../lib/ai.mjs';
-import { factsLangName } from '../editor/facts-bar.mjs';
 
 /** 一排不预选的芯片(同 /edit 文档栏与这一页选择区的 `.facts-lang`,不发明第二种画法)。 */
 function chipPicker(values, current, onPick) {
@@ -67,7 +73,8 @@ export function openJobDialog({ job = null, langs = [], defaultLang = '', defaul
   const draft = {
     title: (job && job.title) || '',
     spec: (job && job.spec) || defaultSpec || '',
-    lang: (job && job.lang) || defaultLang || '',
+    // 新建时缺省跟着投递目标走(nz/au→英文、cn→中文);推不出就沿用当前语言
+    lang: (job && job.lang) || defaultLangForSpec(defaultSpec) || defaultLang || '',
     jd: (job && job.jd) || '',
     // 读出来的结构随记录走:编辑时不重读也不丢(重读要人点)
     extracted: (job && job.extracted) || null,
@@ -97,12 +104,24 @@ export function openJobDialog({ job = null, langs = [], defaultLang = '', defaul
   const specPicker = chipPicker(
     APPLY_SPECS.map((s) => ({ value: s.id, text: tr(s.labelKey) })),
     () => draft.spec,
-    (v) => { draft.spec = v; }
+    (v) => {
+      draft.spec = v;
+      // 换了国家,缺省的简历语言跟着换 —— 除非人已经自己点过语言
+      if (!langTouched) {
+        const guess = defaultLangForSpec(v);
+        if (guess) {
+          draft.lang = guess;
+          langPicker.paint();
+        }
+      }
+    }
   );
+  // **人一旦自己点过语言,国家就不再替他改**(那是他刚做的决定)
+  let langTouched = Boolean(job && job.lang);
   const langPicker = chipPicker(
-    langs.map(({ lang: code }) => ({ value: code, text: factsLangName(code) })),
+    FACTS_LANGS.map((code) => ({ value: code, text: factsLangName(code) })),
     () => draft.lang,
-    (v) => { draft.lang = v; }
+    (v) => { draft.lang = v; langTouched = true; }
   );
 
   const hint = h('span', { class: 'apply-stale' });
@@ -200,9 +219,10 @@ export function openJobDialog({ job = null, langs = [], defaultLang = '', defaul
       { class: 'apply-dlg' },
       field('apply.jobName', titleInput),
       field('apply.target', specPicker.row),
-      // **语种永远摆出来**,哪怕只有一门:它是这条记录的字段,不是"有选择才出现"的控件
-      //(2026-08-30 用户问「语种呢?」—— 一门语种时它被条件藏掉了)
-      field('apply.facts', langPicker.row),
+      // **简历语言永远摆出来**:它是这条记录的字段,不是"有选择才出现"的控件。
+      // 列的是**语言**(不是你已有的事实文档)—— 选一门你还没有事实的语言是合法的,
+      // 生成时会从默认语种译过去。
+      field('apply.jobLang', langPicker.row),
       field('apply.job', jdInput),
       h('div', { class: 'apply-row apply-dlg-read' }, hint),
       h('div', { class: 'apply-dlg-actions' }, cancelBtn, saveBtn)

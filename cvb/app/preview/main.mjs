@@ -60,7 +60,7 @@ import {
 } from '../apply/tailor.mjs';
 import { runTailor } from '../lib/tailor-client.mjs';
 import { confirmAction } from '../lib/confirm.mjs';
-import { extractJobFromText } from '../lib/ai.mjs';
+import { translateResumeConfig } from '../lib/ai.mjs';
 import { splitName } from '../lib/name-parts.mjs';
 import { factsLangName } from '../editor/facts-bar.mjs';
 import { texEngineAssets } from '../tex/writer.mjs';
@@ -83,6 +83,10 @@ const state = {
   // **选中一个职位就定了投递目标与语种**,所以那两行芯片在选中时不再单独出现
   // —— 同一件事只该有一个说了算的地方。
   jobs: [], // 职位列表(不带 JD 正文,那是编辑时按 id 单取的)
+  // **提交语言**:交出去的那份简历用什么语言(= 广告语言,职位记录里的 lang)。
+  // 与 factsLang(手上那份事实文档是什么语种)**是两件事** —— 不同就过翻译。
+  outLang: '',
+  translated: {}, // 「源→目标」译好的事实,会话内缓存;不回写事实库
   jobId: '', // 当前选中的职位 id('' = 没选,回落到「纯预览」)
   job: null, // 选中职位里 AI 抽出来的结构(normalizeJob 形状);没读过是 null
   jobBusy: false,
@@ -870,8 +874,11 @@ function buildSelectionBar() {
 // 职位有**两个消费方**:① 推导投递目标(→ 决定可选版式与文件名惯例);
 // ② 连同求职者的额外指令一起,作为定向裁剪的输入(见下面的 tailor 那一段)。
 
-/** 选中的那条记录(列表里的浅记录,不含 JD 正文)。 */
+/** 选中的那条记录(列表里的浅记录;JD 正文由 selectJob 现取后挂上去)。 */
 const currentJob = () => state.jobs.find((j) => j.id === state.jobId) || null;
+
+/** 喂给裁剪的职位描述正文。**没有职位就是空串**,不是 undefined(预算要拿它算长度)。 */
+const jobDescription = () => (currentJob() || {}).jd || '';
 
 /**
  * 喂给裁剪的职位结构。**没读过 AI 的记录也能裁** —— 拿手填的职位名与
@@ -898,6 +905,16 @@ async function selectJob(id, { rebuild }) {
   if (state.jobId === id) return;
   state.jobId = id;
   const rec = currentJob();
+  // **JD 正文要现取**:列表回包里没有它(几万字符 × N 条太大),
+  // 而裁剪要拿它当素材 —— 不取的话职位描述整个不会送出去,而且一声不响。
+  if (rec && rec.jd === undefined) {
+    try {
+      rec.jd = (await fetchJob(id)).job.jd || '';
+    } catch (err) {
+      if (isUnauthorized(err)) return redirectToUnlock();
+      rec.jd = ''; // 取不到就少一份素材,不挡生成
+    }
+  }
   state.job = jobForTailor(rec);
   state.instructions = '';
   clearDraft(tr('apply.draftStale'));
@@ -906,11 +923,17 @@ async function selectJob(id, { rebuild }) {
       state.spec = rec.spec;
       state.template = templateForSpec(state.spec, state.template);
     }
+    // **提交语言跟着职位走**;事实文档另说 ——
+    //   有那门语种的事实 → 直接读它(读完两者相同,不必翻译);
+    //   没有 → 留在默认语种那份,生成时现译(见 factsInOutputLang)。
+    state.outLang = rec.lang || '';
     if (rec.lang && state.langs.some((l) => l.lang === rec.lang) && rec.lang !== state.factsLang) {
       state.factsLang = rec.lang;
       state.refs = state.refs.filter((code) => code !== rec.lang);
       await loadFacts();
     }
+  } else {
+    state.outLang = '';
   }
   syncUrl();
   markStale();
@@ -1049,6 +1072,16 @@ function buildJobBlock() {
             )
           ),
           meta && h('div', { class: 'apply-job-meta' }, meta),
+          // **事实与提交语言不同就说一句** —— 生成时会现译一份,人该知道
+          needsTranslation()
+            ? h(
+                'div',
+                { class: 'apply-job-meta' },
+                tr('apply.willTranslate')
+                  .replace('{from}', factsLangName(state.factsLang || ''))
+                  .replace('{to}', factsLangName(state.outLang))
+              )
+            : null,
           ex && ex.responsibilities.length
             ? h(
                 'div',
@@ -1144,9 +1177,37 @@ function turnBlock(turn) {
   return h('div', { class: 'tlr-turn' }, ...rows);
 }
 
+/** 这一份事实要不要先翻译:提交语言与手上这份文档的语种不同就要。 */
+const needsTranslation = () => Boolean(state.outLang) && state.outLang !== (state.factsLang || '');
+
 /** 跑一轮裁剪 / 改版:AI → 归一 → 套用。初版跑完顺手编译一次。 */
 async function runTailorRound({ revise = false, feedback = '' } = {}) {
-  const source = revise ? compileSource() : state.config;
+  // **先把事实变成提交语言**(事实是中文、这份要交英文 → 现译一份,内存里)。
+  // 放在裁剪之前:各步只做一件事,裁剪于是全程面对目标语言。
+  // 改版轮不必再译 —— 那时 compileSource() 已经是目标语言的稿了。
+  let base = state.config;
+  if (!revise) {
+    try {
+      if (needsTranslation()) {
+        state.tailorBusy = 'tailor';
+        state.tailorHint = '';
+        setPdfBusy(true, { text: tr('apply.translatingFacts') });
+        rebuildTailor();
+      }
+      base = await factsInOutputLang();
+    } catch (err) {
+      if (isUnauthorized(err)) return redirectToUnlock();
+      // **译不成不许拿原语言顶上** —— 那会交出一份中文简历投新西兰,
+      // 而界面还说它是英文的。如实停在这里。
+      state.tailorBusy = '';
+      state.tailorHint = tr('apply.translateFailed').replace('{lang}', factsLangName(state.outLang));
+      setPdfBusy(false);
+      syncGenerate();
+      rebuildTailor();
+      return;
+    }
+  }
+  const source = revise ? compileSource() : base;
   const facts = collectTailorFacts(source, { sections: templateSections(state.template) });
   const refs = state.refs
     .map((lang) => state.refDocs && state.refDocs[lang])
@@ -1156,7 +1217,7 @@ async function runTailorRound({ revise = false, feedback = '' } = {}) {
       return { lang: state.refs[i], slots: f.slots, chars: f.chars };
     });
   const budget = estimateTailorPayload({
-    facts, refs, jobText: state.jobText, job: state.job, instructions: state.instructions,
+    facts, refs, jobText: jobDescription(), job: state.job, instructions: state.instructions,
   });
   // 素材太多时说清是**哪一样**大。客户端先拦一道(不让请求白打到服务端),
   // 服务端的 413 是第二道 —— 但服务端不知道是哪一样,所以两条路都在这里组装。
@@ -1184,7 +1245,7 @@ async function runTailorRound({ revise = false, feedback = '' } = {}) {
       facts,
       refs,
       job: state.job,
-      jobText: state.jobText,
+      jobText: jobDescription(),
       instructions: state.instructions,
       feedback,
       spec: state.spec,
@@ -1436,6 +1497,40 @@ async function loadFacts() {
   state.config = state.rawConfig;
 }
 
+/**
+ * **事实语种与提交语言可以不同 —— 中间过翻译**(2026-08-30 用户裁定)。
+ *
+ * 职位上的 `lang` 是**交出去的那份简历用什么语言**;而事实库里未必有那门语种。
+ * 规则两条:有对应语种的事实文档就直接用它(不翻译);没有就取**默认语种**那份
+ * **当场译过去** —— 译在内存里,**一个字节都不回写事实库**(§3.6 的红线;
+ * 建一份新文档是 /edit 那一页的事,不该由生成侧替人决定)。
+ *
+ * **翻译在裁剪之前**:各步只做一件事(§3.6「裁剪不是翻译步」)—— 先把事实变成
+ * 目标语言,裁剪于是全程面对目标语言,模型改写出来的也是目标语言。
+ *
+ * 译好的按「源→目标」缓存在会话里:换职位、重新生成都不必再译一遍。
+ *
+ * **译不成不许拿原语言顶上**:那样你会拿到一份中文简历投新西兰,而界面还说它是英文的。
+ * 如实抛,调用方报错。
+ */
+async function factsInOutputLang() {
+  const want = state.outLang;
+  // 没指定 / 就是当前这份文档的语种 → 原样用
+  if (!want || want === (state.factsLang || '')) return state.config;
+  // 事实库里真有这门语种 → selectJob 已经把它读进来了,这里不会走到
+  const key = `${state.factsLang || 'default'}->${want}`;
+  if (state.translated[key]) return state.translated[key];
+  const out = await translateResumeConfig({
+    config: state.config,
+    sourceLang: state.factsLang || '',
+    targetLang: want,
+    sourceLabel: factsLangName(state.factsLang || ''),
+    targetLabel: factsLangName(want),
+  });
+  state.translated[key] = normalizeResume(out);
+  return state.translated[key];
+}
+
 function buildToolbar(pageEl) {
   pdfBtnEl = h(
     'button',
@@ -1512,6 +1607,7 @@ async function main() {
       state.spec = picked.spec;
       state.template = templateForSpec(state.spec, state.template);
     }
+    state.outLang = picked.lang || '';
     if (picked.lang && state.langs.some((l) => l.lang === picked.lang)) state.factsLang = picked.lang;
   }
   await loadFacts();

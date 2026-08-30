@@ -102,3 +102,21 @@ export const JOB_ERROR_KEYS = {
   JOB_EMPTY: 'apply.jobErrEmpty',
   AI_TEXT_TOO_LARGE: 'apply.jobErrTooLarge',
 };
+
+// ---- 投递语言(2026-08-30 用户裁定)----
+//
+// **招聘广告的语言与简历提交语言是同一件事**,所以职位上只有一个语言字段;
+// 而**事实库里的事实可以是另一门语言 —— 中间过翻译**(用户原话)。
+// 于是 `job.lang` 的语义是「这份简历用什么语言交出去」,**不是**「用哪份事实文档」:
+// 后者由生成侧现算(有对应语种的文档就用它,没有就取默认语种那份译过去)。
+//
+// **这张表不是文化规范条目**,所以不进 specs.mjs(那里每一条都要逐项手抄自
+// `culture/<id>.md` 并留出处,见 §4)。它只是「投这个国家通常用什么语言写简历」的
+// **缺省值**,人可以改 —— 广告是英文的日本外企岗位就该选英文。
+const SPEC_DEFAULT_LANG = { au: 'en', nz: 'en', cn: 'zh' };
+
+/**
+ * 某个投递目标的缺省简历语言。认不出的返回 '' —— **不猜**,让人自己选
+ *(同 deriveSpec 那条:推不出来就什么都不动)。
+ */
+export const defaultLangForSpec = (specId) => SPEC_DEFAULT_LANG[String(specId || '')] || '';

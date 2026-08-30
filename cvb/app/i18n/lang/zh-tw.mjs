@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': '這份還沒讓 AI 讀過——裁剪時只知道你手動填的內容',
 
+  'apply.jobLang': '履歷語言',
+
+  'apply.willTranslate': '你的事實是{from}的，會先譯成{to}',
+
+  'apply.translatingFacts': '正在翻譯事實…',
+
+  'apply.translateFailed': '沒能把事實譯成{lang}',
+
   'apply.jobErrBadUrl': '這條連結不能讀 —— 只讀公開網路上的 http/https 網頁',
 
   'apply.jobErrFetch': '打不開這條連結',

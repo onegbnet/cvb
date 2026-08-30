@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': 'ШІ ще не прочитав її — адаптація знає лише те, що ви ввели',
 
+  'apply.jobLang': 'Мова резюме',
+
+  'apply.willTranslate': 'Ваші факти написані мовою {from}; спершу їх буде перекладено на {to}',
+
+  'apply.translatingFacts': 'Перекладаємо ваші факти…',
+
+  'apply.translateFailed': 'Не вдалося перекласти ваші факти на {lang}',
+
   'apply.jobErrBadUrl': 'Це посилання не можна прочитати — лише публічні сторінки http/https',
 
   'apply.jobErrFetch': 'Не вдалося відкрити це посилання',

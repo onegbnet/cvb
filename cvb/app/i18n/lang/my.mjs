@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': 'AI က မဖတ်ရသေးပါ — ချိန်ညှိရာတွင် သင်ရိုက်ထည့်ထားသည်ကိုသာ သိပါမည်',
 
+  'apply.jobLang': 'ကိုယ်ရေးရာဇဝင် ဘာသာစကား',
+
+  'apply.willTranslate': 'သင့်အချက်အလက်များသည် {from} ဖြစ်ပြီး {to} သို့ ဦးစွာ ဘာသာပြန်ပါမည်',
+
+  'apply.translatingFacts': 'အချက်အလက်များကို ဘာသာပြန်နေသည်…',
+
+  'apply.translateFailed': 'အချက်အလက်များကို {lang} သို့ ဘာသာပြန်၍ မရပါ',
+
   'apply.jobErrBadUrl': 'ထိုလင့်ခ်ကို ဖတ်၍မရပါ — အများသုံး http/https စာမျက်နှာများသာ',
 
   'apply.jobErrFetch': 'ထိုလင့်ခ်ကို ဖွင့်၍မရပါ',

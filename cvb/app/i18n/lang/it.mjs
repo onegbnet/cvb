@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': 'Non ancora letta dall’IA: l’adattamento conosce solo ciò che hai scritto',
 
+  'apply.jobLang': 'Lingua del CV',
+
+  'apply.willTranslate': 'I tuoi dati sono in {from}; verranno prima tradotti in {to}',
+
+  'apply.translatingFacts': 'Traduzione dei dati in corso…',
+
+  'apply.translateFailed': 'Impossibile tradurre i dati in {lang}',
+
   'apply.jobErrBadUrl': 'Quel link non può essere letto: solo pagine http/https pubbliche',
 
   'apply.jobErrFetch': 'Non è stato possibile aprire quel link',

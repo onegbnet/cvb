@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': 'AI ยังไม่ได้อ่านประกาศนี้ การปรับแต่งจะรู้เฉพาะสิ่งที่คุณกรอกเอง',
 
+  'apply.jobLang': 'ภาษาของเรซูเม่',
+
+  'apply.willTranslate': 'ข้อมูลของคุณเป็นภาษา{from} จะถูกแปลเป็นภาษา{to}ก่อน',
+
+  'apply.translatingFacts': 'กำลังแปลข้อมูลของคุณ…',
+
+  'apply.translateFailed': 'แปลข้อมูลของคุณเป็นภาษา{lang}ไม่สำเร็จ',
+
   'apply.jobErrBadUrl': 'อ่านลิงก์นี้ไม่ได้ อ่านได้เฉพาะหน้าเว็บ http/https ที่เปิดสาธารณะ',
 
   'apply.jobErrFetch': 'เปิดลิงก์นี้ไม่ได้',

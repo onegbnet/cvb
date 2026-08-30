@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': 'Noch nicht von der KI gelesen – die Anpassung kennt nur Ihre Eingaben',
 
+  'apply.jobLang': 'Sprache des Lebenslaufs',
+
+  'apply.willTranslate': 'Ihre Fakten liegen auf {from} vor und werden zuerst nach {to} übersetzt',
+
+  'apply.translatingFacts': 'Fakten werden übersetzt…',
+
+  'apply.translateFailed': 'Fakten konnten nicht nach {lang} übersetzt werden',
+
   'apply.jobErrBadUrl': 'Dieser Link kann nicht gelesen werden — nur öffentliche http/https-Seiten',
 
   'apply.jobErrFetch': 'Dieser Link ließ sich nicht öffnen',

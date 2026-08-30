@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': 'ה-AI עדיין לא קרא אותה — ההתאמה מכירה רק את מה שהזנת',
 
+  'apply.jobLang': 'שפת קורות החיים',
+
+  'apply.willTranslate': 'העובדות שלך ב{from} ויתורגמו תחילה ל{to}',
+
+  'apply.translatingFacts': 'מתרגם את העובדות שלך…',
+
+  'apply.translateFailed': 'לא ניתן היה לתרגם את העובדות שלך ל{lang}',
+
   'apply.jobErrBadUrl': 'לא ניתן לקרוא את הקישור הזה — רק דפי http/https ציבוריים',
 
   'apply.jobErrFetch': 'לא ניתן היה לפתוח את הקישור',

@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': '아직 AI로 읽지 않았습니다. 맞춤 작성 시 직접 입력한 내용만 반영됩니다',
 
+  'apply.jobLang': '이력서 언어',
+
+  'apply.willTranslate': '사실은 {from}입니다. 먼저 {to}로 번역합니다',
+
+  'apply.translatingFacts': '사실을 번역하는 중…',
+
+  'apply.translateFailed': '사실을 {lang}(으)로 번역하지 못했습니다',
+
   'apply.jobErrBadUrl': '이 링크는 읽을 수 없습니다. 공개된 http/https 페이지만 읽습니다',
 
   'apply.jobErrFetch': '이 링크를 열 수 없습니다',

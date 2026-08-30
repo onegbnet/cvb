@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': 'Belum dibaca AI — penyesuaian hanya tahu apa yang anda taip',
 
+  'apply.jobLang': 'Bahasa resume',
+
+  'apply.willTranslate': 'Fakta anda dalam {from}; ia akan diterjemahkan ke {to} dahulu',
+
+  'apply.translatingFacts': 'Menterjemah fakta anda…',
+
+  'apply.translateFailed': 'Tidak dapat menterjemah fakta anda ke {lang}',
+
   'apply.jobErrBadUrl': 'Pautan itu tidak boleh dibaca — hanya halaman http/https awam',
 
   'apply.jobErrFetch': 'Pautan itu tidak dapat dibuka',

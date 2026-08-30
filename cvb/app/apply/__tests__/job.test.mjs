@@ -3,7 +3,7 @@
 //
 // 这里盯的核心是一条**用户成文的规矩**:「推导文化模板,**多解时让用户手动选**」
 // —— 所以恰好一套才自动选,多解与推不出都不许替他决定。
-const { looksLikeUrl, normalizeJob, hasJobContent, jobPlaceText, deriveSpec, JOB_ERROR_KEYS } =
+const { looksLikeUrl, normalizeJob, hasJobContent, jobPlaceText, deriveSpec, defaultLangForSpec, JOB_ERROR_KEYS } =
   await import('../job.mjs');
 const { APPLY_SPECS } = await import('../specs.mjs');
 
@@ -127,10 +127,15 @@ test('用到的界面键在 en 表里真的存在', async () => {
     // 职位落库之后的那一组(2026-08-30):芯片行、新建框、卡片
     'apply.jobs', 'apply.jobNew', 'apply.jobName', 'apply.jobNamePh',
     'apply.jobUntitled', 'apply.jobUnread',
+    'apply.jobLang', 'apply.willTranslate', 'apply.translatingFacts', 'apply.translateFailed',
     ...Object.values(JOB_ERROR_KEYS),
   ];
   for (const key of used) expect(typeof en[key]).toBe('string');
   expect(en['apply.jobDuties']).toContain('{n}');
+  // 两个占位符缺一个就会在界面上原样印出 {from} / {to}
+  expect(en['apply.willTranslate']).toContain('{from}');
+  expect(en['apply.willTranslate']).toContain('{to}');
+  expect(en['apply.translateFailed']).toContain('{lang}');
 });
 
 // ---- 2026-08-30 状态穷举时查出来的几条(都是"我自己刚写的代码没走全状态")----
@@ -142,4 +147,16 @@ test('hasJobContent 只看 location.country,不看 countryCode —— 这是它�
   expect(hasJobContent(normalizeJob({ location: { countryCode: 'NZ' } }))).toBe(false);
   expect(hasJobContent(normalizeJob({ location: { country: 'New Zealand' } }))).toBe(true);
   expect(hasJobContent(normalizeJob({ title: '工程师' }))).toBe(true);
+});
+
+test('defaultLangForSpec —— 投递目标给出缺省简历语言,认不出就不猜', () => {
+  // **这不是文化规范条目**(所以不在 specs.mjs 里),只是「投这个国家通常用什么
+  // 语言写简历」的缺省值,人可以改。
+  expect(defaultLangForSpec('nz')).toBe('en');
+  expect(defaultLangForSpec('au')).toBe('en');
+  expect(defaultLangForSpec('cn')).toBe('zh');
+  // 认不出的一律空 —— 同 deriveSpec 那条:推不出来就什么都不动
+  for (const bad of ['', null, undefined, 'xx', 'cn-tech']) expect(defaultLangForSpec(bad)).toBe('');
+  // 每个现有规格都要有缺省(漏一个就是建职位时语言空着)
+  for (const s of APPLY_SPECS) expect(defaultLangForSpec(s.id)).toMatch(/^[a-z]{2}$/);
 });

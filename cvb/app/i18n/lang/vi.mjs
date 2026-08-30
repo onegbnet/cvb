@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': 'AI chưa đọc tin này — phần tinh chỉnh chỉ biết những gì bạn tự nhập',
 
+  'apply.jobLang': 'Ngôn ngữ hồ sơ',
+
+  'apply.willTranslate': 'Dữ kiện của bạn bằng {from}; sẽ được dịch sang {to} trước',
+
+  'apply.translatingFacts': 'Đang dịch dữ kiện của bạn…',
+
+  'apply.translateFailed': 'Không dịch được dữ kiện của bạn sang {lang}',
+
   'apply.jobErrBadUrl': 'Không đọc được liên kết đó — chỉ đọc trang http/https công khai',
 
   'apply.jobErrFetch': 'Không mở được liên kết đó',

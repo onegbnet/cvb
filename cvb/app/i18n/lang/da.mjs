@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': 'Endnu ikke læst af AI’en – tilpasningen kender kun det, du har skrevet',
 
+  'apply.jobLang': 'Cv-sprog',
+
+  'apply.willTranslate': 'Dine fakta er på {from} og bliver først oversat til {to}',
+
+  'apply.translatingFacts': 'Oversætter dine fakta…',
+
+  'apply.translateFailed': 'Kunne ikke oversætte dine fakta til {lang}',
+
   'apply.jobErrBadUrl': 'Det link kan ikke læses — kun offentlige http/https-sider',
 
   'apply.jobErrFetch': 'Det link kunne ikke åbnes',

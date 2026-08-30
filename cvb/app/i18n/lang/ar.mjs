@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': 'لم يقرأها الذكاء الاصطناعي بعد — التخصيص يعرف ما أدخلته فقط',
 
+  'apply.jobLang': 'لغة السيرة الذاتية',
+
+  'apply.willTranslate': 'بياناتك بلغة {from}، وستُترجم أولاً إلى {to}',
+
+  'apply.translatingFacts': 'جارٍ ترجمة بياناتك…',
+
+  'apply.translateFailed': 'تعذّرت ترجمة بياناتك إلى {lang}',
+
   'apply.jobErrBadUrl': 'تعذّرت قراءة هذا الرابط — تُقرأ صفحات http/https العامة فقط',
 
   'apply.jobErrFetch': 'تعذّر فتح هذا الرابط',

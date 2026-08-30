@@ -297,6 +297,14 @@ export default {
 
   'apply.jobUnread': 'Nog niet door de AI gelezen — het op maat maken kent alleen wat u hebt ingevuld',
 
+  'apply.jobLang': 'Taal van het cv',
+
+  'apply.willTranslate': 'Uw feiten staan in het {from} en worden eerst naar het {to} vertaald',
+
+  'apply.translatingFacts': 'Feiten worden vertaald…',
+
+  'apply.translateFailed': 'Kon uw feiten niet naar het {lang} vertalen',
+
   'apply.jobErrBadUrl': 'Die link kan niet gelezen worden — alleen openbare http/https-pagina’s',
 
   'apply.jobErrFetch': 'Die link kon niet geopend worden',

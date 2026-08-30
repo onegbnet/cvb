@@ -298,6 +298,14 @@ export default {
 
   'apply.jobUnread': 'Not read by AI yet — tailoring only knows what you typed',
 
+  'apply.jobLang': 'Resume language',
+
+  'apply.willTranslate': 'Your facts are in {from}; they will be translated to {to} first',
+
+  'apply.translatingFacts': 'Translating your facts…',
+
+  'apply.translateFailed': 'Could not translate your facts into {lang}',
+
   'apply.jobErrBadUrl': 'That link cannot be read — only public http/https web pages',
 
   'apply.jobErrFetch': 'That link could not be opened',

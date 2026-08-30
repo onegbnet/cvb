@@ -21,6 +21,9 @@ const FACTS_LANG_NAMES = {
 
 export const factsLangName = (code) => FACTS_LANG_NAMES[code] || code;
 
+/** 可以作为事实语种的语言清单(/apply 选简历语言也用这一份,两页别各列各的)。 */
+export const FACTS_LANGS = Object.keys(FACTS_LANG_NAMES);
+
 /**
  * @param {object} opts
  * @param {{source: string, langs: Array<{lang: string}>}} opts.langsInfo
