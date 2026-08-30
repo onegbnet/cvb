@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': '읽는 중…',
 
-  'apply.jobRedo': '다른 공고 읽기',
 
-  'apply.jobClear': '지우기',
 
   'apply.jobEmpty': '먼저 공고 내용이나 링크를 붙여넣으세요',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': '원격',
 
   'apply.jobDuties': '업무 내용 {n}건을 읽었습니다',
+
+  'apply.jobs': '채용 공고',
+
+  'apply.jobNew': '공고 추가',
+
+  'apply.jobName': '직무명',
+
+  'apply.jobNamePh': '시니어 소프트웨어 엔지니어',
+
+  'apply.jobUntitled': '이름 없는 공고',
+
+  'apply.jobUnread': '아직 AI로 읽지 않았습니다. 맞춤 작성 시 직접 입력한 내용만 반영됩니다',
 
   'apply.jobErrBadUrl': '이 링크는 읽을 수 없습니다. 공개된 http/https 페이지만 읽습니다',
 

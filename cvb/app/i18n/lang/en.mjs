@@ -273,9 +273,7 @@ export default {
 
   'apply.jobReading': 'Reading…',
 
-  'apply.jobRedo': 'Read another',
 
-  'apply.jobClear': 'Clear',
 
   'apply.jobEmpty': 'Paste a job description or a link first',
 
@@ -288,6 +286,18 @@ export default {
   'apply.jobRemote': 'Remote',
 
   'apply.jobDuties': '{n} duties read',
+
+  'apply.jobs': 'Jobs',
+
+  'apply.jobNew': 'New job',
+
+  'apply.jobName': 'Job title',
+
+  'apply.jobNamePh': 'Senior Software Engineer',
+
+  'apply.jobUntitled': 'Untitled job',
+
+  'apply.jobUnread': 'Not read by AI yet — tailoring only knows what you typed',
 
   'apply.jobErrBadUrl': 'That link cannot be read — only public http/https web pages',
 

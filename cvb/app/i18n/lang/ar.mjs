@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'جارٍ القراءة…',
 
-  'apply.jobRedo': 'اقرأ إعلانًا آخر',
 
-  'apply.jobClear': 'مسح',
 
   'apply.jobEmpty': 'الصق وصف الوظيفة أو رابطًا أولًا',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'عن بُعد',
 
   'apply.jobDuties': 'قُرئت {n} من المهام',
+
+  'apply.jobs': 'الوظائف',
+
+  'apply.jobNew': 'وظيفة جديدة',
+
+  'apply.jobName': 'المسمى الوظيفي',
+
+  'apply.jobNamePh': 'مهندس برمجيات أول',
+
+  'apply.jobUntitled': 'وظيفة بلا عنوان',
+
+  'apply.jobUnread': 'لم يقرأها الذكاء الاصطناعي بعد — التخصيص يعرف ما أدخلته فقط',
 
   'apply.jobErrBadUrl': 'تعذّرت قراءة هذا الرابط — تُقرأ صفحات http/https العامة فقط',
 

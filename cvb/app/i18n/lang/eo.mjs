@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'Legante…',
 
-  'apply.jobRedo': 'Legi alian',
 
-  'apply.jobClear': 'Vakigi',
 
   'apply.jobEmpty': 'Unue algluu priskribon aŭ ligilon',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'Fora',
 
   'apply.jobDuties': '{n} taskoj legitaj',
+
+  'apply.jobs': 'Postenoj',
+
+  'apply.jobNew': 'Nova posteno',
+
+  'apply.jobName': 'Titolo de la posteno',
+
+  'apply.jobNamePh': 'Altranga programaria inĝeniero',
+
+  'apply.jobUntitled': 'Sentitola posteno',
+
+  'apply.jobUnread': 'La AI ankoraŭ ne legis ĝin — la adapto konas nur tion, kion vi tajpis',
 
   'apply.jobErrBadUrl': 'Tiu ligilo ne legeblas — nur publikaj http/https-paĝoj',
 

@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'Læser…',
 
-  'apply.jobRedo': 'Læs en anden',
 
-  'apply.jobClear': 'Ryd',
 
   'apply.jobEmpty': 'Indsæt først et jobopslag eller et link',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'Fjernarbejde',
 
   'apply.jobDuties': '{n} opgaver læst',
+
+  'apply.jobs': 'Stillinger',
+
+  'apply.jobNew': 'Ny stilling',
+
+  'apply.jobName': 'Stillingsbetegnelse',
+
+  'apply.jobNamePh': 'Senior software engineer',
+
+  'apply.jobUntitled': 'Stilling uden titel',
+
+  'apply.jobUnread': 'Endnu ikke læst af AI’en – tilpasningen kender kun det, du har skrevet',
 
   'apply.jobErrBadUrl': 'Det link kan ikke læses — kun offentlige http/https-sider',
 

@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'படிக்கிறது…',
 
-  'apply.jobRedo': 'வேறொன்றைப் படி',
 
-  'apply.jobClear': 'அழி',
 
   'apply.jobEmpty': 'முதலில் பணி விவரணையையோ இணைப்பையோ ஒட்டவும்',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'தொலைவிலிருந்து',
 
   'apply.jobDuties': '{n} பொறுப்புகள் படிக்கப்பட்டன',
+
+  'apply.jobs': 'பணியிடங்கள்',
+
+  'apply.jobNew': 'புதிய பணியிடம்',
+
+  'apply.jobName': 'பணி பெயர்',
+
+  'apply.jobNamePh': 'மூத்த மென்பொருள் பொறியாளர்',
+
+  'apply.jobUntitled': 'பெயரிடப்படாத பணியிடம்',
+
+  'apply.jobUnread': 'AI இதை இன்னும் படிக்கவில்லை — நீங்கள் தட்டச்சு செய்ததை மட்டுமே தையல் அறியும்',
 
   'apply.jobErrBadUrl': 'அந்த இணைப்பைப் படிக்க முடியாது — பொது http/https பக்கங்கள் மட்டுமே',
 

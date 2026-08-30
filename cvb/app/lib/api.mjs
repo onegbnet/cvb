@@ -202,6 +202,41 @@ export async function fetchJobPage(url) {
   );
 }
 
+// ---- 职位记录(/apply 的「新建职位/管理职位」,2026-08-30)----
+// 列表不带 JD 正文(画芯片用不着);正文按 id 单取。
+
+export async function listJobs() {
+  return jsonOrThrow(await fetch('/api/jobs'));
+}
+
+export async function fetchJob(id) {
+  return jsonOrThrow(await fetch(`/api/jobs/${encodeURIComponent(id)}`));
+}
+
+export async function createJob(record) {
+  return jsonOrThrow(
+    await fetch('/api/jobs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(record),
+    })
+  );
+}
+
+export async function updateJob(id, record) {
+  return jsonOrThrow(
+    await fetch(`/api/jobs/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(record),
+    })
+  );
+}
+
+export async function deleteJob(id) {
+  return jsonOrThrow(await fetch(`/api/jobs/${encodeURIComponent(id)}`, { method: 'DELETE' }));
+}
+
 export const isUnauthorized = (err) => err && (err.code === 'UNAUTHORIZED' || err.status === 401);
 
 export function redirectToUnlock() {

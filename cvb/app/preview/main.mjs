@@ -31,7 +31,11 @@ import {
   fetchResume,
   saveResume,
   listFactsLangs,
-  fetchJobPage,
+  listJobs,
+  fetchJob,
+  createJob,
+  updateJob,
+  deleteJob,
   isUnauthorized,
   redirectToUnlock,
 } from '../lib/api.mjs';
@@ -44,14 +48,8 @@ import {
   templateSections,
 } from '../tex/templates/index.mjs';
 import { APPLY_SPECS, DEFAULT_SPEC, resolveSpec, specById, templateForSpec, pdfFileNameFor } from '../apply/specs.mjs';
-import {
-  looksLikeUrl,
-  normalizeJob,
-  hasJobContent,
-  jobPlaceText,
-  deriveSpec,
-  JOB_ERROR_KEYS,
-} from '../apply/job.mjs';
+import { normalizeJob, hasJobContent, jobPlaceText } from '../apply/job.mjs';
+import { openJobDialog, jobChipText } from './job-dialog.mjs';
 import {
   collectTailorFacts,
   normalizeTailorPlan,
@@ -61,6 +59,7 @@ import {
   isNewText,
 } from '../apply/tailor.mjs';
 import { runTailor } from '../lib/tailor-client.mjs';
+import { confirmAction } from '../lib/confirm.mjs';
 import { extractJobFromText } from '../lib/ai.mjs';
 import { splitName } from '../lib/name-parts.mjs';
 import { factsLangName } from '../editor/facts-bar.mjs';
@@ -78,10 +77,16 @@ const state = {
   template: DEFAULT_TEMPLATE,
   factsLang: '', // 用哪份语种事实(空 = 默认语种)
   langs: [], // 已有事实的语种清单
-  jobText: '', // 贴进来的原始输入(职位描述正文 或 一条招聘页链接)
-  job: null, // 读出来的结构化职位(normalizeJob 的形状),没读过是 null
+  // ---- 职位(2026-08-30 起**落库**、可管理)----
+  // 此前它是一个刷新即失的框;用户裁定「职位信息也应该在生成简历这里做一下管理」,
+  // 于是成了 D1 里的一行:国家(spec)+ 语种 + 职位名 + JD + AI 抽出来的结构。
+  // **选中一个职位就定了投递目标与语种**,所以那两行芯片在选中时不再单独出现
+  // —— 同一件事只该有一个说了算的地方。
+  jobs: [], // 职位列表(不带 JD 正文,那是编辑时按 id 单取的)
+  jobId: '', // 当前选中的职位 id('' = 没选,回落到「纯预览」)
+  job: null, // 选中职位里 AI 抽出来的结构(normalizeJob 形状);没读过是 null
   jobBusy: false,
-  jobHint: '', // 读完之后如实说一句(推出来了 / 多解 / 没写清国家 / 出错了)
+  jobHint: '', // 如实说一句(存失败 / 这份还没读过 / …)
 
   // ---- 定向裁剪(B 段)----
   // 这几样与职位信息同生命周期:换一则职位、清除职位、换语种都清掉。
@@ -701,7 +706,7 @@ function chipRow(labelKey, options, current, onPick) {
   );
 }
 
-// 职位块推导出投递目标后要刷新芯片行 —— 由 buildSelectionBar 装上自己的重绘。
+// 三块互相要对方重绘:选职位会换投递目标与语种(芯片行)、会让裁剪作废(对话区)。
 let rebuildSelection = () => {};
 
 // 「已有 PDF,但设置改过了」—— 不自动重编,只把按钮改口成「重新生成」,
@@ -737,6 +742,10 @@ function syncUrl() {
   url.searchParams.set('template', state.template);
   if (state.factsLang) url.searchParams.set('flang', state.factsLang);
   else url.searchParams.delete('flang');
+  // 职位进 URL 的**只是它的 id**(JD 正文装不进 URL,那条判断没变);
+  // 刷新回到同一个职位,而正文由服务端给。
+  if (state.jobId) url.searchParams.set('job', state.jobId);
+  else url.searchParams.delete('job');
   window.history.replaceState({}, '', url.toString());
 }
 
@@ -751,23 +760,30 @@ function buildSelectionBar() {
   const bar = h('div', { class: 'apply-bar' });
   const rebuild = () => {
     clear(bar);
-    bar.append(
-      chipRow(
-        'apply.target',
-        APPLY_SPECS.map((s) => ({ value: s.id, text: tr(s.labelKey) })),
-        state.spec,
-        (v) => {
-          state.spec = v;
-          state.template = templateForSpec(v, state.template); // 版式跟着规格走
-          // 换了投递地就换了一整套当地规范,上一版是按别处的规矩裁的
-          clearDraft(tr('apply.draftStale'));
-          syncUrl();
-          markStale();
-          rebuild();
-          rebuildTailor();
-        }
-      )
-    );
+    // **选中职位时投递目标与语种不在这里出现** —— 它们由那条记录说了算
+    //(2026-08-30 起职位落库,见上面职位块的文件头)。两处都能改就一定会出现
+    // "我改了但没生效":你在这里换了国家,而下次选回这个职位它又变回去了。
+    // 要改就去改那条职位(铅笔记号)。没选职位时这一页仍是纯预览,两行照旧。
+    const bound = Boolean(currentJob());
+    if (!bound) {
+      bar.append(
+        chipRow(
+          'apply.target',
+          APPLY_SPECS.map((s) => ({ value: s.id, text: tr(s.labelKey) })),
+          state.spec,
+          (v) => {
+            state.spec = v;
+            state.template = templateForSpec(v, state.template); // 版式跟着规格走
+            // 换了投递地就换了一整套当地规范,上一版是按别处的规矩裁的
+            clearDraft(tr('apply.draftStale'));
+            syncUrl();
+            markStale();
+            rebuild();
+            rebuildTailor();
+          }
+        )
+      );
+    }
     const templates = specById(state.spec).templates;
     if (templates.length > 1) {
       bar.append(
@@ -787,7 +803,7 @@ function buildSelectionBar() {
         )
       );
     }
-    if (state.langs.length > 1) {
+    if (!bound && state.langs.length > 1) {
       bar.append(
         chipRow(
           'apply.facts',
@@ -806,44 +822,45 @@ function buildSelectionBar() {
           }
         )
       );
-
-      // **参照语种**(用户成文的「默认参照同语种,可指定参照多语种」)。
-      // 只在**读过职位**之后出现 —— 它的唯一消费方是裁剪;没有裁剪就是个空控件。
-      // 只作**措辞对照**,不作事实来源:那是另一份文档,内容未必对得上。
-      if (state.job) {
-        const others = state.langs.filter(({ lang: code }) => code !== state.factsLang);
-        if (others.length) {
-          bar.append(
+    }
+    // **参照语种**(用户成文的「默认参照同语种,可指定参照多语种」)。
+    // 只在**选了职位**之后出现 —— 它的唯一消费方是裁剪;没有裁剪就是个空控件。
+    // 只作**措辞对照**,不作事实来源:那是另一份文档,内容未必对得上。
+    // **提到语种行外面**:2026-08-30 之后语种行在选中职位时不出现,
+    // 而参照恰恰只在那时才有意义,嵌在里面等于永远不出现。
+    if (state.job && state.langs.length > 1) {
+      const others = state.langs.filter(({ lang: code }) => code !== state.factsLang);
+      if (others.length) {
+        bar.append(
+          h(
+            'div',
+            { class: 'apply-row' },
+            h('span', { class: 'apply-row-label' }, tr('apply.refs')),
             h(
               'div',
-              { class: 'apply-row' },
-              h('span', { class: 'apply-row-label' }, tr('apply.refs')),
-              h(
-                'div',
-                { class: 'apply-chips' },
-                ...others.map(({ lang: code }) =>
-                  h(
-                    'button',
-                    {
-                      type: 'button',
-                      class: ['facts-lang', state.refs.includes(code) && 'is-current'],
-                      'aria-pressed': state.refs.includes(code) ? 'true' : 'false',
-                      onClick: async () => {
-                        if (state.refs.includes(code)) state.refs = state.refs.filter((x) => x !== code);
-                        else {
-                          state.refs = [...state.refs, code];
-                          await loadRefDoc(code);
-                        }
-                        rebuild();
-                      },
+              { class: 'apply-chips' },
+              ...others.map(({ lang: code }) =>
+                h(
+                  'button',
+                  {
+                    type: 'button',
+                    class: ['facts-lang', state.refs.includes(code) && 'is-current'],
+                    'aria-pressed': state.refs.includes(code) ? 'true' : 'false',
+                    onClick: async () => {
+                      if (state.refs.includes(code)) state.refs = state.refs.filter((x) => x !== code);
+                      else {
+                        state.refs = [...state.refs, code];
+                        await loadRefDoc(code);
+                      }
+                      rebuild();
                     },
-                    factsLangName(code)
-                  )
+                  },
+                  factsLangName(code)
                 )
               )
             )
-          );
-        }
+          )
+        );
       }
     }
     // **生成是主动动作**:按钮说点了会发生什么,旁边如实说明设置改过了。
@@ -875,88 +892,212 @@ function buildSelectionBar() {
   return h('section', { class: 'blk' }, bar);
 }
 
-// ---- 职位信息 ----
+// ---- 职位(生成侧四步流程的第一步输入;2026-08-30 起落库、可管理)----
 //
-// 生成侧四步流程的第一步输入(用户 2026-08-24 成文:「事实 + **职位信息**
-// (推导文化模板,多解时让用户手动选)+ TeX 模板 → 生成初版简历」)。
+// 用户 2026-08-24 成文:「事实 + **职位信息**(推导文化模板,多解时让用户手动选)
+// + TeX 模板 → 生成初版简历」;2026-08-30 追加「职位信息也应该在生成简历这里
+// 做一下管理,比如可以『新建职位』:选择国家、语种,输入职位和 JD」。
 //
-// **一个框,给的是什么由机器认**(2026-08-25 用户裁定「粘贴文本或输入 URL」;
-// 口径同 AI 导入的「不要做两个导入功能组」):看着是链接就让 worker 代拉,
-// 否则当职位描述正文。让人先选"我这是链接还是正文"是把实现分类摆到了用户面前。
-// 判定与推导都是纯函数,住 app/apply/job.mjs(进 jest);这里只摆控件。
+// **一个职位就是一份记录**:国家(投递目标)/ 语种 / 职位名 / JD 正文 / AI 抽出来的结构。
+// 选中它 = 这一页的投递目标与语种都定了,所以那两行芯片在选中时不再单独出现
+// —— **同一件事只该有一个说了算的地方**,两处都能改就一定会出现"我改了但没生效"。
 //
-// **读取是主动动作**,同「生成预览」那条:贴进来不自动打 AI ——
-// 那要花时间也花钱,该由人说一声「读」才发生。
+// **读取仍是主动动作**(§3.6 那条没变),只是挪进了「新建职位」框里的
+// 「读取并填写」:贴进来不自动打 AI。判定与推导的纯函数仍住 app/apply/job.mjs。
 //
-// 读出来之后它在这一页做的**唯一一件事是推导投递目标**(→ 决定可选版式与文件名惯例)。
-// 恰好一套规格才自动选中;多解或广告里没写清国家就**什么都不动**,如实说一句让人自己选。
-// 拿职位去定向裁剪简历是下一段的事(§8 队列 2 的 B 段),这一页还不做,
-// 所以界面上也不暗示它做了。
-function jobErrorText(err) {
-  const key = JOB_ERROR_KEYS[err && err.code];
-  return key ? tr(key) : (err && err.message) || tr('ai.failed');
+// 职位有**两个消费方**:① 推导投递目标(→ 决定可选版式与文件名惯例);
+// ② 连同求职者的额外指令一起,作为定向裁剪的输入(见下面的 tailor 那一段)。
+
+/** 选中的那条记录(列表里的浅记录,不含 JD 正文)。 */
+const currentJob = () => state.jobs.find((j) => j.id === state.jobId) || null;
+
+/**
+ * 喂给裁剪的职位结构。**没读过 AI 的记录也能裁** —— 拿手填的职位名与
+ * 投递目标的国家现拼一个最小结构(模型知道的就少一些,卡片上如实说了)。
+ */
+function jobForTailor(rec) {
+  if (!rec) return null;
+  if (rec.extracted && hasJobContent(rec.extracted)) return rec.extracted;
+  const spec = specById(rec.spec);
+  const minimal = normalizeJob({
+    title: rec.title,
+    location: spec ? { countryCode: spec.country } : {},
+  });
+  return hasJobContent(minimal) ? minimal : null;
 }
 
-/** 读一次职位:链接先代拉成正文 → AI 抽结构 → 归一 → 推导投递目标。 */
-async function readJob(rebuild) {
-  const raw = String(state.jobText || '').trim();
-  if (!raw) {
-    state.jobHint = tr('apply.jobEmpty');
-    rebuild();
-    return;
-  }
-  state.jobBusy = true;
+/**
+ * 选中一个职位:它的国家与语种**接管**这一页的投递目标与语种。
+ * 换职位 = 换了一整套当地规范与一份不同的事实文档,上一版裁剪当然作废。
+ */
+async function selectJob(id, { rebuild }) {
+  if (state.jobId === id) return;
+  state.jobId = id;
+  const rec = currentJob();
+  state.job = jobForTailor(rec);
+  state.instructions = '';
   state.jobHint = '';
-  rebuild();
-  try {
-    let text = raw;
-    if (looksLikeUrl(raw)) {
-      const page = await fetchJobPage(raw);
-      text = String((page && page.text) || '');
+  clearDraft(tr('apply.draftStale'));
+  if (rec) {
+    if (rec.spec && specById(rec.spec)) {
+      state.spec = rec.spec;
+      state.template = templateForSpec(state.spec, state.template);
     }
-    const job = normalizeJob(await extractJobFromText(text));
-    if (!hasJobContent(job)) {
-      state.jobHint = tr('apply.jobErrEmpty');
+    if (rec.lang && state.langs.some((l) => l.lang === rec.lang) && rec.lang !== state.factsLang) {
+      state.factsLang = rec.lang;
+      state.refs = state.refs.filter((code) => code !== rec.lang);
+      await loadFacts();
+    }
+  }
+  syncUrl();
+  markStale();
+  rebuild();
+  rebuildSelection();
+  rebuildTailor();
+}
+
+/** 新建 / 编辑一个职位。编辑要先按 id 把 JD 正文取回来(列表里没有)。 */
+async function editJob(rec, { rebuild }) {
+  let full = null;
+  if (rec) {
+    try {
+      full = (await fetchJob(rec.id)).job;
+    } catch (err) {
+      if (isUnauthorized(err)) return redirectToUnlock();
+      window.Toast && window.Toast.err(String(err.message || err));
       return;
     }
-    state.job = job;
-    // 推导投递目标 —— 三种结局各说各的,**只有唯一一套时才替他选**
-    const derived = deriveSpec(job);
-    if (derived.status === 'one' && derived.spec !== state.spec) {
-      state.spec = derived.spec;
-      state.template = templateForSpec(state.spec, state.template); // 版式跟着规格走
-      syncUrl();
-      markStale();
-      rebuildSelection();
+  }
+  const draft = await openJobDialog({
+    job: full,
+    langs: state.langs,
+    defaultLang: state.factsLang,
+    defaultSpec: state.spec,
+  });
+  if (!draft) return;
+  try {
+    const saved = rec ? (await updateJob(rec.id, draft)).job : (await createJob(draft)).job;
+    state.jobs = [saved, ...state.jobs.filter((j) => j.id !== saved.id)];
+    if (rec && state.jobId === saved.id) {
+      // 编辑的就是当前这条:重新接管一次(国家/语种可能改了),裁剪作废
+      state.jobId = '';
+      await selectJob(saved.id, { rebuild });
+      return;
     }
-    state.jobHint =
-      derived.status === 'one'
-        ? tr('apply.jobDerived')
-        : derived.status === 'many'
-          ? tr('apply.jobAmbiguous')
-          : tr('apply.jobNoPlace');
+    await selectJob(saved.id, { rebuild });
   } catch (err) {
     if (isUnauthorized(err)) return redirectToUnlock();
-    state.jobHint = jobErrorText(err);
-  } finally {
-    state.jobBusy = false;
-    rebuild();
+    window.Toast && window.Toast.err(String(err.message || err));
   }
 }
+
+/** 记号按钮:图标没有可访问名,`aria-label` + `title` 不能省(同快照那一行)。 */
+const markBtn = (name, labelKey, onClick) =>
+  h(
+    'button',
+    {
+      type: 'button',
+      class: 'btn btn-icon btn-small',
+      'aria-label': tr(labelKey),
+      title: tr(labelKey),
+      onClick,
+    },
+    icon(name)
+  );
 
 function buildJobBlock() {
   const box = h('div', { class: 'apply-bar' });
   const rebuild = () => {
     clear(box);
-    box.append(h('h2', { class: 'blk-title' }, tr('apply.job')));
+    box.append(h('h2', { class: 'blk-title' }, tr('apply.jobs')));
 
-    if (state.job) {
-      // 读出来了:摆事实(职位 · 机构 · 职阶 · 地点),不加标签词 ——
+    // 职位行:一枚芯片一个职位,末尾常驻「＋ 新建职位」(同 /edit 文档栏的做法)。
+    // **空库时这一行只有那一枚** —— 比一个空白框更说得清这一页要什么。
+    const chips = h('div', { class: 'apply-chips' });
+    for (const rec of state.jobs) {
+      chips.append(
+        h(
+          'button',
+          {
+            type: 'button',
+            class: ['facts-lang', rec.id === state.jobId && 'is-current'],
+            'aria-pressed': rec.id === state.jobId ? 'true' : 'false',
+            onClick: () => selectJob(rec.id, { rebuild }),
+          },
+          jobChipText(rec)
+        )
+      );
+    }
+    chips.append(
+      h(
+        'button',
+        {
+          type: 'button',
+          class: 'facts-lang facts-lang-add',
+          onClick: () => editJob(null, { rebuild }),
+        },
+        `＋ ${tr('apply.jobNew')}`
+      )
+    );
+    box.append(h('div', { class: 'apply-row' }, chips));
+
+    const rec = currentJob();
+    if (rec) {
+      // 选中的那条:摆事实(职位 · 机构 · 职阶 · 地点),不加标签词 ——
       // 一行里每一样都自说明,再各配一个标签只会把行撑满(同快照那一行的判断)
-      const loc = jobPlaceText(state.job);
-      const meta = [state.job.org, state.job.level, loc, state.job.remote && tr('apply.jobRemote')]
+      const ex = rec.extracted;
+      const loc = ex ? jobPlaceText(ex) : '';
+      const meta = [ex && ex.org, ex && ex.level, loc, ex && ex.remote && tr('apply.jobRemote')]
         .filter(Boolean)
         .join(' · ');
+      box.append(
+        h(
+          'div',
+          { class: 'apply-job-card' },
+          h(
+            'div',
+            { class: 'apply-job-head' },
+            h('div', { class: 'apply-job-title' }, rec.title || tr('apply.jobUntitled')),
+            h(
+              'div',
+              { class: 'apply-job-marks' },
+              markBtn('pencil', 'action.edit', () => editJob(rec, { rebuild })),
+              markBtn('trash', 'action.delete', async () => {
+                const ok = await confirmAction(tr('action.confirmDelete'));
+                if (!ok) return;
+                try {
+                  await deleteJob(rec.id);
+                } catch (err) {
+                  if (isUnauthorized(err)) return redirectToUnlock();
+                  window.Toast && window.Toast.err(String(err.message || err));
+                  return;
+                }
+                state.jobs = state.jobs.filter((j) => j.id !== rec.id);
+                state.jobId = '';
+                state.job = null;
+                state.instructions = '';
+                clearDraft(tr('apply.draftStale'));
+                syncUrl();
+                markStale();
+                rebuild();
+                rebuildSelection();
+                rebuildTailor();
+              })
+            )
+          ),
+          meta && h('div', { class: 'apply-job-meta' }, meta),
+          ex && ex.responsibilities.length
+            ? h(
+                'div',
+                { class: 'apply-job-meta' },
+                tr('apply.jobDuties').replace('{n}', String(ex.responsibilities.length))
+              )
+            : // **没读过就如实说**:裁剪照跑,但模型只知道你手填的那点东西。
+              h('div', { class: 'apply-job-meta' }, tr('apply.jobUnread'))
+        )
+      );
+      // 第三方输入:求职者对这个职位的额外指令。**选了职位才摆出来** ——
+      // 没有职位时它没有消费方,那时摆出来就是个不起作用的控件。
       const instr = h('textarea', {
         class: 'fc-input apply-job-input apply-instr',
         rows: 2,
@@ -965,93 +1106,10 @@ function buildJobBlock() {
         onInput: (e) => { state.instructions = e.target.value; },
       });
       instr.value = state.instructions;
-      box.append(
-        h(
-          'div',
-          { class: 'apply-job-card' },
-          h('div', { class: 'apply-job-title' }, state.job.title || tr('apply.job')),
-          meta && h('div', { class: 'apply-job-meta' }, meta),
-          state.job.responsibilities.length
-            ? h(
-                'div',
-                { class: 'apply-job-meta' },
-                tr('apply.jobDuties').replace('{n}', String(state.job.responsibilities.length))
-              )
-            : null
-        )
-      );
-      // 第三方输入:求职者对这个职位的额外指令。**到这一段才摆出来** ——
-      // 在裁剪落地之前它没有消费方,那时摆出来就是个不起作用的控件。
       box.append(h('div', { class: 'apply-instr-label' }, tr('apply.instr')), instr);
-    } else {
-      const input = h('textarea', {
-        class: 'fc-input apply-job-input',
-        rows: 4,
-        placeholder: tr('apply.jobPlaceholder'),
-        'aria-label': tr('apply.job'),
-        disabled: state.jobBusy || undefined,
-        onInput: (e) => {
-          state.jobText = e.target.value;
-        },
-      });
-      input.value = state.jobText;
-      box.append(input);
     }
 
-    const actions = h('div', { class: 'apply-row apply-actions' });
-    if (state.job) {
-      actions.append(
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'btn btn-small',
-            onClick: () => {
-              state.job = null;
-              state.jobHint = '';
-              clearDraft(tr('apply.draftStale'));
-              rebuild();
-              rebuildSelection();
-              rebuildTailor();
-            },
-          },
-          tr('apply.jobRedo')
-        ),
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'btn btn-small',
-            onClick: () => {
-              state.job = null;
-              state.jobText = '';
-              state.jobHint = '';
-              state.instructions = '';
-              clearDraft(tr('apply.draftStale'));
-              rebuild();
-              rebuildSelection();
-              rebuildTailor();
-            },
-          },
-          tr('apply.jobClear')
-        )
-      );
-    } else {
-      actions.append(
-        h(
-          'button',
-          {
-            type: 'button',
-            class: 'btn btn-primary',
-            disabled: state.jobBusy || undefined,
-            onClick: () => readJob(rebuild),
-          },
-          state.jobBusy ? tr('apply.jobReading') : tr('apply.jobRead')
-        )
-      );
-    }
-    if (state.jobHint) actions.append(h('span', { class: 'apply-stale' }, state.jobHint));
-    box.append(actions);
+    if (state.jobHint) box.append(h('div', { class: 'apply-row' }, h('span', { class: 'apply-stale' }, state.jobHint)));
   };
   rebuild();
   return h('section', { class: 'blk' }, box);
@@ -1475,6 +1533,24 @@ async function main() {
     wanted && state.langs.some((l) => l.lang === wanted)
       ? wanted
       : (state.langs.find((l) => l.lang === (state.langs[0] && state.langs[0].lang)) || {}).lang || '';
+
+  // 职位清单(取不到就当一个都没有:少一行芯片,不挡出 PDF —— 同语种那条)
+  try {
+    state.jobs = (await listJobs()).jobs || [];
+  } catch { /* 空手继续 */ }
+  // **URL 指名的优先,否则不替他选**:一进来就自动选中最近那个,等于替人
+  // 决定了投递目标与语种;而"我只想看看简历长什么样"是个合法诉求。
+  const wantedJob = params.get('job');
+  const picked = wantedJob && state.jobs.find((j) => j.id === wantedJob);
+  if (picked) {
+    state.jobId = picked.id;
+    state.job = jobForTailor(picked);
+    if (picked.spec && specById(picked.spec)) {
+      state.spec = picked.spec;
+      state.template = templateForSpec(state.spec, state.template);
+    }
+    if (picked.lang && state.langs.some((l) => l.lang === picked.lang)) state.factsLang = picked.lang;
+  }
   await loadFacts();
 
   const app = document.getElementById('app');

@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'Lecture…',
 
-  'apply.jobRedo': 'Lire une autre',
 
-  'apply.jobClear': 'Effacer',
 
   'apply.jobEmpty': 'Collez d’abord une description de poste ou un lien',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'À distance',
 
   'apply.jobDuties': '{n} missions lues',
+
+  'apply.jobs': 'Postes',
+
+  'apply.jobNew': 'Nouveau poste',
+
+  'apply.jobName': 'Intitulé du poste',
+
+  'apply.jobNamePh': 'Ingénieur logiciel senior',
+
+  'apply.jobUntitled': 'Poste sans titre',
+
+  'apply.jobUnread': 'Pas encore lu par l’IA — l’adaptation ne connaît que ce que vous avez saisi',
 
   'apply.jobErrBadUrl': 'Ce lien ne peut pas être lu : seules les pages http/https publiques le sont',
 

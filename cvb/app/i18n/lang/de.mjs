@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'Wird gelesen…',
 
-  'apply.jobRedo': 'Andere lesen',
 
-  'apply.jobClear': 'Leeren',
 
   'apply.jobEmpty': 'Zuerst eine Stellenbeschreibung oder einen Link einfügen',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'Remote',
 
   'apply.jobDuties': '{n} Aufgaben gelesen',
+
+  'apply.jobs': 'Stellen',
+
+  'apply.jobNew': 'Neue Stelle',
+
+  'apply.jobName': 'Stellenbezeichnung',
+
+  'apply.jobNamePh': 'Senior Software Engineer',
+
+  'apply.jobUntitled': 'Stelle ohne Titel',
+
+  'apply.jobUnread': 'Noch nicht von der KI gelesen – die Anpassung kennt nur Ihre Eingaben',
 
   'apply.jobErrBadUrl': 'Dieser Link kann nicht gelesen werden — nur öffentliche http/https-Seiten',
 

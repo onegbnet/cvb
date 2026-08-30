@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'ဖတ်နေသည်…',
 
-  'apply.jobRedo': 'အခြားတစ်ခု ဖတ်ရန်',
 
-  'apply.jobClear': 'ရှင်းလင်းရန်',
 
   'apply.jobEmpty': 'အလုပ်ကြော်ငြာ သို့မဟုတ် လင့်ခ်ကို ဦးစွာ ကူးထည့်ပါ',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'အဝေးမှ',
 
   'apply.jobDuties': 'လုပ်ငန်းတာဝန် {n} ခု ဖတ်ပြီးပါပြီ',
+
+  'apply.jobs': 'ရာထူးများ',
+
+  'apply.jobNew': 'ရာထူးအသစ်',
+
+  'apply.jobName': 'ရာထူးအမည်',
+
+  'apply.jobNamePh': 'အကြီးတန်း ဆော့ဖ်ဝဲအင်ဂျင်နီယာ',
+
+  'apply.jobUntitled': 'အမည်မဲ့ ရာထူး',
+
+  'apply.jobUnread': 'AI က မဖတ်ရသေးပါ — ချိန်ညှိရာတွင် သင်ရိုက်ထည့်ထားသည်ကိုသာ သိပါမည်',
 
   'apply.jobErrBadUrl': 'ထိုလင့်ခ်ကို ဖတ်၍မရပါ — အများသုံး http/https စာမျက်နှာများသာ',
 

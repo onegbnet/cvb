@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'Читання…',
 
-  'apply.jobRedo': 'Прочитати інше',
 
-  'apply.jobClear': 'Очистити',
 
   'apply.jobEmpty': 'Спершу вставте опис вакансії або посилання',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'Віддалено',
 
   'apply.jobDuties': 'Прочитано обов’язків: {n}',
+
+  'apply.jobs': 'Вакансії',
+
+  'apply.jobNew': 'Нова вакансія',
+
+  'apply.jobName': 'Назва посади',
+
+  'apply.jobNamePh': 'Старший інженер-програміст',
+
+  'apply.jobUntitled': 'Вакансія без назви',
+
+  'apply.jobUnread': 'ШІ ще не прочитав її — адаптація знає лише те, що ви ввели',
 
   'apply.jobErrBadUrl': 'Це посилання не можна прочитати — лише публічні сторінки http/https',
 

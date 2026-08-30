@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'Bezig met lezen…',
 
-  'apply.jobRedo': 'Andere lezen',
 
-  'apply.jobClear': 'Wissen',
 
   'apply.jobEmpty': 'Plak eerst een vacaturetekst of een link',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'Op afstand',
 
   'apply.jobDuties': '{n} taken gelezen',
+
+  'apply.jobs': 'Vacatures',
+
+  'apply.jobNew': 'Nieuwe vacature',
+
+  'apply.jobName': 'Functietitel',
+
+  'apply.jobNamePh': 'Senior software engineer',
+
+  'apply.jobUntitled': 'Naamloze vacature',
+
+  'apply.jobUnread': 'Nog niet door de AI gelezen — het op maat maken kent alleen wat u hebt ingevuld',
 
   'apply.jobErrBadUrl': 'Die link kan niet gelezen worden — alleen openbare http/https-pagina’s',
 

@@ -122,8 +122,11 @@ test('用到的界面键在 en 表里真的存在', async () => {
   const en = (await import('../../i18n/lang/en.mjs')).default;
   const used = [
     'apply.job', 'apply.jobPlaceholder', 'apply.jobRead', 'apply.jobReading',
-    'apply.jobRedo', 'apply.jobClear', 'apply.jobEmpty', 'apply.jobDerived',
-    'apply.jobAmbiguous', 'apply.jobNoPlace', 'apply.jobRemote', 'apply.jobDuties',
+    'apply.jobEmpty', 'apply.jobDerived', 'apply.jobAmbiguous', 'apply.jobNoPlace',
+    'apply.jobRemote', 'apply.jobDuties',
+    // 职位落库之后的那一组(2026-08-30):芯片行、新建框、卡片
+    'apply.jobs', 'apply.jobNew', 'apply.jobName', 'apply.jobNamePh',
+    'apply.jobUntitled', 'apply.jobUnread',
     ...Object.values(JOB_ERROR_KEYS),
   ];
   for (const key of used) expect(typeof en[key]).toBe('string');

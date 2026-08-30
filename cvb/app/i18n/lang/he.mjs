@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'קורא…',
 
-  'apply.jobRedo': 'קראו מודעה אחרת',
 
-  'apply.jobClear': 'ניקוי',
 
   'apply.jobEmpty': 'הדביקו תחילה תיאור משרה או קישור',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'מרחוק',
 
   'apply.jobDuties': 'נקראו {n} תחומי אחריות',
+
+  'apply.jobs': 'משרות',
+
+  'apply.jobNew': 'משרה חדשה',
+
+  'apply.jobName': 'שם המשרה',
+
+  'apply.jobNamePh': 'מהנדס תוכנה בכיר',
+
+  'apply.jobUntitled': 'משרה ללא שם',
+
+  'apply.jobUnread': 'ה-AI עדיין לא קרא אותה — ההתאמה מכירה רק את מה שהזנת',
 
   'apply.jobErrBadUrl': 'לא ניתן לקרוא את הקישור הזה — רק דפי http/https ציבוריים',
 

@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'Leyendo…',
 
-  'apply.jobRedo': 'Leer otro',
 
-  'apply.jobClear': 'Borrar',
 
   'apply.jobEmpty': 'Pega antes una descripción del puesto o un enlace',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'En remoto',
 
   'apply.jobDuties': '{n} funciones leídas',
+
+  'apply.jobs': 'Puestos',
+
+  'apply.jobNew': 'Nuevo puesto',
+
+  'apply.jobName': 'Título del puesto',
+
+  'apply.jobNamePh': 'Ingeniero de software sénior',
+
+  'apply.jobUntitled': 'Puesto sin título',
+
+  'apply.jobUnread': 'La IA aún no lo ha leído: la adaptación solo conoce lo que has escrito',
 
   'apply.jobErrBadUrl': 'Ese enlace no se puede leer: solo páginas http/https públicas',
 

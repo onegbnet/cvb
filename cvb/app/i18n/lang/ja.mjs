@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': '読み取り中…',
 
-  'apply.jobRedo': '別の求人を読む',
 
-  'apply.jobClear': 'クリア',
 
   'apply.jobEmpty': 'まず募集要項かリンクを貼り付けてください',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'リモート',
 
   'apply.jobDuties': '業務内容を {n} 件読み取りました',
+
+  'apply.jobs': '求人',
+
+  'apply.jobNew': '求人を追加',
+
+  'apply.jobName': '職種名',
+
+  'apply.jobNamePh': 'シニアソフトウェアエンジニア',
+
+  'apply.jobUntitled': '名称未設定の求人',
+
+  'apply.jobUnread': 'AI でまだ読み取っていません。調整時は入力した内容しか分かりません',
 
   'apply.jobErrBadUrl': 'このリンクは読み取れません。公開されている http/https のページのみです',
 

@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'Đang đọc…',
 
-  'apply.jobRedo': 'Đọc tin khác',
 
-  'apply.jobClear': 'Xóa',
 
   'apply.jobEmpty': 'Hãy dán mô tả công việc hoặc liên kết trước',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'Từ xa',
 
   'apply.jobDuties': 'Đã đọc {n} đầu việc',
+
+  'apply.jobs': 'Vị trí',
+
+  'apply.jobNew': 'Thêm vị trí',
+
+  'apply.jobName': 'Tên vị trí',
+
+  'apply.jobNamePh': 'Kỹ sư phần mềm cấp cao',
+
+  'apply.jobUntitled': 'Vị trí chưa đặt tên',
+
+  'apply.jobUnread': 'AI chưa đọc tin này — phần tinh chỉnh chỉ biết những gì bạn tự nhập',
 
   'apply.jobErrBadUrl': 'Không đọc được liên kết đó — chỉ đọc trang http/https công khai',
 

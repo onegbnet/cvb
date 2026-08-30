@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'Sedang membaca…',
 
-  'apply.jobRedo': 'Baca yang lain',
 
-  'apply.jobClear': 'Kosongkan',
 
   'apply.jobEmpty': 'Tampal keterangan kerja atau pautan dahulu',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'Jarak jauh',
 
   'apply.jobDuties': '{n} tugas dibaca',
+
+  'apply.jobs': 'Jawatan',
+
+  'apply.jobNew': 'Jawatan baharu',
+
+  'apply.jobName': 'Nama jawatan',
+
+  'apply.jobNamePh': 'Jurutera Perisian Kanan',
+
+  'apply.jobUntitled': 'Jawatan tanpa nama',
+
+  'apply.jobUnread': 'Belum dibaca AI — penyesuaian hanya tahu apa yang anda taip',
 
   'apply.jobErrBadUrl': 'Pautan itu tidak boleh dibaca — hanya halaman http/https awam',
 

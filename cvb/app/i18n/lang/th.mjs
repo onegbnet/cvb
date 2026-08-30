@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': 'กำลังอ่าน…',
 
-  'apply.jobRedo': 'อ่านประกาศอื่น',
 
-  'apply.jobClear': 'ล้าง',
 
   'apply.jobEmpty': 'วางรายละเอียดงานหรือลิงก์ก่อน',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': 'ทำงานทางไกล',
 
   'apply.jobDuties': 'อ่านหน้าที่งานได้ {n} ข้อ',
+
+  'apply.jobs': 'ตำแหน่งงาน',
+
+  'apply.jobNew': 'เพิ่มตำแหน่งงาน',
+
+  'apply.jobName': 'ชื่อตำแหน่งงาน',
+
+  'apply.jobNamePh': 'วิศวกรซอฟต์แวร์อาวุโส',
+
+  'apply.jobUntitled': 'ตำแหน่งงานที่ยังไม่ตั้งชื่อ',
+
+  'apply.jobUnread': 'AI ยังไม่ได้อ่านประกาศนี้ การปรับแต่งจะรู้เฉพาะสิ่งที่คุณกรอกเอง',
 
   'apply.jobErrBadUrl': 'อ่านลิงก์นี้ไม่ได้ อ่านได้เฉพาะหน้าเว็บ http/https ที่เปิดสาธารณะ',
 

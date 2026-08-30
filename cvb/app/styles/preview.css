@@ -460,19 +460,16 @@
   padding-bottom: 0;
 }
 
-/* **两栏只在放得下 A4 时才开**:A4 是 794px,右栏还要留内边距。
-   1200px 视口下左 360 + 右约 800,刚好;再窄就回落单列,
-   否则 A4 要么缩到读不清、要么在舞台里横向滚(layout-guard 有硬断言盯着)。 */
+/* **两栏只在放得下 A4 时才开**(A4 是 794px):再窄就回落单列 —— A4 缩到读不清
+   或在舞台里横向滚,都比上下排更糟(layout-guard 有硬断言盯着)。
+   两档左栏宽度都是按右栏剩多少算出来的:
+     1024:1024 − 40 内边距 − 16 间距 − 300 左栏 = 668px(A4 的 84%,适应宽度看得清);
+     1280:1280 − 40 − 16 − 380 左栏 = 844px(A4 原尺寸装得下)。
+   **两栏时容器不能再压在 1100px 里**,那样右栏只剩 644px、PDF 只能缩着看,
+   而这一页的全部意义就是看清那份 PDF。 */
 @media (min-width: 1024px) {
   .apply-work {
-    /* **两栏时不能再压在 1100px 里**:那样右栏只剩 644px,A4(794px)放不下,
-       PDF 只能缩着看 —— 而这一页的全部意义就是看清那份 PDF。
-       断点定在 1280:1280 − 40 内边距 − 16 间距 − 380 左栏 = 844px,刚好装得下 A4。
-       再窄就回落单列(A4 挤到读不清比上下排更糟)。 */
     max-width: 1600px;
-    /* 左栏在 1024 上收到 300px,让 A4 至少能按适应宽度看清:
-       1024 − 40 内边距 − 16 间距 − 300 = 668px(A4 的 84%)。
-       1280 以上再放宽到 380px(那时右栏 844px,A4 原尺寸装得下)。 */
     grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
     align-content: stretch;
     /* 两栏各自内部滚动,**页面本身不滚** —— 这样右边那份 PDF 永远在视口里。
@@ -503,6 +500,7 @@
 
 @media (min-width: 1280px) {
   .apply-work {
+    /* 左栏放宽到 380(右栏 844px,A4 原尺寸装得下 —— 算式见上面那段)。 */
     grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
   }
 
@@ -557,9 +555,59 @@
   min-width: 0;
 }
 
+/* 标题一行:名字占满,记号(编辑/删除)靠右。记号是图标按钮 ——
+   `aria-label` + `title` 在 JS 那侧给,这里只管排布。 */
+.apply-job-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
 .apply-job-title {
   font-size: 0.95rem;
   font-weight: 600;
+  flex: 1;
+  min-width: 0;
+}
+
+.apply-job-marks {
+  display: flex;
+  gap: 4px;
+  flex: none;
+}
+
+/* ---- 「新建 / 编辑职位」框(2026-08-30)----
+   **内容一律 width:100%** —— 给内容加 min-width 不会让框变宽,只会把它撑破
+   (§3 那条:要宽就向 Overlay 要,这里要的是 `width: 'wide'`)。 */
+.apply-dlg {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.apply-dlg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.apply-dlg-read {
+  align-items: center;
+  gap: 8px;
+}
+
+/* **自己的类,别蹭别的框的按钮行** —— 蹭了之后选择器会同时选中两个框的按钮
+   (§3 记着这条,写探针时当场撞到过)。 */
+.apply-dlg-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
 }
 
 .apply-job-meta {

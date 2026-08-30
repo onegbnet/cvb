@@ -272,9 +272,7 @@ export default {
 
   'apply.jobReading': '讀取中…',
 
-  'apply.jobRedo': '換一則',
 
-  'apply.jobClear': '清除',
 
   'apply.jobEmpty': '請先貼上職缺說明或連結',
 
@@ -287,6 +285,18 @@ export default {
   'apply.jobRemote': '遠端',
 
   'apply.jobDuties': '讀到 {n} 條工作內容',
+
+  'apply.jobs': '職位',
+
+  'apply.jobNew': '新增職位',
+
+  'apply.jobName': '職位名稱',
+
+  'apply.jobNamePh': '資深軟體工程師',
+
+  'apply.jobUntitled': '未命名職位',
+
+  'apply.jobUnread': '這份還沒讓 AI 讀過——裁剪時只知道你手動填的內容',
 
   'apply.jobErrBadUrl': '這條連結不能讀 —— 只讀公開網路上的 http/https 網頁',
 
