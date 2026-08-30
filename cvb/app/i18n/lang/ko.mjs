@@ -281,7 +281,7 @@ export default {
 
   'apply.jobAmbiguous': '이 지역에는 관행이 여러 가지입니다. 아래에서 직접 고르세요',
 
-  'apply.jobNoPlace': '공고에 국가가 없습니다. 지원 국가를 아래에서 고르세요',
+  'apply.jobNoPlace': '공고에 국가가 없습니다. 공고를 열어 지원 지역을 선택하세요',
 
   'apply.jobRemote': '원격',
 

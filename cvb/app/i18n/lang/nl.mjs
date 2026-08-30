@@ -281,7 +281,7 @@ export default {
 
   'apply.jobAmbiguous': 'Die plaats heeft meer dan één set conventies — kies er hieronder een',
 
-  'apply.jobNoPlace': 'De advertentie noemt geen land — kies hieronder waar je solliciteert',
+  'apply.jobNoPlace': 'De vacature noemt geen land — open de vacature en kies waar u solliciteert',
 
   'apply.jobRemote': 'Op afstand',
 

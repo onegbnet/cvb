@@ -282,7 +282,7 @@ export default {
 
   'apply.jobAmbiguous': 'That location has more than one set of conventions — choose one below',
 
-  'apply.jobNoPlace': 'The advert does not say which country — choose where you are applying below',
+  'apply.jobNoPlace': 'The advert does not say which country — open the job and choose where you are applying',
 
   'apply.jobRemote': 'Remote',
 

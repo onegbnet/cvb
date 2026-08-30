@@ -289,7 +289,7 @@ export default {
   'apply.jobEmpty': '请先粘贴职位描述或链接',
   'apply.jobDerived': '投递目标已按招聘地点选好',
   'apply.jobAmbiguous': '这个地点对应多套规范，请在下面自己选一套',
-  'apply.jobNoPlace': '广告里没写清是哪个国家，投递目标请在下面自己选',
+  'apply.jobNoPlace': '广告没写清是哪个国家——打开这条职位，选一个投递目标',
   'apply.jobRemote': '远程',
   'apply.jobDuties': '读到 {n} 条工作内容',
   'apply.jobs': '职位',

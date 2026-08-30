@@ -42,6 +42,7 @@ describe('normalizeJob —— 结构不靠模型自觉', () => {
       org: 'Acme Pty Ltd',
       level: 'Senior',
       remote: true,
+      language: '', // 广告没说是什么语言就留空(**不猜**)
       location: { city: 'Sydney', region: 'NSW', country: 'Australia', countryCode: 'AU' },
       responsibilities: ['Build things', 'Ship things'],
     });
@@ -159,4 +160,15 @@ test('defaultLangForSpec —— 投递目标给出缺省简历语言,认不出�
   for (const bad of ['', null, undefined, 'xx', 'cn-tech']) expect(defaultLangForSpec(bad)).toBe('');
   // 每个现有规格都要有缺省(漏一个就是建职位时语言空着)
   for (const s of APPLY_SPECS) expect(defaultLangForSpec(s.id)).toMatch(/^[a-z]{2}$/);
+});
+
+test('广告语言:只认主语言子标签,认不出就留空', () => {
+  // **广告是什么语言,简历就用什么语言交**(2026-08-30 用户裁定)——
+  // 这个信号直接来自广告,比绕道猜国家可靠:一则英文广告哪怕没写清国家,
+  // 也该出英文简历(那次真机上正是国家没推出来、于是出了一份中文简历)。
+  expect(normalizeJob({ language: 'EN' }).language).toBe('en');
+  expect(normalizeJob({ language: 'zh' }).language).toBe('zh');
+  for (const bad of ['English', 'en-NZ', '', null, 42]) {
+    expect(normalizeJob({ language: bad }).language).toBe('');
+  }
 });

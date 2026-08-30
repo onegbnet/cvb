@@ -281,7 +281,7 @@ export default {
 
   'apply.jobAmbiguous': 'Für diesen Ort gibt es mehrere Konventionen — unten eine auswählen',
 
-  'apply.jobNoPlace': 'Die Anzeige nennt kein Land — unten auswählen, wo Sie sich bewerben',
+  'apply.jobNoPlace': 'Die Anzeige nennt kein Land – öffnen Sie die Stelle und wählen Sie das Zielland',
 
   'apply.jobRemote': 'Remote',
 

@@ -36,11 +36,14 @@ export const normalizeJob = (raw) => {
   const src = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
   const loc = src.location && typeof src.location === 'object' && !Array.isArray(src.location) ? src.location : {};
   const code = str(loc.countryCode, 8).toUpperCase();
+  // 广告本身的语言 = 简历该用的语言(见 §3.6)。只认主语言子标签,别的当没给
+  const lang = str(src.language, 8).toLowerCase();
   return {
     title: str(src.title, 200),
     org: str(src.org, 200),
     level: str(src.level, 80),
     remote: src.remote === true,
+    language: /^[a-z]{2,3}$/.test(lang) ? lang : '',
     location: {
       city: str(loc.city, 120),
       region: str(loc.region, 120),

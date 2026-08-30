@@ -281,7 +281,7 @@ export default {
 
   'apply.jobAmbiguous': 'Nơi đó có nhiều bộ quy ước — hãy chọn một ở dưới',
 
-  'apply.jobNoPlace': 'Tin tuyển dụng không nói rõ quốc gia — hãy chọn nơi ứng tuyển ở dưới',
+  'apply.jobNoPlace': 'Tin tuyển dụng không nêu quốc gia — mở vị trí và chọn nơi bạn ứng tuyển',
 
   'apply.jobRemote': 'Từ xa',
 

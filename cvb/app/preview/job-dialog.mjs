@@ -73,7 +73,8 @@ export function openJobDialog({ job = null, langs = [], defaultLang = '', defaul
   const draft = {
     title: (job && job.title) || '',
     spec: (job && job.spec) || defaultSpec || '',
-    // 新建时缺省跟着投递目标走(nz/au→英文、cn→中文);推不出就沿用当前语言
+    // 打开框时的**初值**:跟着投递目标走(nz/au→英文、cn→中文),推不出就沿用当前语言。
+    // 这只是初值 —— 读了广告之后以**广告本身的语言**为准(见 readJobIntoDraft)。
     lang: (job && job.lang) || defaultLangForSpec(defaultSpec) || defaultLang || '',
     jd: (job && job.jd) || '',
     // 读出来的结构随记录走:编辑时不重读也不丢(重读要人点)
@@ -147,6 +148,13 @@ export function openJobDialog({ job = null, langs = [], defaultLang = '', defaul
     if (!hasJobContent(extracted)) return false;
     draft.extracted = extracted;
     if (!draft.title) draft.title = extracted.title || '';
+    // **广告是什么语言,简历就用什么语言**(用户 2026-08-30:「这两者应该是同一的」)。
+    // 这个信号直接来自广告,比绕道猜国家可靠 —— 一则英文广告哪怕没写清国家,
+    // 也该出英文简历。**只在人没自己点过语言时才动**。
+    if (!langTouched && extracted.language) {
+      draft.lang = extracted.language;
+      langPicker.paint();
+    }
     return true;
   }
 

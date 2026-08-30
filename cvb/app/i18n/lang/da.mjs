@@ -281,7 +281,7 @@ export default {
 
   'apply.jobAmbiguous': 'Det sted har mere end ét sæt konventioner — vælg et nedenfor',
 
-  'apply.jobNoPlace': 'Annoncen siger ikke hvilket land — vælg nedenfor, hvor du søger',
+  'apply.jobNoPlace': 'Annoncen nævner ikke et land – åbn stillingen, og vælg hvor du søger',
 
   'apply.jobRemote': 'Fjernarbejde',
 

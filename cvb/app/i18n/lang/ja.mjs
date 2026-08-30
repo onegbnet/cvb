@@ -281,7 +281,7 @@ export default {
 
   'apply.jobAmbiguous': 'この勤務地には作法が複数あります。下から選んでください',
 
-  'apply.jobNoPlace': '求人に国の記載がありません。応募先を下から選んでください',
+  'apply.jobNoPlace': '広告に国が書かれていません。求人を開いて応募先を選んでください',
 
   'apply.jobRemote': 'リモート',
 

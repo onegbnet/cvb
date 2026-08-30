@@ -281,7 +281,7 @@ export default {
 
   'apply.jobAmbiguous': '這個地點對應多套規範，請在下面自己選一套',
 
-  'apply.jobNoPlace': '廣告裡沒寫清是哪個國家，投遞目標請在下面自己選',
+  'apply.jobNoPlace': '廣告沒寫清是哪個國家——打開這條職位，選一個投遞目標',
 
   'apply.jobRemote': '遠端',
 

@@ -281,7 +281,7 @@ export default {
 
   'apply.jobAmbiguous': 'Lokasi itu mempunyai lebih daripada satu set kelaziman — pilih satu di bawah',
 
-  'apply.jobNoPlace': 'Iklan tidak menyebut negara — pilih di bawah tempat anda memohon',
+  'apply.jobNoPlace': 'Iklan tidak menyatakan negara — buka jawatan dan pilih destinasi permohonan',
 
   'apply.jobRemote': 'Jarak jauh',
 

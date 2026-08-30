@@ -281,7 +281,7 @@ export default {
 
   'apply.jobAmbiguous': 'Tiu loko havas plurajn konvenciarojn — elektu unu sube',
 
-  'apply.jobNoPlace': 'La anonco ne diras la landon — elektu sube, kien vi kandidatiĝas',
+  'apply.jobNoPlace': 'La anonco ne diras la landon — malfermu la postenon kaj elektu kien vi kandidatiĝas',
 
   'apply.jobRemote': 'Fora',
 
