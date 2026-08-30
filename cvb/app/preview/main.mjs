@@ -90,6 +90,7 @@ const state = {
   jobId: '', // 当前选中的职位 id('' = 没选,回落到「纯预览」)
   job: null, // 选中职位里 AI 抽出来的结构(normalizeJob 形状);没读过是 null
   jobBusy: false,
+  specHint: '', // 读广告时推不出投递目标 → 卡片上如实说一句(不落库)
 
   // ---- 定向裁剪(B 段)----
   // 这几样与职位信息同生命周期:换一则职位、清除职位、换语种都清掉。
@@ -917,6 +918,7 @@ async function selectJob(id, { rebuild }) {
   }
   state.job = jobForTailor(rec);
   state.instructions = '';
+  state.specHint = '';
   clearDraft(tr('apply.draftStale'));
   if (rec) {
     if (rec.spec && specById(rec.spec)) {
@@ -961,8 +963,14 @@ async function editJob(rec, { rebuild }) {
     defaultSpec: state.spec,
   });
   if (!draft) return;
+  // **推不出投递目标时把这句留在卡片上** —— 读取现在发生在保存那一刻,
+  // 框随即就关了,提示留在框里等于没说(2026-08-30 真机撞到:一则新西兰的广告
+  // 停在缺省的中国大陆,而"请自己选"那句话人从没看见过)。
+  // 它是这一次读取的观察,不是职位的属性,所以**不进库**。
+  const { specHint, ...record } = draft;
   try {
-    const saved = rec ? (await updateJob(rec.id, draft)).job : (await createJob(draft)).job;
+    const saved = rec ? (await updateJob(rec.id, record)).job : (await createJob(record)).job;
+    state.specHint = specHint || '';
     state.jobs = [saved, ...state.jobs.filter((j) => j.id !== saved.id)];
     if (rec && state.jobId === saved.id) {
       // 编辑的就是当前这条:重新接管一次(国家/语种可能改了),裁剪作废
@@ -1072,6 +1080,8 @@ function buildJobBlock() {
             )
           ),
           meta && h('div', { class: 'apply-job-meta' }, meta),
+          // 推不出投递目标就如实说,并指到能改的地方(铅笔记号)
+          state.specHint ? h('div', { class: 'apply-stale' }, tr(state.specHint)) : null,
           // **事实与提交语言不同就说一句** —— 生成时会现译一份,人该知道
           needsTranslation()
             ? h(

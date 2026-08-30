@@ -21,7 +21,7 @@
 // 是在给一个已经懂了的人讲课。
 import { h, clear } from '../lib/dom.mjs';
 import { tr } from '../lib/i18n.mjs';
-import { looksLikeUrl, normalizeJob, hasJobContent, defaultLangForSpec, JOB_ERROR_KEYS } from '../apply/job.mjs';
+import { looksLikeUrl, normalizeJob, hasJobContent, deriveSpec, defaultLangForSpec, JOB_ERROR_KEYS } from '../apply/job.mjs';
 import { APPLY_SPECS, specById } from '../apply/specs.mjs';
 import { FACTS_LANGS, factsLangName } from '../editor/facts-bar.mjs';
 import { fetchJobPage, isUnauthorized, redirectToUnlock } from '../lib/api.mjs';
@@ -107,6 +107,7 @@ export function openJobDialog({ job = null, langs = [], defaultLang = '', defaul
     () => draft.spec,
     (v) => {
       draft.spec = v;
+      specTouched = true;
       // 换了国家,缺省的简历语言跟着换 —— 除非人已经自己点过语言
       if (!langTouched) {
         const guess = defaultLangForSpec(v);
@@ -117,8 +118,9 @@ export function openJobDialog({ job = null, langs = [], defaultLang = '', defaul
       }
     }
   );
-  // **人一旦自己点过语言,国家就不再替他改**(那是他刚做的决定)
+  // **人一旦自己点过,模型就不再替他改**(那是他刚做的决定)
   let langTouched = Boolean(job && job.lang);
+  let specTouched = Boolean(job && job.spec);
   const langPicker = chipPicker(
     FACTS_LANGS.map((code) => ({ value: code, text: factsLangName(code) })),
     () => draft.lang,
@@ -154,6 +156,21 @@ export function openJobDialog({ job = null, langs = [], defaultLang = '', defaul
     if (!langTouched && extracted.language) {
       draft.lang = extracted.language;
       langPicker.paint();
+    }
+    // **推导投递目标**(用户成文的「推导文化模板,多解时让用户手动选」)。
+    // 这一段在 2026-08-30 把「读取」挪进保存时被我一并删掉过 —— 于是整个推导没了,
+    // 一则新西兰的广告照样停在缺省的中国大陆。三种结局分得干干净净:
+    //   恰好一套才自动选;多解或推不出**什么都不动**,并把话留给卡片说
+    //(框马上就关了,提示留在框里等于没说 —— 这也是那次踩到的)。
+    draft.specHint = '';
+    if (!specTouched) {
+      const derived = deriveSpec(extracted);
+      if (derived.status === 'one') {
+        draft.spec = derived.spec;
+        specPicker.paint();
+      } else {
+        draft.specHint = derived.status === 'many' ? 'apply.jobAmbiguous' : 'apply.jobNoPlace';
+      }
     }
     return true;
   }
@@ -215,6 +232,8 @@ export function openJobDialog({ job = null, langs = [], defaultLang = '', defaul
             lang: draft.lang,
             jd: draft.jd,
             extracted: draft.extracted,
+            // 推不出投递目标时把话带出去 —— 框马上就关了,留在框里等于没说
+            specHint: draft.specHint || '',
           });
           handle && handle.close();
         },
