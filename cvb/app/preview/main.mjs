@@ -970,15 +970,16 @@ async function editJob(rec, { rebuild }) {
   const { specHint, ...record } = draft;
   try {
     const saved = rec ? (await updateJob(rec.id, record)).job : (await createJob(record)).job;
-    state.specHint = specHint || '';
     state.jobs = [saved, ...state.jobs.filter((j) => j.id !== saved.id)];
-    if (rec && state.jobId === saved.id) {
-      // 编辑的就是当前这条:重新接管一次(国家/语种可能改了),裁剪作废
-      state.jobId = '';
-      await selectJob(saved.id, { rebuild });
-      return;
-    }
+    // 编辑的就是当前这条:先松手再重新接管一次(国家/语种可能改了),裁剪作废
+    if (rec && state.jobId === saved.id) state.jobId = '';
     await selectJob(saved.id, { rebuild });
+    // **必须在 selectJob 之后**:它会把上一次读取的观察清掉(换职位就该清),
+    // 放在前面等于自己刚设的这一句被自己抹掉(2026-08-30 踩到:提示永远不显示)。
+    if (specHint) {
+      state.specHint = specHint;
+      rebuild();
+    }
   } catch (err) {
     if (isUnauthorized(err)) return redirectToUnlock();
     window.Toast && window.Toast.err(String(err.message || err));
