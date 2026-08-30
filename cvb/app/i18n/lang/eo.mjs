@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': 'Algluu la priskribon de la posteno, aŭ ligilon al la anonco',
 
-  'apply.jobRead': 'Legi la anoncon',
 
   'apply.jobReading': 'Legante…',
 

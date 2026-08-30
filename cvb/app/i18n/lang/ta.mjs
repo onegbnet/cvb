@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': 'பணி விவரணையை ஒட்டவும், அல்லது விளம்பரத்தின் இணைப்பைத் தரவும்',
 
-  'apply.jobRead': 'விளம்பரத்தைப் படி',
 
   'apply.jobReading': 'படிக்கிறது…',
 

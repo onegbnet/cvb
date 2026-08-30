@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': '채용 공고 내용을 붙여넣거나, 공고 페이지 링크를 넣으세요',
 
-  'apply.jobRead': '공고 읽기',
 
   'apply.jobReading': '읽는 중…',
 

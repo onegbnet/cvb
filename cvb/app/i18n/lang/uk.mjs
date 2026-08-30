@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': 'Вставте опис вакансії або посилання на оголошення',
 
-  'apply.jobRead': 'Прочитати оголошення',
 
   'apply.jobReading': 'Читання…',
 

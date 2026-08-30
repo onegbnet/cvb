@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': 'Tampal keterangan kerja, atau pautan ke iklan',
 
-  'apply.jobRead': 'Baca iklan',
 
   'apply.jobReading': 'Sedang membaca…',
 

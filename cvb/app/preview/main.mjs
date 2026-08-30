@@ -760,30 +760,14 @@ function buildSelectionBar() {
   const bar = h('div', { class: 'apply-bar' });
   const rebuild = () => {
     clear(bar);
-    // **选中职位时投递目标与语种不在这里出现** —— 它们由那条记录说了算
-    //(2026-08-30 起职位落库,见上面职位块的文件头)。两处都能改就一定会出现
-    // "我改了但没生效":你在这里换了国家,而下次选回这个职位它又变回去了。
-    // 要改就去改那条职位(铅笔记号)。没选职位时这一页仍是纯预览,两行照旧。
-    const bound = Boolean(currentJob());
-    if (!bound) {
-      bar.append(
-        chipRow(
-          'apply.target',
-          APPLY_SPECS.map((s) => ({ value: s.id, text: tr(s.labelKey) })),
-          state.spec,
-          (v) => {
-            state.spec = v;
-            state.template = templateForSpec(v, state.template); // 版式跟着规格走
-            // 换了投递地就换了一整套当地规范,上一版是按别处的规矩裁的
-            clearDraft(tr('apply.draftStale'));
-            syncUrl();
-            markStale();
-            rebuild();
-            rebuildTailor();
-          }
-        )
-      );
-    }
+    // **投递目标与语种不在这里出现,一处都没有**(2026-08-30 用户:「投递目标 ——
+    // 这里选了,为什么下面还有?」)。它们是**职位的字段**,只在「新建/编辑职位」
+    // 框里选;同一件事两个地方都能改,就一定会出现「我改了但没生效」——
+    // 你在这里换了国家,下次选回那个职位它又变回去。
+    // 没有职位时按缺省投递目标与默认语种出一份纯预览,要换就去建一个职位。
+    //
+    // **版式留在这里**:它不是职位的属性 —— 同一个职位换一套版式重出一版是常事,
+    // 而换国家/语种是换了另一件事。只有一套可选时这一行不出现(没有选择就别摆控件)。
     const templates = specById(state.spec).templates;
     if (templates.length > 1) {
       bar.append(
@@ -803,31 +787,10 @@ function buildSelectionBar() {
         )
       );
     }
-    if (!bound && state.langs.length > 1) {
-      bar.append(
-        chipRow(
-          'apply.facts',
-          state.langs.map(({ lang: code }) => ({ value: code, text: factsLangName(code) })),
-          state.factsLang,
-          async (v) => {
-            state.factsLang = v;
-            state.refs = state.refs.filter((code) => code !== v); // 参照不能是它自己
-            // 换了语种,计划里的下标就不指着同一份文档了 —— 作废,如实说一句
-            clearDraft(tr('apply.draftStale'));
-            syncUrl();
-            markStale();
-            rebuild();
-            rebuildTailor();
-            await loadFacts();
-          }
-        )
-      );
-    }
+
     // **参照语种**(用户成文的「默认参照同语种,可指定参照多语种」)。
     // 只在**选了职位**之后出现 —— 它的唯一消费方是裁剪;没有裁剪就是个空控件。
     // 只作**措辞对照**,不作事实来源:那是另一份文档,内容未必对得上。
-    // **提到语种行外面**:2026-08-30 之后语种行在选中职位时不出现,
-    // 而参照恰恰只在那时才有意义,嵌在里面等于永远不出现。
     if (state.job && state.langs.length > 1) {
       const others = state.langs.filter(({ lang: code }) => code !== state.factsLang);
       if (others.length) {

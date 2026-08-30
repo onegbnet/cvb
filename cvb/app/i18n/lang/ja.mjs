@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': '募集要項を貼り付けるか、求人ページのリンクを貼ってください',
 
-  'apply.jobRead': '求人を読み取る',
 
   'apply.jobReading': '読み取り中…',
 

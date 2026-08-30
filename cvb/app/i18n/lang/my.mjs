@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': 'အလုပ်ကြော်ငြာစာသားကို ကူးထည့်ပါ၊ သို့မဟုတ် ကြော်ငြာလင့်ခ်ကို ထည့်ပါ',
 
-  'apply.jobRead': 'ကြော်ငြာကို ဖတ်ရန်',
 
   'apply.jobReading': 'ဖတ်နေသည်…',
 

@@ -283,7 +283,6 @@ export default {
   'apply.facts': '事实语种',
   'apply.job': '职位信息',
   'apply.jobPlaceholder': '粘贴职位描述，或一条招聘页链接',
-  'apply.jobRead': '读取招聘广告',
   'apply.jobReading': '读取中…',
   'apply.jobEmpty': '请先粘贴职位描述或链接',
   'apply.jobDerived': '投递目标已按招聘地点选好',

@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': 'Indsæt jobopslaget, eller et link til annoncen',
 
-  'apply.jobRead': 'Læs annoncen',
 
   'apply.jobReading': 'Læser…',
 

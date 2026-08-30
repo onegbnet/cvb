@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': 'הדביקו את תיאור המשרה, או קישור למודעה',
 
-  'apply.jobRead': 'קראו את המודעה',
 
   'apply.jobReading': 'קורא…',
 

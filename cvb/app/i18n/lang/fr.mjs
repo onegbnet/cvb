@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': 'Collez la description du poste, ou un lien vers l’annonce',
 
-  'apply.jobRead': 'Lire l’annonce',
 
   'apply.jobReading': 'Lecture…',
 

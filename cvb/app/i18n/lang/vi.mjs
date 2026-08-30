@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': 'Dán mô tả công việc, hoặc một liên kết tới tin tuyển dụng',
 
-  'apply.jobRead': 'Đọc tin tuyển dụng',
 
   'apply.jobReading': 'Đang đọc…',
 

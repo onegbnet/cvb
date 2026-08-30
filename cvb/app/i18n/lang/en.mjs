@@ -269,7 +269,6 @@ export default {
 
   'apply.jobPlaceholder': 'Paste the job description, or a link to the advert',
 
-  'apply.jobRead': 'Read the advert',
 
   'apply.jobReading': 'Reading…',
 

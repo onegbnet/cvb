@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': '貼上職缺說明，或一條徵才頁連結',
 
-  'apply.jobRead': '讀取徵才廣告',
 
   'apply.jobReading': '讀取中…',
 

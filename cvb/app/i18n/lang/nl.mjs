@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': 'Plak de vacaturetekst, of een link naar de advertentie',
 
-  'apply.jobRead': 'Advertentie lezen',
 
   'apply.jobReading': 'Bezig met lezen…',
 

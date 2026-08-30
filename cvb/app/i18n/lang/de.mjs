@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': 'Stellenbeschreibung einfügen oder einen Link zur Anzeige',
 
-  'apply.jobRead': 'Anzeige lesen',
 
   'apply.jobReading': 'Wird gelesen…',
 

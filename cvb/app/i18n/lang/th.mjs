@@ -268,7 +268,6 @@ export default {
 
   'apply.jobPlaceholder': 'วางรายละเอียดงาน หรือวางลิงก์ประกาศรับสมัคร',
 
-  'apply.jobRead': 'อ่านประกาศ',
 
   'apply.jobReading': 'กำลังอ่าน…',
 
